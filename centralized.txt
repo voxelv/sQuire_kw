@@ -1,0 +1,4 @@
+Central server:
+- Manage Projects, user accounts
+- Never runs any java code from the projects
+    - Code must be run on clients' machines. This gets around security nightmare.
