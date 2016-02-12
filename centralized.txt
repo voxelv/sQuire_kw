@@ -3,3 +3,17 @@ Central server:
 - Never runs any java code from the projects
     - Code must be run on clients' machines. This gets around security nightmare.
 - Enables user accounts and friending.
+
+Server Functionality:
+- Joe F
+
+
+Client Functionality:
+- Scott D
+- Tim S
+
+Chat:
+- Grant W
+
+User Accounts:
+- Feng G
