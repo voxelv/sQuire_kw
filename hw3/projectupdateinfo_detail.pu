@@ -1,0 +1,15 @@
+@startuml
+hide circle
+hide empty members
+
+class "ProjectManager" as sqpm
+
+class "ProjectUpdateInfo" as sqpui{
+	ProjectGUID
+	ProjectEditKeyValuePairs
+	}
+
+sqpm - sqpui : <<Argument>>
+
+
+@enduml

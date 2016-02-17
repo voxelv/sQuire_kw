@@ -1,0 +1,17 @@
+@startuml
+hide circle
+hide empty members
+
+class "Project" as sqp
+
+class "FileUpdateInfo" as sqfui{
+	FileGUID
+	FileEditKeyValuePairs
+	}
+
+
+sqp - sqfui : <<Argument>>
+
+
+
+@enduml

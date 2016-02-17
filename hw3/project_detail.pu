@@ -1,0 +1,36 @@
+@startuml
+hide circle
+hide empty members
+
+class "ProjectManager" as sqpm
+
+class "Session" as ses
+
+class "UserAccount" as ua
+
+class "Project" as sqp{
+	ProjectGUID
+	ProjectDescription
+	ProjectSettings
+	ProjectFiles
+	UpdateProject(Key,Value)
+	UpdateFile(FileUpdateInfo)
+	}
+
+class "File" as sqf
+
+class "FileUpdateInfo" as sqfui
+
+ses .left. ua : 1
+ses .right. sqp : 1
+
+sqpm *-- sqp : 0..*
+
+'sqp *-left- ua : Many
+sqp *-- sqf : 0..*
+
+sqp - sqfui : <<Argument>>
+
+
+
+@enduml

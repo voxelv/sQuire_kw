@@ -1,0 +1,22 @@
+@startuml
+hide circle
+hide empty members
+
+class "AccountManager" as uam{
+	'AccountList
+	'CreateAccount(Name, Email)
+	'Login(LoginInfo)
+	'Logout(UserGUID)
+	'GetUserDetails(Name)
+	'SetUserDetails(UserUpdateInfo)
+	}
+class "UserUpdateInfo" as uaui{
+	UserGUID
+	ValidationToken
+	UserInfoKeyValuePairs
+	}
+
+uam - uaui : <<Argument>>
+
+
+@enduml
