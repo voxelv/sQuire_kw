@@ -11,4 +11,15 @@ logout()
 }
 
 
+
+class "Register" as re {
+first_name
+last_name
+user_name
+password
+
+check_username()
+check_password()
+}
+
 @enduml
