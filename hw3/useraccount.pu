@@ -18,8 +18,27 @@ last_name
 user_name
 password
 
+get_username()
+get_password()
+get_first_last_name()
 check_username()
 check_password()
 }
+
+class "Login" as lo {
+user_name
+password
+
+check_username()
+check_password()
+}
+
+
+
+
+
+
+
+
 
 @enduml
