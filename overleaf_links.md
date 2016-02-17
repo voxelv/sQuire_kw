@@ -14,3 +14,4 @@ Team 4: [pdf](http://www2.cs.uidaho.edu/~jeffery/courses/383/hw1-team4.pdf)
 
 ## Homework 2's links:
 Team A: [Overleaf] (https://www.overleaf.com/4236744jrrqpg#/12532352/)
+Team C: [Overleaf] (https://www.overleaf.com/4236690nydzfb#/12532109/)
