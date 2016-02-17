@@ -1,0 +1,67 @@
+@startuml
+hide circle
+hide empty members
+
+class "SquireServer" as sqs{
+	'SquireProjects
+	'SquireAccounts
+	'ChatServer
+	'Forum
+	'ClientConnections
+	
+	'GetProject()
+	'UserAuthenticate()
+	'SendChatMessage()
+	}
+	
+class "SquireAccount" as ua{
+	'UserName
+	'DisplayName
+	'IsHost
+	'Biography
+	'Photo
+	
+	'Login()
+	'Logout()
+	}
+	
+class "SquireClient" as sq{
+	'ChatInstance
+	'CurrentUser
+	'CurrentEditor
+	'ServerConnection
+
+	'Login()
+	'Logout()
+	}
+	
+class "SquireProject" as sqp {
+	'ProjectDescription
+	'ProjectSettings
+	'ProjectFiles
+	
+	'OpenProject()
+	'CloseProject()
+	'OpenFile()
+	'CloseFile()
+	'EditFile()
+	'EditDescription()
+	'ViewFileHistory()
+	'GetFileListFromServer()
+	}
+class "SquireFile" as sqf {
+	'FileName
+	'FileDescription
+	'FileDataBase
+	
+	'Edit()
+	}
+
+sqp *-- sqf : 0..*
+sqs *-- sqp : Many
+sqs *-- ua : Many
+sqp *-left- ua : Many
+
+sq -right- sqs : <<TCP>>
+
+@enduml

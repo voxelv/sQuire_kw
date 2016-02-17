@@ -1,0 +1,98 @@
+<<<<<<< HEAD
+=======
+@startuml
+hide circle
+hide empty members
+
+class "SquireClient" as sq {
+	ChatInstance
+	CurrentUser
+	CurrentProject
+	ServerConnection
+
+	Login()
+	Logout()
+	}
+
+class "SquireAccount" as ua {
+	UserName
+	DisplayName
+	IsHost
+	Biography
+	Photo
+	
+	Login()
+	Logout()
+	}
+
+class "SquireChat" as sqc {
+	GlobalChat
+	ProjectChat
+	PrivateChat
+	
+	SendGlobalMessage()
+	SendProjectMessage()
+	SendPrivateMessage()
+	}
+
+class "SquireServer" as sqs{
+	SquireProjects
+	SquireAccounts
+	ChatServer
+	Forum
+	ClientConnections
+	
+	GetProject()
+	UserAuthenticate()
+	SendChatMessage()
+	}
+
+class "SquireProject" as sqp {
+	ProjectDescription
+	ProjectSettings
+	ProjectFiles
+	
+	OpenProject()
+	CloseProject()
+	OpenFile()
+	CloseFile()
+	EditFile()
+	EditDescription()
+	ViewFileHistory()
+	GetFileListFromServer()
+	}
+class "SquireFile" as sqf {
+	FileName
+	FileDescription
+	FileDataBase
+	
+	Edit()
+	}
+class "GlobalChat" as gchat {
+	Users
+	
+	SendGlobalMessage()
+	}
+class "ProjectChat" as pchat {
+	Users
+
+	SendProjectMessage()
+	}
+class "PrivateChat" as fchat {
+	Users
+
+	SendPrivateMessage()
+	}
+
+sqs *-- sqp : Many
+sqp *-- sqf  : 0+
+sq *-- ua  
+sq -right- sqs : <<TCP>>
+sq *-- sqc 
+sqc *-- gchat 
+sqc *-- pchat 
+sqc *-- fchat 
+
+
+@enduml
+>>>>>>> cedcbbe81b3ab6e03288ac585d8b968a9bd962f6

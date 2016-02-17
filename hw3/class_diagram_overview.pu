@@ -1,0 +1,20 @@
+@startuml
+hide circle
+hide empty members
+
+class "SquireAccount" as ua
+class "SquireClient" as sq
+class "SquireServer" as sqs
+class "SquireChat" as sqc
+class "SquireProject" as sqp
+class "SquireFile" as sqf
+class "SquireEditor" as sqe
+
+sqp *-- sqf : 0+
+sqs *-- sqp : 0+
+sq *-- ua  
+sq *-- sqe
+sq *-- sqc 
+sq - sqs :  <<TCP>>
+
+@enduml
