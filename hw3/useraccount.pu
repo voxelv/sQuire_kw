@@ -1,6 +1,6 @@
 @startuml
 
-class "SquireAccount" as ua {
+class "sQuire Account" as ua {
 first_name
 last_name
 user_name
