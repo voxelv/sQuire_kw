@@ -16,5 +16,6 @@ sq *-- ua
 sq *-- sqe
 sq *-- sqc 
 sq - sqs :  <<TCP>>
+sqp *-left- ua : Many
 
 @enduml
