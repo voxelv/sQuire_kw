@@ -1,0 +1,98 @@
+@startuml
+hide circle
+hide empty members
+
+class "SquireClient" as sq {
+	'ChatInstance
+	'CurrentUser
+	'CurrentEditor
+	'ServerConnection
+
+	'Login()
+	'Logout()
+	}
+
+class "SquireAccount" as ua {
+	'UserName
+	'DisplayName
+	'IsHost
+	'Biography
+	'Photo
+	
+	'Login()
+	'Logout()
+	}
+
+class "SquireChat" as sqc {
+	'GlobalChat
+	'ProjectChat
+	'PrivateChat
+	
+	'SendGlobalMessage()
+	'SendProjectMessage()
+	'SendPrivateMessage()
+	}
+
+class "SquireEditor" as sqe {
+	'CurrentProject
+	'OpenedFiles
+	
+	'OpenProject()
+	'CloseProject()
+	'OpenFile()
+	'CloseFile()
+	'EditFile()
+	'EditDescription()
+	'ViewFileHistory()
+	}
+
+class "SquireProject" as sqp {
+	'ProjectDescription
+	'ProjectSettings
+	'ProjectFiles
+	
+	'OpenProject()
+	'CloseProject()
+	'OpenFile()
+	'CloseFile()
+	'EditFile()
+	'EditDescription()
+	'ViewFileHistory()
+	'GetFileListFromServer()
+	}
+class "SquireFile" as sqf {
+	'FileName
+	'FileDescription
+	'FileDataBase
+	
+	'Edit()
+	}
+class "GlobalChat" as gchat {
+	'Users
+	
+	'SendGlobalMessage()
+	}
+class "ProjectChat" as pchat {
+	'Users
+
+	'SendProjectMessage()
+	}
+class "PrivateChat" as fchat {
+	'Users
+
+	'SendPrivateMessage()
+	}
+class "SquireServer" as sqse
+
+sqe *-- sqp
+sqp *-- sqf  : 0+
+sq *-- ua  
+sq *-- sqe
+sq -right- sqse : <<TCP>>
+sq *-- sqc 
+sqc *-- gchat 
+sqc *-- pchat 
+sqc *-- fchat 
+
+
+@enduml
