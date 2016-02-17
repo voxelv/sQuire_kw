@@ -2,66 +2,29 @@
 hide circle
 hide empty members
 
-class "SquireServer" as sqs{
-	'SquireProjects
-	'SquireAccounts
-	'ChatServer
-	'Forum
-	'ClientConnections
-	
-	'GetProject()
-	'UserAuthenticate()
-	'SendChatMessage()
-	}
-	
-class "SquireAccount" as ua{
-	'UserName
-	'DisplayName
-	'IsHost
-	'Biography
-	'Photo
-	
-	'Login()
-	'Logout()
-	}
-	
-class "SquireClient" as sq{
-	'ChatInstance
-	'CurrentUser
-	'CurrentEditor
-	'ServerConnection
-
-	'Login()
-	'Logout()
-	}
-	
-class "SquireProject" as sqp {
-	'ProjectDescription
-	'ProjectSettings
-	'ProjectFiles
-	
-	'OpenProject()
-	'CloseProject()
-	'OpenFile()
-	'CloseFile()
-	'EditFile()
-	'EditDescription()
-	'ViewFileHistory()
-	'GetFileListFromServer()
-	}
-class "SquireFile" as sqf {
-	'FileName
-	'FileDescription
-	'FileDataBase
-	
-	'Edit()
-	}
-
-sqp *-- sqf : 0..*
-sqs *-- sqp : Many
-sqs *-- ua : Many
-sqp *-left- ua : Many
+class "Server" as sqs	
+class "Server Account" as ua
+class "Client" as sq	
+class "Project" as sqp 
+class "File" as sqf 
+class "Chat" as chat 
+class "Global Chat" as gchat 
+class "Project Chat" as pchat 
+class "Private Chat" as fchat 
+class "Backend" as bkg
 
 sq -right- sqs : <<TCP>>
+
+sqs *-- sqp : Many
+sqs *-- ua : Many
+sqs *-- chat : 1
+sqs *-- bkg
+
+chat *-- gchat
+chat *-- pchat
+chat *-- fchat
+
+'sqp *-left- ua : Many
+sqp *-- sqf : 0..*
 
 @enduml

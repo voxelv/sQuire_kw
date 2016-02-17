@@ -11,12 +11,14 @@ class "Global Chat" as gchat
 class "Project Chat" as pchat 
 class "Private Chat" as fchat 
 class "Server" as sqse
+class "GUI" as gui
 
 sq -right- sqse : <<TCP>>
 
 sq *-- ua : 1
 sq *-- sqc : 1
 sq *-- sqe : 0..1
+sq *-- gui : 1
 
 sqc *-- gchat : 1
 sqc *-- pchat : 0..1
