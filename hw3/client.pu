@@ -2,87 +2,15 @@
 hide circle
 hide empty members
 
-class "SquireClient" as sq {
-	'ChatInstance
-	'CurrentUser
-	'CurrentEditor
-	'ServerConnection
-
-	'Login()
-	'Logout()
-	}
-
-class "SquireAccount" as ua {
-	'UserName
-	'DisplayName
-	'IsHost
-	'Biography
-	'Photo
-	
-	'Login()
-	'Logout()
-	}
-
-class "SquireChat" as sqc {
-	'GlobalChat
-	'ProjectChat
-	'PrivateChat
-	
-	'SendGlobalMessage()
-	'SendProjectMessage()
-	'SendPrivateMessage()
-	}
-
-class "SquireEditor" as sqe {
-	'CurrentProject
-	'OpenedFiles
-	
-	'OpenProject()
-	'CloseProject()
-	'OpenFile()
-	'CloseFile()
-	'EditFile()
-	'EditDescription()
-	'ViewFileHistory()
-	}
-
-class "SquireProject" as sqp {
-	'ProjectDescription
-	'ProjectSettings
-	'ProjectFiles
-	
-	'OpenProject()
-	'CloseProject()
-	'OpenFile()
-	'CloseFile()
-	'EditFile()
-	'EditDescription()
-	'ViewFileHistory()
-	'GetFileListFromServer()
-	}
-class "SquireFile" as sqf {
-	'FileName
-	'FileDescription
-	'FileDataBase
-	
-	'Edit()
-	}
-class "GlobalChat" as gchat {
-	'Users
-	
-	'SendGlobalMessage()
-	}
-class "ProjectChat" as pchat {
-	'Users
-
-	'SendProjectMessage()
-	}
-class "PrivateChat" as fchat {
-	'Users
-
-	'SendPrivateMessage()
-	}
-class "SquireServer" as sqse
+class "Client" as sq 
+class "Client Account" as ua 
+class "Client Chat" as sqc 
+class "Project Editor" as sqe 
+class "File" as sqf 
+class "Global Chat" as gchat 
+class "Project Chat" as pchat 
+class "Private Chat" as fchat 
+class "Server" as sqse
 
 sq -right- sqse : <<TCP>>
 
@@ -94,8 +22,7 @@ sqc *-- gchat : 1
 sqc *-- pchat : 0..1
 sqc *-- fchat : 0..*
 
-sqe *-- sqf
-sqe -left- sqp 
+sqe *-- sqf : 0..*
 
 
 @enduml
