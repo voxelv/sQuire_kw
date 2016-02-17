@@ -1,0 +1,14 @@
+@startuml
+
+class "SquireAccount" as ua {
+first_name
+last_name
+user_name
+password
+register()
+login()
+logout()
+}
+
+
+@enduml
