@@ -84,15 +84,18 @@ class "PrivateChat" as fchat {
 	}
 class "SquireServer" as sqse
 
-sqe *-- sqp
-sqp *-- sqf  : 0+
-sq *-- ua  
-sq *-- sqe
 sq -right- sqse : <<TCP>>
-sq *-- sqc 
-sqc *-- gchat 
-sqc *-- pchat 
-sqc *-- fchat 
+
+sq *-- ua : 1
+sq *-- sqc : 1
+sq *-- sqe : 0..1
+
+sqc *-- gchat : 1
+sqc *-- pchat : 0..1
+sqc *-- fchat : 0..*
+
+sqe *-- sqf
+sqe -left- sqp 
 
 
 @enduml
