@@ -57,7 +57,7 @@ sq_projmgr -- "1" projmgr_utrack : Track User
 sq_projmgr o-- "1" projmgr_editq : Log Edits
 sq_projmgr o-- "0..*" proj
 
-projmgr_editq o-- "0..*" editq_atomedit
+projmgr_editq o-- "0..*" editq_atomedit : Stores and Sends
 
 projmgr_utrack o-- "1" loc
 projmgr_utrack -- editq_atomedit : Generates
