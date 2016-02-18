@@ -5,13 +5,11 @@ hide empty members
 class "Project" as sqp
 
 class "FileUpdateInfo" as sqfui{
-	FileGUID
-	FileEditKeyValuePairs
+	+FileID
+	+FileEditKeyValuePairs
 	}
 
 
 sqp - sqfui : <<Argument>>
-
-
 
 @enduml

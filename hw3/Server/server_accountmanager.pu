@@ -1,0 +1,22 @@
+@startuml
+hide circle
+hide empty members
+
+class "Server" as sqs
+class "AccountManager" as sqs_ua_m{
+	-AccountList
+	+CreateAccount(Name, Email)
+	+Login(LoginInfo)
+	+Logout(UserID)
+	+GetUserDetails(Name)
+	+SetUserDetails(UserUpdateInfo)
+	}
+class "UserAccount" as sqs_ua
+class "UserUpdateInfo" as sqs_ua_ui
+
+sqs o-- "1" sqs_ua_m 
+sqs_ua_m *-- "*" sqs_ua 
+sqs_ua_m - sqs_ua_ui : Encapsulates User Changes
+
+
+@enduml

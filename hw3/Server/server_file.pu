@@ -1,0 +1,18 @@
+@startuml
+hide circle
+hide empty members
+
+class "Project" as sqs_pr
+
+class "File" as sqs_fi{
+	-FileID
+	-FileName
+	-FileDescription
+	-FileContent
+	+GetFileInfo()
+	+UpdateFile(Key,Value)
+	}
+
+sqs_pr *-- "*" sqs_fi 
+
+@enduml

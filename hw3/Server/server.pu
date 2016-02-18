@@ -1,0 +1,36 @@
+@startuml
+hide circle
+hide empty members
+
+class "Client" as sq
+class "Server" as sqs{
+	-AccountManager
+	-ProjectManager
+	-SessionManager
+	-ChatManager
+	+AccountManagerMethods()
+	+ProjectManagerMethods()
+	+SessionManagerMethods()
+	+ChatManagerMethods(GUIDs)
+	}
+class "AccountManager" as sqs_ua_m
+class "ProjectManager" as sqs_pr_m
+class "SessionManager" as sqs_se_m
+class "ChatManager" as sqs_ch_m
+
+sq -right- sqs : <<TCP>>
+
+sqs o-- "1" sqs_pr_m 
+sqs o-- "1" sqs_ua_m
+sqs o-- "1" sqs_se_m
+sqs o-- "1" sqs_ch_m
+
+
+
+
+
+
+
+
+
+@enduml

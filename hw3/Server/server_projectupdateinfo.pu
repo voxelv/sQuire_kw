@@ -5,11 +5,11 @@ hide empty members
 class "ProjectManager" as sqpm
 
 class "ProjectUpdateInfo" as sqpui{
-	ProjectGUID
-	ProjectEditKeyValuePairs
+	+ProjectID
+	+ProjectEditKeyValuePairs
 	}
 
-sqpm - sqpui : <<Argument>>
+sqpm - sqpui : Encapsulates User Changes
 
 
 @enduml

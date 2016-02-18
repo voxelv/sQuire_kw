@@ -4,101 +4,38 @@ hide empty members
 
 class "Client" as sq
 
-class "Server" as sqs{
-	'AccountManager
-	'ProjectManager
-	'Sockets
-	'AccountManagerMethods()
-	'ProjectManagerMethods()
-	}
+class "Server" as sqs
 
-class "AccountManager" as uam{
-	'AccountList
-	'CreateAccount(Name, Email)
-	'Login(LoginInfo)
-	'Logout(UserGUID)
-	'GetUserDetails(Name)
-	'SetUserDetails(UserUpdateInfo)
-	}
-class "ProjectManager" as sqpm{
-	'ProjectList
-	'CreateProject(Name)
-	'OpenProject(Name)
-	'DeleteProject(Name)
-	'UpdateProject(ProjectUpdateInfo)
-	}
-class "Session" as ses{
-	'SessionGUID
-	'ProjectGUID
-	'UserGUID
-	'Socket
-	}
-class "UserAccount" as ua{
-	'UserGUID
-	'UserName
-	'DisplayName
-	'Biography
-	'Photo
-	'IsHost
-	'IsLoggedIn
-	'CurrentProjectGUID
-	'PrivateChatGUIDS
-	'GetUserName(UserGUID)
-	'GetUserGUID(Name)
-	'GetUserDetails(UserGUID)
-	'SetUserDetail(Key,Value)
-	}
-class "Project" as sqp{
-	'ProjectGUID
-	'ProjectDescription
-	'ProjectSettings
-	'ProjectFiles
-	'UpdateProject(Key,Value)
-	'UpdateFile(FileUpdateInfo)
-	}
-
-class "File" as sqf{
-	'FileGUID
-	'FileName
-	'FileDescription
-	'FileDataBase
-	'UpdateFile(Key,Value)
-	}
-
-class "UserUpdateInfo" as uaui{
-	'UserGUID
-	'UserKeyValuePairs
-	}
-
-class "ProjectUpdateInfo" as sqpui{
-	'ProjectGUID
-	'ProjectKeyValuePairs
-	}
-
-class "FileUpdateInfo" as sqfui{
-	'FileGUID
-	'EditKeyValuePairs
-	}
+	class "AccountManager" as sqs_ua_m
+		class "UserAccount" as sqs_ua
+		
+	class "ProjectManager" as sqs_pr_m
+		class "Project" as sqs_pr
+			class "File" as sqs_fi
+		
+	class "SessionManager" as sqs_se_m
+		class "Session" as sqs_se
+		
+	class "ChatManager" as sqs_ch_m
+		class "ChatRoom" as sqs_ch_rm
 
 sq -right- sqs : <<TCP>>
 
-sqs *-- sqpm : 1
-sqs *-- uam : 1
+sqs o-- "1" sqs_pr_m 
+	sqs_pr_m *-- "*" sqs_pr 
+		'sqs_pr o-right-- sqs_ua : "Project Owners"
+		sqs_pr *-- "1..*" sqs_fi 
+sqs o-- "1" sqs_ua_m
+	sqs_ua_m *-- "*" sqs_ua 
+sqs o-- "1" sqs_ch_m
+	sqs_ch_m *-- "*" sqs_ch_rm
+sqs o-- "1" sqs_se_m
+	sqs_se_m *-- "*" sqs_se
 
-sqpm - sqpui : <<Argument>>
+'sqs_se o-- "1" sqs_ua 
+'sqs_se o-- "1" sqs_pr 
 
-ses .left. ua : 1
-ses .right. sqp : 1
 
-uam *-- ua : 0..*
-uam - uaui : <<Argument>>
-
-sqpm *-- sqp : 0..*
-
-'sqp *-left- ua : Many
-sqp *-- sqf : 0..*
-
-sqp - sqfui : <<Argument>>
 
 
 

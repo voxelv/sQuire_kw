@@ -1,0 +1,24 @@
+@startuml
+hide circle
+hide empty members
+
+class "Server" as sqs
+class "ProjectManager" as sqs_pr_m{
+	-ProjectList
+	+CreateProject(Name)
+	+OpenProject(Name)
+	+DeleteProject(Name)
+	+GetProject(Name)
+	+GetProject(ProjectID)
+	+UpdateProject(ProjectUpdateInfo)
+	}
+class "Project" as sqs_pr
+class "ProjectUpdateInfo" as sqs_pr_ui
+
+
+sqs o-- "1" sqs_pr_m  
+sqs_pr_m -- sqs_pr_ui : Encapsulates User Changes
+sqs_pr_m *-- "0..*" sqs_pr 
+
+
+@enduml

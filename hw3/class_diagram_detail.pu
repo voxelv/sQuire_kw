@@ -1,94 +1,128 @@
 @startuml
 hide circle
+hide empty members
 
-class "SquireClient" as sq {
-	ChatInstance
-	CurrentUser
-	CurrentProject
-	ServerConnection
-
-	Login()
-	Logout()
-	}
-
-class "SquireAccount" as ua {
-	UserName
-	DisplayName
-	IsHost
-	Biography
-	Photo
+class "Client" as sq 
+	class "SquireChat" as sq_ch {
+		GlobalChat
+		ProjectChat
+		PrivateChat
+		SendGlobalMessage()
+		SendProjectMessage()
+		SendPrivateMessage()
+		}
+	class "GlobalChat" as sq_ch_glob {
+		Users
 	
-	Login()
-	Logout()
-	}
+		SendGlobalMessage()
+		}
+	class "ProjectChat" as sq_ch_proj {
+		Users
+		SendProjectMessage()
+		}
+	class "PrivateChat" as sq_ch_priv {
+		Users
+		SendPrivateMessage()
+		}
 
-class "SquireChat" as sqc {
-	GlobalChat
-	ProjectChat
-	PrivateChat
-	
-	SendGlobalMessage()
-	SendProjectMessage()
-	SendPrivateMessage()
-	}
 
-class "SquireServer" as sqs{
-	SquireProjects
-	SquireAccounts
-	ChatServer
-	Forum
-	ClientConnections
-	
-	GetProject()
-	UserAuthenticate()
-	SendChatMessage()
+class "Server" as sqs{
+	-AccountManager
+	-ProjectManager
+	-SessionManager
+	-ChatManager
+	+AccountManagerMethods()
+	+ProjectManagerMethods()
+	+SessionManagerMethods()
+	+ChatManagerMethods(GUIDs)
 	}
+	class "AccountManager" as sqs_ua_m{
+		-AccountList
+		+CreateAccount(Name, Email)
+		+Login(LoginInfo)
+		+Logout(UserID)
+		+GetUserDetails(Name)
+		+SetUserDetails(UserUpdateInfo)
+		}
+		class "UserAccount" as sqs_ua {
+			+first_name
+			+last_name
+			+user_name
+			-password
+			+register()
+			+login()
+			+logout()
+			}
+	class "ProjectManager" as sqs_pr_m{
+		-ProjectList
+		+CreateProject(Name)
+		+OpenProject(Name)
+		+DeleteProject(Name)
+		+GetProject(Name)
+		+GetProject(ProjectID)
+		+UpdateProject(ProjectUpdateInfo)
+		}
+		class "Project" as sqs_pr{
+			-ProjectID
+			-ProjectDescription
+			-ProjectSettings
+			-ProjectFiles
+			+GetProjectID()
+			+GetProjectDescription()
+			+GetProjectSettings()
+			+GetProjectFiles()
+			+UpdateProject(Key,Value)
+			+UpdateFile(FileUpdateInfo)
+			}
+			class "File" as sqs_fi{
+				-FileID
+				-FileName
+				-FileDescription
+				-FileContent
+				+GetFileInfo()
+				+UpdateFile(Key,Value)
+				}
+	class "SessionManager" as sqs_se_m{
+		-SessionList
+		+CreateSession()
+		+CloseSession()
+		+GetSession(SessionID)
+		}
+		class "Session" as sqs_se{
+			+Socket
+			+SessionID
+			+UserID
+			+ProjectID
+			+ChatIDs
+			}
+	class "ChatManager" as sqs_ch_m{
+		+chatroomList
+		+createRoom(name)
+		}
+		class "ChatRoom" as sqs_ch {
+			+id
+			+addMessage(msg)
+			+getMessages()
+			+sendMessagesToClients()
+			}
 
-class "SquireProject" as sqp {
-	ProjectDescription
-	ProjectSettings
-	ProjectFiles
-	
-	OpenProject()
-	CloseProject()
-	OpenFile()
-	CloseFile()
-	EditFile()
-	EditDescription()
-	ViewFileHistory()
-	GetFileListFromServer()
-	}
-class "SquireFile" as sqf {
-	FileName
-	FileDescription
-	FileDataBase
-	
-	Edit()
-	}
-class "GlobalChat" as gchat {
-	Users
-	
-	SendGlobalMessage()
-	}
-class "ProjectChat" as pchat {
-	Users
 
-	SendProjectMessage()
-	}
-class "PrivateChat" as fchat {
-	Users
-
-	SendPrivateMessage()
-	}
-
-sqs *-- sqp : Many
-sqp *-- sqf  : 0+
-sq *-- ua  
 sq -right- sqs : <<TCP>>
-sq *-- sqc 
-sqc *-- gchat 
-sqc *-- pchat 
-sqc *-- fchat 
+
+	sqs o-- "1" sqs_pr_m 
+		sqs_pr_m *-- "*" sqs_pr 
+			sqs_pr *-- "*" sqs_fi 
+	sqs o-- "1" sqs_ua_m 
+		sqs_ua_m *-- "*" sqs_ua  
+	sqs o-- "1" sqs_ch_m 
+		sqs_ch_m *-- "*" sqs_ch 
+	sqs o-- "1" sqs_se_m 
+		sqs_se_m *-- "*" sqs_se
+
+sq *-down- sq_ch 
+sq_ch *-- sq_ch_glob
+sq_ch *-- sq_ch_proj
+sq_ch *-- sq_ch_priv
 
 
 @enduml

@@ -1,0 +1,18 @@
+@startuml
+hide circle
+hide empty members
+
+class "SessionManager" as sqs_se_m
+class "Session" as sqs_se{
+	+Socket
+	+SessionID
+	+UserID
+	+ProjectID
+	+ChatIDs
+	}
+
+			
+sqs_se_m *-- "*" sqs_se
+
+
+@enduml

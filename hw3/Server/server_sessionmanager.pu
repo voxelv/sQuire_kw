@@ -1,0 +1,19 @@
+@startuml
+hide circle
+hide empty members
+
+class "Server" as sqs
+class "SessionManager" as sqs_se_m{
+	-SessionList
+	+CreateSession()
+	+CloseSession()
+	+GetSession(SessionID)
+	}
+class "Session" as sqs_se
+
+
+sqs o-- "1" sqs_se_m 
+sqs_se_m *-- "*" sqs_se
+
+
+@enduml

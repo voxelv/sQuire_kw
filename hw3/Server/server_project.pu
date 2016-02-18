@@ -1,0 +1,35 @@
+@startuml
+hide circle
+hide empty members
+
+class "ProjectManager" as sqs_pr_m
+class "Project" as sqs_pr{
+	-ProjectID
+	-ProjectDescription
+	-ProjectSettings
+	-FileIDs
+	-OwnerUserIDs
+	+GetProjectID()
+	+GetProjectDescription()
+	+GetProjectSettings()
+	+GetProjectFiles()
+	+GetProjectOwners()
+	+UpdateProject(Key,Value)
+	+UpdateFile(FileUpdateInfo)
+	}
+
+class "File" as sqs_fi
+class "UserAccount" as sqs_ua
+class "FileUpdateInfo" as sqs_fi_ui
+
+sqs_pr_m *-- "*" sqs_pr
+
+sqs_pr *-- "*" sqs_fi 
+
+sqs_pr *-- "1..*" sqs_ua : "Project Owners"
+
+sqs_pr -- sqs_fi_ui : Enacpsulates User Changes
+
+
+
+@enduml
