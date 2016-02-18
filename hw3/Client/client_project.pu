@@ -2,9 +2,12 @@
 hide circle
 hide empty members
 
+class "Client" as sq_c
+
 class "ProjectManager" as sq_projmgr {
     -userTracker : UserTracker
     -editQueue : EditQueue
+    +updateToServer()
 }
 
 class "Server" as sq_server
@@ -16,7 +19,7 @@ class "Project" as proj {
     -onlineUsers : UserAccount[]
     -lastUpdated : String
     +downloadProjectPackage()
-    +
+    +importProjectPackage()
 }
 
 class "UserTracker" as projmgr_utrack {
@@ -28,7 +31,7 @@ class "UserTracker" as projmgr_utrack {
 class "EditQueue" as projmgr_editq {
     -edits : AtomicEdit[]
     +enqueueEdit()
-    +pushEditsToServer()
+    +pushEditsToServer(Server server)
 }
 
 class "AtomicEdit" as editq_atomedit {
@@ -46,9 +49,11 @@ class "Location" as loc {
     +set(String file, int line, int col, int len)
 }
 
+sq_c o-- "1" sq_projmgr
+
 sq_projmgr o-left- "1" sq_server : Communicates With over TCP
 
-sq_projmgr o=-- "1" projmgr_utrack : Track User
+sq_projmgr =-- "1" projmgr_utrack : Track User
 sq_projmgr o-- "1" projmgr_editq : Log Edits
 sq_projmgr o=-- "0..*" proj
 
