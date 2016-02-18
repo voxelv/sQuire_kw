@@ -5,6 +5,7 @@ hide empty members
 class "Client" as sq_c
 
 class "ProjectManager" as sq_projmgr {
+    -server : Server
     -userTracker : UserTracker
     -editQueue : EditQueue
     +updateToServer()
