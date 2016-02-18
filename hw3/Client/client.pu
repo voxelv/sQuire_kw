@@ -1,0 +1,33 @@
+@startuml
+hide circle
+hide empty members
+
+class "Client" as sq_c {
+    -clientAccountManager : ClientAccountManager
+    -projectManager : ProjectManager
+    -chatManager : Chat Manager
+    -server : Server
+    -gui : GUI
+    +sendChatMessageToServer()
+    +getProjectsFromServer() : Project[]
+    +sendProjectUpdateToServer()
+    +displayGUI()
+    +
+}
+
+
+class "ClientAccountManager" as sq_acntmgr 
+class "ProjectManager" as sq_projmgr
+class "ChatManager" as sq_chatmgr
+class "Server" as sq_server
+class "GUI" as sq_gui
+
+sq_c o-left- "1" sq_server : Communicates With over TCP
+
+sq_c o-- "0..1" sq_projmgr :  Manage Projects
+sq_c o-- "1" sq_acntmgr : Manage Account
+sq_c o-- "1" sq_chatmgr : Manage Chat
+sq_c o-- "1" sq_gui : Displays
+
+
+@enduml

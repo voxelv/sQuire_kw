@@ -1,0 +1,63 @@
+@startuml
+hide circle
+hide empty members
+
+class "ProjectManager" as sq_projmgr {
+    -userTracker : UserTracker
+    -editQueue : EditQueue
+}
+
+class "Server" as sq_server
+
+class "Project" as proj {
+    -owners : UserAccount[]
+    -participants : UserAccount[]
+    -isOnline : boolean
+    -onlineUsers : UserAccount[]
+    -lastUpdated : String
+    +downloadProjectPackage()
+    +
+}
+
+class "UserTracker" as projmgr_utrack {
+    -loc : Location
+    -focus : String
+    +update()
+}
+
+class "EditQueue" as projmgr_editq {
+    -edits : AtomicEdit[]
+    +enqueueEdit()
+    +pushEditsToServer()
+}
+
+class "AtomicEdit" as editq_atomedit {
+    -type : String
+    -loc : Location
+    -val : Object
+    +packForTransport() : TCPPacket
+}
+
+class "Location" as loc {
+    -file : String
+    -lineNumber : int
+    -lineColumn : int
+    -length : int
+    +set(String file, int line, int col, int len)
+}
+
+sq_projmgr o-left- "1" sq_server : Communicates With over TCP
+
+sq_projmgr o=-- "1" projmgr_utrack : Track User
+sq_projmgr o-- "1" projmgr_editq : Log Edits
+sq_projmgr o=-- "0..*" proj
+
+projmgr_editq o-- "0..*" editq_atomedit
+
+projmgr_utrack o-- "1" loc
+
+editq_atomedit o-- "1" loc
+
+
+
+@enduml
