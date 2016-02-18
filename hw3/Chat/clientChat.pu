@@ -1,0 +1,38 @@
+@startuml
+hide circle
+hide empty members
+
+class "Client Chat (manager)" as clientChat{
+	-lastReceiveTime - epoch time for the last time messages were received
+	-joinedChannels - list of all the channels user is part of. dynamic
+	
+	-parseMessages( ) - called by fetchMessages()
+	+fetchMessages()
+	+sendMessage(toChannel, message)
+	+getJoinedChannelList()
+	+joinChannel(channelName)
+	+leaveChannel(channelName)
+}
+
+class "Chatroom" as clientChatroom{
+	+sendMessage()
+	+displayMessage()
+}
+
+class "Message" as msg{
+	+fromID
+	+fromUsername
+	+text
+	+timestamp
+}
+
+class "User Account" as userAccount{
+	-userInfo
+	+getUserID()
+}
+
+clientChat "1  " <|-- "*" clientChatroom : has
+userAccount "1" -right- "1" clientChat : "   Get User ID   "
+clientChatroom "1  " <|-- "*" msg
+
+@enduml

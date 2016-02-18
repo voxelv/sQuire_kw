@@ -1,0 +1,27 @@
+@startuml
+hide circle
+hide empty members
+
+class "Server Chat (manager)" as chat{
+	+chatroomList
+	+createRoom(name)
+	
+}
+
+class "Chatroom" as chatroom{
+	+id
+	+addMessage(msg)
+	+getMessages()
+	+sendMessagesToClients()
+}
+
+class "Chat Message" as chatMsg{
+	+fromID
+	+text
+	+timestamp
+}
+
+chat "1 " <|-- "*" chatroom
+chatroom "1 " <|-- "*" chatMsg
+
+@enduml
