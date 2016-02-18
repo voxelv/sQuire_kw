@@ -1,0 +1,37 @@
+@startuml
+hide circles
+
+class "SquireServer" as ss
+
+class "UserAccount" as ua {
+DisplayName
+LoginRequest()
+LogoutRequest()
+RegisterRequest()
+}
+
+class "SquireClient" as sc
+
+class "UserID" as id
+
+class "UserInfo" as ui {
+Username
+IsHost
+Bio
+Photo
+}
+
+class "FriendsList" as fl {
+FriendCount
+FriendArray
+}
+
+
+sc "1"  -- "1" ua : Manages >
+ss "1"  -- "*" sc : Communicates
+id "1"  -- ua : Is Assigned >
+ss      -- id : Assigns >
+ui "1"  -right-* ua 
+fl "1"  -left-* ua
+@enduml
+
