@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Project Update Info</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - Project Update Info</b>\n
 
 class "ProjectManager" as sqpm
 class "ProjectUpdateInfo" as sqpui{

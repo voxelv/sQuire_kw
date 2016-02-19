@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Session</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - Session</b>\n
 
 class "SessionManager" as sqs_se_m
 class "Session" as sqs_se{
@@ -13,8 +13,7 @@ class "Session" as sqs_se{
 	+ChatIDs
 	}
 
-			
-sqs_se_m *-- "*" sqs_se
+sqs_se_m o-- "*" sqs_se
 
 
 @enduml

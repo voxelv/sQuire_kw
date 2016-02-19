@@ -1,0 +1,28 @@
+@startuml
+hide circles
+
+
+
+
+class "SquireServer" as ss {
+-UserOnlineArray
+-UsernamePasswordDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
+}
+class "UserAccount" as ua
+
+class "SquireClient" as sc {
++GetFromUser()
++GetFromServer()
++SendToUser()
++SendToServer()
+}
+
+
+sc "1"  -- "1" ua : Manages >
+ss "1"  -- "*" sc : Communicates
+@enduml
+
+

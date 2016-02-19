@@ -1,0 +1,58 @@
+@startuml
+hide circles
+
+Title <b>User Account</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+
+
+class "Server" as ss{
+-UsernamePasswordOnlineArray
+-UsernameDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
++UserPasswordChecker()
+}
+
+class "UserAccount" as ua {
+-DisplayName
+-Username
+-IsHost
+-Bio
+-Photo
+-FirstName
+-LastName
+-Email
+-IsOnline
+-Password
++Register()
++PasswordReset()
++ChangeStatus()
++JoinProject()
++LeaveProject()
++UpdateProfile()
+}
+
+
+
+class "FriendsList" as fl {
+-FriendCount
+-FriendArray
++FriendRequest()
++CheckOnline()
++FriendAccept()
++InviteToChat()
+}
+
+class "AccountManager" as sc {
++GetFromUser()
++GetFromServer()
++SendToUser()
++SendToServer()
+}
+
+
+sc "1"  -- "1" ua : Manages >
+ss "1"  -r- "*" sc : Communicates
+
+fl  -l-* ua
+@enduml

@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Server Classes</b>\n
+
 class "Client" as sq 
 class "Server" as sqs{
 	-AccountManager
@@ -84,19 +86,25 @@ class "Server" as sqs{
 			+getMessages()
 			+sendMessagesToClients()
 			}
+			class "ChatMessage" as sqs_ch_mes{
+				+fromID
+				+text
+				+timestamp
+				}
 
 
 sq -right- sqs : <<TCP>>
 
-	sqs o-- "1" sqs_pr_m 
-		sqs_pr_m *-- "*" sqs_pr 
-			sqs_pr *-- "*" sqs_fi 
-	sqs o-- "1" sqs_ua_m 
-		sqs_ua_m *-- "*" sqs_ua  
-	sqs o-- "1" sqs_ch_m 
-		sqs_ch_m *-- "*" sqs_ch 
-	sqs o-- "1" sqs_se_m 
-		sqs_se_m *-- "*" sqs_se
+	sqs *-- "1" sqs_pr_m 
+		sqs_pr_m o-- "*" sqs_pr 
+			sqs_pr o-- "*" sqs_fi 
+	sqs *-- "1" sqs_ua_m 
+		sqs_ua_m o-- "*" sqs_ua  
+	sqs *-- "1" sqs_ch_m 
+		sqs_ch_m o-- "*" sqs_ch 
+			sqs_ch o-- "*" sqs_ch_mes
+	sqs *-- "1" sqs_se_m 
+		sqs_se_m o-- "*" sqs_se
 
 
 

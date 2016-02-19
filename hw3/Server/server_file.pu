@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>File</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - File</b>\n
 
 class "Project" as sqs_pr
 class "File" as sqs_fi{
@@ -14,6 +14,6 @@ class "File" as sqs_fi{
 	+UpdateFile(Key,Value)
 	}
 
-sqs_pr *-- "*" sqs_fi 
+sqs_pr o-- "*" sqs_fi 
 
 @enduml

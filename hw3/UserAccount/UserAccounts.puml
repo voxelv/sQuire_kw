@@ -1,10 +1,16 @@
 @startuml
 hide circles
 
-Title <b>Client</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+Title <b>User Account</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
 
 
-class "SquireServer" as ss
+class "SquireServer" as ss{
+-UserOnlineArray
+-UsernamePasswordDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
+}
 
 class "UserAccount" as ua {
 -DisplayName
@@ -17,7 +23,7 @@ class "UserAccount" as ua {
 -Email
 -Online
 -Password
-+RegisterRequest()
++Register()
 +PasswordReset()
 +ChangeStatus()
 +JoinProject()
@@ -25,12 +31,6 @@ class "UserAccount" as ua {
 +UpdateProfile()
 }
 
-class "SquireClient" as sc {
-+GetFromUser()
-+GetFromServer()
-+SendToUser()
-+SendToServer()
-}
 
 
 class "FriendsList" as fl {
@@ -43,8 +43,27 @@ class "FriendsList" as fl {
 }
 
 
+class "SquireServer" as ss {
+-UserOnlineArray
+-UsernamePasswordDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
+}
+
+
+class "SquireClient" as sc {
++GetFromUser()
++GetFromServer()
++SendToUser()
++SendToServer()
+}
+
+
 sc "1"  -- "1" ua : Manages >
-ss "1"  -- "*" sc : Communicates
-fl  -r-* ua
+ss "1"  -r- "*" sc : Communicates
+
+fl  -l-* ua
 @enduml
+
 

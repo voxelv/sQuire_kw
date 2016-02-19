@@ -1,0 +1,41 @@
+@startuml
+hide circles
+
+
+class "UserAccount" as ua {
+-DisplayName
+-Username
+-IsHost
+-Bio
+-Photo
+-FirstName
+-LastName
+-Email
+-Online
+-Password
++Register()
++PasswordReset()
++ChangeStatus()
++JoinProject()
++LeaveProject()
++UpdateProfile()
+}
+
+class "SquireClient" as sc
+
+
+class "FriendsList" as fl {
+-FriendCount
+-FriendArray
++FriendRequest()
++CheckOnline()
++FriendAccept()
++InviteToChat()
+}
+
+
+sc "1"  -- "1" ua : Manages >
+fl  -l-* ua
+@enduml
+
+
