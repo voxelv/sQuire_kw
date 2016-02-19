@@ -2,14 +2,13 @@
 hide circle
 hide empty members
 
-Title <b>File Update Info</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - File Update Info</b>\n
 
 class "Project" as sqp
 class "FileUpdateInfo" as sqfui{
 	+FileID
 	+FileEditKeyValuePairs
 	}
-
 
 sqp - sqfui : <<Argument>>
 

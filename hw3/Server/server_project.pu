@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Project</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - Project</b>\n
 
 class "ProjectManager" as sqs_pr_m
 class "Project" as sqs_pr{
@@ -24,12 +24,9 @@ class "File" as sqs_fi
 class "UserAccount" as sqs_ua
 class "FileUpdateInfo" as sqs_fi_ui
 
-sqs_pr_m *-- "*" sqs_pr
-
-sqs_pr *-- "*" sqs_fi 
-
-sqs_pr *-- "1..*" sqs_ua : "Project Owners"
-
+sqs_pr_m o-- "*" sqs_pr
+sqs_pr o-- "*" sqs_fi 
+sqs_pr o-- "1..*" sqs_ua : "Project Owners"
 sqs_pr -- sqs_fi_ui : Enacpsulates User Changes
 
 
