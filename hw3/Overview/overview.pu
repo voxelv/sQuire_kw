@@ -19,16 +19,16 @@ class "ProjectManager" as sqs_pr_m
 class "SessionManager" as sqs_se_m
 class "ChatManager" as sqs_ch_m
 
-sq_c o-- "1" sq_projmgr
-sq_c o-- "1" sq_acntmgr
-sq_c o-- "1" sq_chatmgr
-sq_c o-- "1" sq_gui
+sq_c o-- sq_projmgr
+sq_c o-- sq_acntmgr
+sq_c o-- sq_chatmgr
+sq_c o-- sq_gui
 
-sq_c o-up- "1" sq_s : TCP Communication
+sq_c -up- sq_s : TCP Communication
 
-sqs_pr_m "1" --o sq_s 
-sqs_ua_m "1" --o sq_s 
-sqs_se_m "1" --o sq_s 
-sqs_ch_m "1" --o sq_s 
+sqs_pr_m --o sq_s 
+sqs_ua_m --o sq_s 
+sqs_se_m --o sq_s 
+sqs_ch_m --o sq_s 
 
 @enduml

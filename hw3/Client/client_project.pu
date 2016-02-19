@@ -63,22 +63,22 @@ class "Location" as loc {
     +set(String file, int line, int col, int len)
 }
 
-sq_c o-- "1" sq_projmgr
+sq_c o-- sq_projmgr
 
-sq_projmgr o-left- "1" sq_server : Communicates With over TCP
+sq_projmgr o-left- sq_server : Communicates With over TCP
 
-sq_projmgr -- "1" projmgr_utrack : Track User
-sq_projmgr o-- "1" projmgr_editq : Log Edits
-sq_projmgr o-- "0..*" proj
+sq_projmgr -- projmgr_utrack : Track User
+sq_projmgr o-- projmgr_editq : Log Edits
+sq_projmgr o-- "*" proj
 
-proj o-- "0..*" file
+proj o-- "*" file
 
-projmgr_editq o-- "0..*" editq_atomedit : Stores and Sends
+projmgr_editq o-- "*" editq_atomedit : Stores and Sends
 
-projmgr_utrack o-- "1" loc
+projmgr_utrack o-- loc
 projmgr_utrack -- editq_atomedit : Generates
 
-editq_atomedit o-- "1" loc
+editq_atomedit o-- loc
 
 
 
