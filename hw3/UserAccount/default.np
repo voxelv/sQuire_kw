@@ -1,0 +1,65 @@
+@startuml
+hide circles
+
+Title <b>User Account</b>\n<size:12>Authors: guan2264, ocke8865</size>
+
+
+class "Server" as ss{
+-UsernamePasswordOnlineArray
+-UsernameDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
++UserPasswordChecker()
+}
+
+class "UserAccount" as ua {
+-DisplayName
+-Username
+-IsHost
+-Bio
+-Photo
+-FirstName
+-LastName
+-Email
+-IsOnline
+-Password
+
+}
+
+
+
+class "AccountManager" as sc {
++Register()
++PasswordReset()
++ChangeStatus()
++JoinProject()
++LeaveProject()
++UpdateProfile()
+}
+
+
+
+
+class "FriendsList" as fl {
+-FriendCount
+-FriendArray
++FriendRequest()
++CheckOnline()
++FriendAccept()
++InviteToChat()
+}
+
+class "Client" as c {
++GetFromUser()
++GetFromServer()
++SendToUser()
++SendToServer()
+}
+
+
+sc "1"  -- "1" ua : manages >
+c "1"  -r- "1" sc 
+ss "1" -r-"*" c: Communicates
+fl  -l-* ua
+@enduml
