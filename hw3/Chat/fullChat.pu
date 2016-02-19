@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Chat</b>\n<size:12>Authors: Grant Wade, Jesse Jutson\n<size:12>Reviewed by: Scott Dennis
+Title <b>Chat</b>\n<size:12>Authors: gwade, juts3869\n<size:12>Reviewed by: denn2725
 
 
 class "ServerChatManager" as chat{
