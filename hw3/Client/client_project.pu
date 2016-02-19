@@ -8,6 +8,7 @@ class "Client" as sq_c
 
 class "ProjectManager" as sq_projmgr {
     -server : Server
+    -project : Project
     -userTracker : UserTracker
     -editQueue : EditQueue
     +updateToServer()
