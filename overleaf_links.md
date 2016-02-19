@@ -1,5 +1,8 @@
+## Homework 4 Document
+* new
+* [Homework 4 Master Doc] (https://www.overleaf.com/4388669wxqmrp)
+
 ## Class Diagrams
-* new!
 * put diagrams and descriptions here
 * [Class Diagrams](https://www.overleaf.com/4361110npqmqd)
 
