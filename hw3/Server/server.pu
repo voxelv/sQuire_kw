@@ -13,7 +13,7 @@ class "Server" as sqs{
 	+AccountManagerMethods()
 	+ProjectManagerMethods()
 	+SessionManagerMethods()
-	+ChatManagerMethods(GUIDs)
+	+ChatManagerMethods(IDs)
 	}
 class "AccountManager" as sqs_ua_m
 class "ProjectManager" as sqs_pr_m
