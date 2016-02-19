@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Session Manager</b>\n<size:12>Authors: ferg2065, </size>
+
 class "Server" as sqs
 class "SessionManager" as sqs_se_m{
 	-SessionList

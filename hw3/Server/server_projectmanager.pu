@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Project Manager</b>\n<size:12>Authors: ferg2065, </size>
+
 class "Server" as sqs
 class "ProjectManager" as sqs_pr_m{
 	-ProjectList

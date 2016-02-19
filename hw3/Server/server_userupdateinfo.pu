@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>User Update Info</b>\n<size:12>Authors: ferg2065, </size>
+
 class "AccountManager" as uam
 class "UserUpdateInfo" as uaui{
 	-ValidationToken

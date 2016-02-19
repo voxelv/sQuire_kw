@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Session</b>\n<size:12>Authors: ferg2065, </size>
+
 class "SessionManager" as sqs_se_m
 class "Session" as sqs_se{
 	+Socket

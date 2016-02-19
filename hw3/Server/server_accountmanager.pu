@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Account Manager</b>\n<size:12>Authors: ferg2065, </size>
+
 class "Server" as sqs
 class "AccountManager" as sqs_ua_m{
 	-AccountList
