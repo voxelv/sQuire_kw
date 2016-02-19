@@ -1,0 +1,43 @@
+@startuml
+hide circles
+
+Title <b>Client</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+
+
+class "UserAccount" as ua {
+-DisplayName
+-Username
+-IsHost
+-Bio
+-Photo
+-FirstName
+-LastName
+-Email
+-Online
+-Password
++RegisterRequest()
++PasswordReset()
++ChangeStatus()
++JoinProject()
++LeaveProject()
++UpdateProfile()
+}
+
+class "SquireClient" as sc
+
+
+class "FriendsList" as fl {
+-FriendCount
+-FriendArray
++FriendRequest()
++CheckOnline()
++FriendAccept()
++InviteToChat()
+}
+
+
+sc "1"  -- "1" ua : Manages >
+fl  -r-* ua
+@enduml
+
+
