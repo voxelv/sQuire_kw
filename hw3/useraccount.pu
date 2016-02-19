@@ -1,4 +1,5 @@
 @startuml
+hide circle
 
 class "User Account Manager" as UAM {
 f_name: String
