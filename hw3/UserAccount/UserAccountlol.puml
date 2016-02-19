@@ -1,7 +1,7 @@
 @startuml
 hide circles
 
-Title <b>User Account</b>\n<size:12>Authors: guan2264, ocke8865</size>
+Title <b>User Account</b>\n<size:12>Authors: guan2264, ocke8865</size>\n<size:12>Reviewed by: juts3869</size>
 
 
 class "Server" as ss{
@@ -43,7 +43,7 @@ class "FriendsList" as fl {
 +InviteToChat()
 }
 
-class "AccountManager" as sc {
+class "ClientAccountManager" as sc {
 +GetFromUser()
 +GetFromServer()
 +SendToUser()
@@ -52,7 +52,7 @@ class "AccountManager" as sc {
 
 
 sc "1"  -- "1" ua : Manages >
-ss "1"  -r- "*" sc : Communicates
+ss "1"  -l- "*" sc : Communicates
 
-fl  -l-* ua
+fl  -r-* ua
 @enduml
