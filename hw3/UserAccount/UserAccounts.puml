@@ -1,37 +1,42 @@
 @startuml
 hide circles
 
+Title <b>Client</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+
+
 class "SquireServer" as ss
 
 class "UserAccount" as ua {
-DisplayName
-LoginRequest()
-LogoutRequest()
-RegisterRequest()
+-DisplayName
+-UserID
++LoginRequest()
++LogoutRequest()
++RegisterRequest()
 }
 
-class "SquireClient" as sc
-
-class "UserID" as id
+class "SquireClient" as sc {
++GetRequest()
++SendRequest()
+}
 
 class "UserInfo" as ui {
-Username
-IsHost
-Bio
-Photo
+-Username
+-IsHost
+-Bio
+-Photo
 }
 
 class "FriendsList" as fl {
-FriendCount
-FriendArray
+-FriendCount
+-FriendArray
++FriendRequest()
 }
 
 
 sc "1"  -- "1" ua : Manages >
 ss "1"  -- "*" sc : Communicates
-id "1"  -- ua : Is Assigned >
-ss      -- id : Assigns >
-ui "1"  -right-* ua 
+ss      -- ua : Assigns\nUser ID >
+ui "1"  -right-*   ua 
 fl "1"  -left-* ua
 @enduml
 
