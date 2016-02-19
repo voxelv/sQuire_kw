@@ -1,0 +1,74 @@
+@startuml
+hide circle
+hide empty members
+
+Title <b>Chat</b>\n<size:12>Authors: Grant Wade, Jesse Jutson</size>
+
+
+class "Server Chat (manager)" as chat{
+	+chatroomList
+	+createRoom(name)
+
+}
+
+class "Chatroom" as chatroom{
+	+id
+	+addMessage(msg)
+	+getMessages()
+	+sendMessagesToClients()
+}
+
+/'
+class "Chat Message" as chatMsg{
+	+fromUsername
+	+text
+	+timestamp
+}
+'/
+
+
+class "Client Chat (manager)" as clientChat{
+	-lastReceiveTime - epoch time for the last time messages were received
+	-joinedChannels - list of all the channels user is part of. dynamic
+
+	-parseMessages( ) - called by fetchMessages()
+	+fetchMessages()
+	+sendMessage(toChannel, message)
+	+getJoinedChannelList()
+	+joinChannel(channelName)
+	+leaveChannel(channelName)
+}
+
+class "Chatroom View" as clientChatroom{
+	+id
+	+sendMessage()
+	+displayMessage()
+}
+
+
+class "Message" as msg{
+'	+fromID
+	+fromUsername
+	+text
+	+timestamp
+}
+
+
+class "User Account" as userAccount{
+	-userInfo
+	+getUserID()
+}
+
+
+chat "1 " o-- "*" chatroom : manages
+chatroom "1 " o-- "*" msg : keeps
+
+clientChat "1  " o-- "*" clientChatroom : manages
+userAccount "1" -right- "1" clientChat : provides user info >
+clientChatroom "1  " o-- "*" msg : displays
+
+'projectChat -r-|> clientChatroom
+
+clientChat "*" -r- "1" chat : fetches messages >
+
+@enduml
