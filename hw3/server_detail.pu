@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+Title <b>Server Classes</b>\n
+
 class "Client" as sq 
 class "Server" as sqs{
 	-AccountManager
