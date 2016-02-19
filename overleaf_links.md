@@ -1,3 +1,8 @@
+## Class Diagrams
+  *new!
+  *put diagrams and descriptions here
+[Use Cases](https://www.overleaf.com/4361110npqmqd)
+
 ## Functional/Non-Functional Requirements
   *was called "Homework 3"
   *needs updating, mostly there
@@ -7,11 +12,6 @@
   *needs work
   *currently just aggregate of all teams' use cases
 [Use Cases](https://www.overleaf.com/4306618jzdznq)
-
-## Class Diagrams
-  *new!
-  *put diagrams and descriptions here
-[Use Cases](https://www.overleaf.com/4361110npqmqd)
 
 ## Homework 1's links:
 Team 1: [pdf](http://www2.cs.uidaho.edu/~jeffery/courses/383/hw1-team1.pdf)
