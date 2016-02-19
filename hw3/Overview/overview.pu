@@ -1,0 +1,34 @@
+@startuml
+hide circle
+hide empty members
+
+title <b>Overview</b>\n<size:12>Authors: slip5295</size>
+
+left to right direction
+
+class "Client" as sq_c 
+class "Server" as sq_s
+
+class "ClientAccountManager" as sq_acntmgr 
+class "ProjectManager" as sq_projmgr
+class "ChatManager" as sq_chatmgr
+class "GUI" as sq_gui
+
+class "AccountManager" as sqs_ua_m
+class "ProjectManager" as sqs_pr_m
+class "SessionManager" as sqs_se_m
+class "ChatManager" as sqs_ch_m
+
+sq_c o-- "1" sq_projmgr
+sq_c o-- "1" sq_acntmgr
+sq_c o-- "1" sq_chatmgr
+sq_c o-- "1" sq_gui
+
+sq_c o-up- "1" sq_s : TCP Communication
+
+sqs_pr_m "1" --o sq_s 
+sqs_ua_m "1" --o sq_s 
+sqs_se_m "1" --o sq_s 
+sqs_ch_m "1" --o sq_s 
+
+@enduml
