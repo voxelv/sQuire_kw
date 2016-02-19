@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Server Classes</b>\n
+Title <b>Server Classes</b>\n<size:12>Author: ferg2065\n<size:12>Reviewed by: slip5295</size>
 
 class "Client" as sq 
 class "Server" as sqs{
