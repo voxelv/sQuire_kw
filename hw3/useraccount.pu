@@ -1,44 +1,50 @@
 @startuml
 
-class "sQuire Account" as ua {
-first_name
-last_name
-user_name
-password
-register()
+class "User Account Manager" as UAM {
+f_name: String
+l_name: String
+user_name: String
+password: String
+email: String
+
 login()
+registration()
 logout()
+password_reset()
 }
 
 
+class "User" as U {
+f_name: String
+l_name: String
+user_name: String
+password: String
+email: String
 
-class "Register" as re {
-first_name
-last_name
-user_name
-password
 
-get_username()
-get_password()
-get_first_last_name()
-check_username()
-check_password()
 }
 
-class "Login" as lo {
-user_name
-password
+class "Registration" as R {
+f_name: String
+l_name: String
+user_name: String
+password: String
+email: String
 
-check_username()
-check_password()
+set_name()
+set_user_name()
+set_password()
+set_email()
 }
 
 
+class "Login" as login {
+user_name: String
+password: String
 
-
-
-
-
-
-
+check_name_pass(user_name, password)
+}
+U "*"-d-* UAM 
+login -r- UAM
+R -l- UAM 
 @enduml
