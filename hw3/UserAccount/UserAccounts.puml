@@ -8,35 +8,43 @@ class "SquireServer" as ss
 
 class "UserAccount" as ua {
 -DisplayName
--UserID
-+LoginRequest()
-+LogoutRequest()
-+RegisterRequest()
-}
-
-class "SquireClient" as sc {
-+GetRequest()
-+SendRequest()
-}
-
-class "UserInfo" as ui {
 -Username
 -IsHost
 -Bio
 -Photo
+-FirstName
+-LastName
+-Email
+-Online
+-Password
++RegisterRequest()
++PasswordReset()
++ChangeStatus()
++JoinProject()
++LeaveProject()
++UpdateProfile()
 }
+
+class "SquireClient" as sc {
++GetFromUser()
++GetFromServer()
++SendToUser()
++SendToServer()
+}
+
 
 class "FriendsList" as fl {
 -FriendCount
 -FriendArray
 +FriendRequest()
++CheckOnline()
++FriendAccept()
++InviteToChat()
 }
 
 
 sc "1"  -- "1" ua : Manages >
 ss "1"  -- "*" sc : Communicates
-ss      -- ua : Assigns\nUser ID >
-ui "1"  -right-*   ua 
-fl "1"  -left-* ua
+fl  -r-* ua
 @enduml
 
