@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>
+title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>\n<size:12>Reviewed by juts3869</size>
 
 class "Client" as sq_c
 
@@ -63,6 +63,13 @@ class "Location" as loc {
     +set(String file, int line, int col, int len)
 }
 
+class "Subdirectory" as dir {
+	-directoryname : string
+	-directorypath : string
+	+addFile(String file)
+	+rename(String name)
+}
+
 sq_c *-- sq_projmgr
 
 sq_projmgr o-left- sq_server : Communicates With over TCP
@@ -72,6 +79,8 @@ sq_projmgr o-- projmgr_editq : Log Edits
 sq_projmgr o-- "*" proj
 
 proj o-- "*" file
+proj o-- "*" dir
+dir o-- "*" file
 
 projmgr_editq o-- "*" editq_atomedit : Stores and Sends
 
