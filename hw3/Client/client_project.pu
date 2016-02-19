@@ -2,6 +2,8 @@
 hide circle
 hide empty members
 
+title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>
+
 class "Client" as sq_c
 
 class "ProjectManager" as sq_projmgr {
