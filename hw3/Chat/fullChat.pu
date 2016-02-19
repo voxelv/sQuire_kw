@@ -60,15 +60,15 @@ class "UserAccount" as userAccount{
 }
 
 
-chat "1 " o-- "*" chatroom : manages
-chatroom "1 " o-- "*" msg : keeps
+chat  o-- "*" chatroom : manages
+chatroom  o-- "*" msg : keeps
 
-clientChat "1  " o-- "*" clientChatroom : manages
-userAccount "1" -up- "1" clientChat : provides user info >
-clientChatroom "1  " o-- "*" msg : displays
+clientChat  o-- "*" clientChatroom : manages
+userAccount  -up-  clientChat : provides user info >
+clientChatroom  o-- "*" msg : displays
 
 'projectChat -r-|> clientChatroom
 
-clientChat "*" -r- "1" chat : fetches messages >
+clientChat "*" -r- chat : fetches messages >
 
 @enduml
