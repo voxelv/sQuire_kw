@@ -23,6 +23,13 @@ class "Project" as proj {
     +importProjectPackage()
 }
 
+class "File" as file {
+    -filename : String
+    -filepath : String
+    -
+    +doFileStuff()
+}
+
 class "UserTracker" as projmgr_utrack {
     -loc : Location
     -focus : String
@@ -57,6 +64,8 @@ sq_projmgr o-left- "1" sq_server : Communicates With over TCP
 sq_projmgr -- "1" projmgr_utrack : Track User
 sq_projmgr o-- "1" projmgr_editq : Log Edits
 sq_projmgr o-- "0..*" proj
+
+proj o-- "0..*" file
 
 projmgr_editq o-- "0..*" editq_atomedit : Stores and Sends
 
