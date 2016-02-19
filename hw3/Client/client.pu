@@ -26,10 +26,10 @@ class "GUI" as sq_gui
 
 sq_c o-left- sq_server : Communicates With\nServer Over TCP
 
-sq_c o-- sq_projmgr :  Manage Projects
-sq_c o-- sq_acntmgr : Manage Account
-sq_c o-- sq_chatmgr : Manage Chat
-sq_c o-- sq_gui : Displays
+sq_c *-- sq_projmgr :  Manage Projects
+sq_c *-- sq_acntmgr : Manage Account
+sq_c *-- sq_chatmgr : Manage Chat
+sq_c *-- sq_gui : Displays
 
 
 @enduml

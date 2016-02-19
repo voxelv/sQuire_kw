@@ -63,7 +63,7 @@ class "Location" as loc {
     +set(String file, int line, int col, int len)
 }
 
-sq_c o-- sq_projmgr
+sq_c *-- sq_projmgr
 
 sq_projmgr o-left- sq_server : Communicates With over TCP
 
