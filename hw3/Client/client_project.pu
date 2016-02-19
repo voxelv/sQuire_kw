@@ -23,6 +23,9 @@ class "Project" as proj {
     -lastUpdated : String
     +downloadProjectPackage()
     +importProjectPackage()
+    +compileProject()
+    +runProject()
+    +debugProject()
 }
 
 class "File" as file {
