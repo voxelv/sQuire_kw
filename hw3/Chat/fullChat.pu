@@ -64,7 +64,7 @@ chat "1 " o-- "*" chatroom : manages
 chatroom "1 " o-- "*" msg : keeps
 
 clientChat "1  " o-- "*" clientChatroom : manages
-userAccount "1" -right- "1" clientChat : provides user info >
+userAccount "1" -up- "1" clientChat : provides user info >
 clientChatroom "1  " o-- "*" msg : displays
 
 'projectChat -r-|> clientChatroom
