@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>
+title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>\n<size:12>Reviewed by: juts3869</size>
 
 class "Client" as sq_c
 
