@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Account Manager</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - Account Manager</b>\n
 
 class "Server" as sqs
 class "AccountManager" as sqs_ua_m{
@@ -16,8 +16,8 @@ class "AccountManager" as sqs_ua_m{
 class "UserAccount" as sqs_ua
 class "UserUpdateInfo" as sqs_ua_ui
 
-sqs o-- "1" sqs_ua_m 
-sqs_ua_m *-- "*" sqs_ua 
+sqs *-- "1" sqs_ua_m 
+sqs_ua_m o-- "*" sqs_ua 
 sqs_ua_m - sqs_ua_ui : Encapsulates User Changes
 
 

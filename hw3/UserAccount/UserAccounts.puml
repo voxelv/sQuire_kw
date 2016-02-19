@@ -1,8 +1,16 @@
 @startuml
 hide circles
 
-Title <b>User Accounts</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+Title <b>User Account</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
 
+
+class "SquireServer" as ss{
+-UserOnlineArray
+-UsernamePasswordDatabank
+-ProjectHostArray
++GetFromClient()
++SendToClient()
+}
 
 class "UserAccount" as ua {
 -DisplayName
@@ -15,7 +23,7 @@ class "UserAccount" as ua {
 -Email
 -Online
 -Password
-+RegisterRequest()
++Register()
 +PasswordReset()
 +ChangeStatus()
 +JoinProject()

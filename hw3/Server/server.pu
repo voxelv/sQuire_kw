@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Server</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server</b>\n
 
 class "Client" as sq
 class "Server" as sqs{
@@ -22,10 +22,10 @@ class "ChatManager" as sqs_ch_m
 
 sq -right- sqs : <<TCP>>
 
-sqs o-- "1" sqs_pr_m 
-sqs o-- "1" sqs_ua_m
-sqs o-- "1" sqs_se_m
-sqs o-- "1" sqs_ch_m
+sqs *-- "1" sqs_pr_m 
+sqs *-- "1" sqs_ua_m
+sqs *-- "1" sqs_se_m
+sqs *-- "1" sqs_ch_m
 
 
 

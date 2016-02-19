@@ -2,7 +2,7 @@
 hide circle
 hide empty members
 
-Title <b>Session Manager</b>\n<size:12>Authors: ferg2065, </size>
+Title <b>Server - Session Manager</b>\n
 
 class "Server" as sqs
 class "SessionManager" as sqs_se_m{
@@ -14,8 +14,8 @@ class "SessionManager" as sqs_se_m{
 class "Session" as sqs_se
 
 
-sqs o-- "1" sqs_se_m 
-sqs_se_m *-- "*" sqs_se
+sqs *-- "1" sqs_se_m 
+sqs_se_m o-- "*" sqs_se
 
 
 @enduml
