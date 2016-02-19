@@ -1,0 +1,21 @@
+@startuml
+hide circle
+hide empty fields
+hide empty methods
+title <b>Client Class Diagram
+
+Class Client
+Class UserInterfaceController
+Class Editor
+Class Project
+Class File
+Class Subdirectory
+
+Client *-- Editor
+UserInterfaceController -left- Editor : controls
+Editor -- Project : Manages
+Editor -- File : Edits
+Project o-- "*" File
+Project o-- "*" Subdirectory
+Subdirectory o-right- "*" File
+@enduml
