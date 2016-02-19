@@ -1,8 +1,6 @@
 @startuml
 hide circles
 
-Title <b>Client</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
-
 
 class "UserAccount" as ua {
 -DisplayName
@@ -15,7 +13,7 @@ class "UserAccount" as ua {
 -Email
 -Online
 -Password
-+RegisterRequest()
++Register()
 +PasswordReset()
 +ChangeStatus()
 +JoinProject()
@@ -37,7 +35,7 @@ class "FriendsList" as fl {
 
 
 sc "1"  -- "1" ua : Manages >
-fl  -r-* ua
+fl  -l-* ua
 @enduml
 
 

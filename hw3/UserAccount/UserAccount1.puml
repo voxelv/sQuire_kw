@@ -1,7 +1,7 @@
 @startuml
 hide circles
 
-Title <b>Client</b>\n<size:12>Authors: Feng Guan, Chris Ocker</size>
+
 
 
 class "SquireServer" as ss {
