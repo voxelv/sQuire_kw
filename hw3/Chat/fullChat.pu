@@ -5,7 +5,7 @@ hide empty members
 Title <b>Chat</b>\n<size:12>Authors: Grant Wade, Jesse Jutson\n<size:12>Reviewed by: Scott Dennis
 
 
-class "Server Chat (manager)" as chat{
+class "ServerChatManager" as chat{
 	+chatroomList
 	+createRoom(name)
 
@@ -27,7 +27,7 @@ class "Chat Message" as chatMsg{
 '/
 
 
-class "Client Chat (manager)" as clientChat{
+class "ClientChatManager" as clientChat{
 	-lastReceiveTime - epoch time for the last time messages were received
 	-joinedChannels - list of all the channels user is part of. dynamic
 
@@ -39,7 +39,7 @@ class "Client Chat (manager)" as clientChat{
 	+leaveChannel(channelName)
 }
 
-class "Chatroom View" as clientChatroom{
+class "ChatroomView" as clientChatroom{
 	+id
 	+sendMessage()
 	+displayMessage()
@@ -54,7 +54,7 @@ class "Message" as msg{
 }
 
 
-class "User Account" as userAccount{
+class "UserAccount" as userAccount{
 	-userInfo
 	+getUserID()
 }
