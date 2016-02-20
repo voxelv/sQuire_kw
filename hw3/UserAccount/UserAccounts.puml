@@ -33,7 +33,7 @@ class "UserAccount" as ua {
 
 
 
-class "FriendsList" as fl {
+class "FriendsManager" as fl {
 -FriendCount
 -FriendArray
 +FriendRequest()
