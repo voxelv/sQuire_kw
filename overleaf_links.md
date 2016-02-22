@@ -9,13 +9,10 @@
 ## Functional/Non-Functional Requirements
 * was called "Homework 3"
 * needs updating, mostly there
-* [Requirements Doc](https://www.overleaf.com/4286506kvbrwb#/12707218/)
+* [Our Requirements Doc](https://www.overleaf.com/4286506kvbrwb#/12707218/)
+* [Aggregate Requirements Doc](https://www.overleaf.com/4306618jzdznq)
 
 ## Use Cases
-* needs work
-* currently just aggregate of all teams' use cases
-* [Use Cases](https://www.overleaf.com/4306618jzdznq)
-
 ## Homework 1's links:
 * Team 1: [pdf](http://www2.cs.uidaho.edu/~jeffery/courses/383/hw1-team1.pdf)
 
