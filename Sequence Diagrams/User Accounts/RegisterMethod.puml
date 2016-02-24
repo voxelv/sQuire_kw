@@ -1,0 +1,31 @@
+@startuml
+
+Actor User
+User -> AccountManager : Register
+activate AccountManager
+AccountManager --> User : getFromUser()
+deactivate AccountManager
+User -> AccountManager : UsrNm,Pswd,Eml
+activate AccountManager
+AccountManager -> Client : register(UsrNm,Pswd,Eml)
+deactivate AccountManager
+activate Client
+Client -> Server : sendToServer(register(UsrNm,Pswd,Eml))
+deactivate Client
+activate Server
+Server --> Client : Success
+deactivate Server
+activate Client
+Client --> AccountManager : sendToManager(Success)
+deactivate Client
+activate AccountManager
+AccountManager -> UserAccount : storeInformation(UsrNm,Pswd,Eml)
+deactivate AccountManager
+activate UserAccount
+UserAccount --> AccountManager : Done
+deactivate UserAccount
+activate AccountManager
+AccountManager --> User : output("You are now registered")
+deactivate AccountManager
+
+@enduml
