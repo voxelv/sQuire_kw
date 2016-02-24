@@ -1,0 +1,42 @@
+@startuml
+participant userInput
+participant chatRoom
+participant message
+participant userAccount
+participant serverConnection
+
+activate userInput
+
+userInput -> chatRoom : sendMsg()
+deactivate userInput
+activate chatRoom
+
+chatRoom -> message : createMsg()
+deactivate chatRoom
+activate message
+
+message -> userAccount : getUserInfo
+deactivate message
+activate userAccount
+
+userAccount --> message : userInfo
+deactivate userAccount
+activate message
+
+message --> chatRoom : Message Obj
+deactivate message
+activate chatRoom
+
+chatRoom -> serverConnection : sendMsgToServer()
+deactivate chatRoom
+activate serverConnection
+
+serverConnection --> chatRoom : bool
+deactivate serverConnection
+activate chatRoom
+
+chatRoom --> userInput : null
+deactivate chatRoom
+
+
+@enduml
