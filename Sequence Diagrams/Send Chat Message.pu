@@ -1,0 +1,20 @@
+@startuml
+hide circle
+hide empty members
+
+Title <b>Chat</b>\n<size:12>Authors: juts3869\n
+
+activate ChatRoomView
+ChatRoomView -> ClientChatManager: sendMessage(string, channel)
+activate ClientChatManager
+ClientChatManager -> Server : sendMessages(message[])
+ClientChatManager -> ChatRoomView : success
+deactivate ClientChatManager
+ClientChatManager -> Server: updateMessages(message[])
+activate Server
+Server -> ClientChatManager : message[]
+
+
+
+
+@enduml
