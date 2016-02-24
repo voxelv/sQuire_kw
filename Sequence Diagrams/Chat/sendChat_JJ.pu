@@ -11,17 +11,20 @@ ChatRoomView -> ClientChatManager: sendMessage(string, channel)
 activate ClientChatManager
 ClientChatManager -> Server : sendMessages(message[])
 activate Server
-Server -> ClientChatManager : success
+Server --> ClientChatManager : success
 deactivate Server
-ClientChatManager -> ChatRoomView : success
+ClientChatManager --> ChatRoomView : success
+deactivate ClientChatManager
 
-
+ChatRoomView-> ClientChatManager: updateMessages(message[])
+activate ClientChatManager
 ClientChatManager -> Server: updateMessages(message[])
 
 activate Server
-Server -> ClientChatManager : message[]
+Server --> ClientChatManager : message[]
 deactivate Server
-ClientChatManager -> ChatRoomView : message[]
-ChatRoomView -> User : Displays Message
+ClientChatManager --> ChatRoomView : message[]
+deactivate ClientChatManager
+ChatRoomView --> User : Displays Message
 
 @enduml
