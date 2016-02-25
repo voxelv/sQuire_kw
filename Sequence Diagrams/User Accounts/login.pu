@@ -1,0 +1,42 @@
+@startuml
+participant "User Input" as ui
+participant "Client" as cl
+participant "Server" as sv
+participant "Account Manager" as am
+participant "User Account" as ua
+participant "Session Manager" as sm
+
+title <size:20>User Login Sequence</size> \nAuthors: ferg2065
+
+activate ui
+activate cl
+activate sv
+
+ui -> cl : enterCredentials()
+deactivate ui
+
+cl -> sv : authenticate()
+
+sv -> am : checkCredentials()
+activate am
+
+am --> ua : getAccountInfo()
+deactivate am
+activate ua
+
+ua -> am : accountInfo
+deactivate ua
+activate am
+
+am -> sv : credentialsValid
+deactivate am
+
+sv --> sm : createSession()
+activate sm
+
+sm --> sv : newSession
+deactivate sm
+
+sv --> cl : authenticationSuccess
+
+@enduml
