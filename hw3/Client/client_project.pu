@@ -11,6 +11,7 @@ class "ProjectManager" as sq_projmgr {
     -projects : Project[]
     -userTracker : UserTracker
     -editQueue : EditQueue
+    -editor : Editor
     +updateToServer()
 }
 
@@ -34,6 +35,24 @@ class "File" as file {
     -filepath : String
     -
     +doFileStuff()
+}
+
+class "Editor" as editor {
+    -currentFile : File
+    -currentView : View
+    +setView(View)
+}
+
+class "View" as a_view <<Abstract>>{
+    +displayView()
+}
+
+class "UserEditsView" as ue_view {
+    -databaseHook
+}
+
+class "SyntaxColoringView" as sc_view {
+    -interpreterHook
 }
 
 class "UserTracker" as projmgr_utrack {
@@ -73,13 +92,19 @@ sq_projmgr o-- "*" proj
 
 proj o-- "*" file
 
+sq_projmgr o-- "*" editor
+editor o-- a_view
+a_view <|-- ue_view
+a_view <|-- sc_view
+
+editor o-- file
+
 projmgr_editq o-- "*" editq_atomedit : Stores and Sends
 
 projmgr_utrack o-- loc
 projmgr_utrack -- editq_atomedit : Generates
 
 editq_atomedit o-- loc
-
 
 
 @enduml
