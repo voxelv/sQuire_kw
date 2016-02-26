@@ -15,7 +15,7 @@ activate sv
 ui -> cl : enterCredentials()
 deactivate ui
 
-cl -> sv : authenticate()
+cl ->> sv : requestAuthentication()
 
 sv -> am : checkCredentials()
 activate am
@@ -37,6 +37,6 @@ activate sm
 sm --> sv : newSession
 deactivate sm
 
-sv --> cl : authenticationSuccess
+sv -->> cl : authenticateUser()
 
 @enduml
