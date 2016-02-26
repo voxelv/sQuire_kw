@@ -1,0 +1,50 @@
+@startuml
+participant "User Input" as ui
+participant "Editor" as ed
+participant "File Update" as fu
+participant "Client" as cl
+participant "Server" as sv
+participant "Project Manager" as pm
+participant "Project" as pr
+
+title <size:20>Change Logging Sequence</size> \nAuthors: ferg2065
+
+activate ui
+activate cl
+activate sv
+
+ui -> ed : makeEdit()
+deactivate ui
+activate ed
+
+ed -> fu : enacapsulateChange()
+deactivate ed
+activate fu
+
+fu -> cl : sendChange()
+deactivate fu
+
+cl ->> sv : sendChange()
+deactivate ui
+
+sv -> pm : handleChange()
+deactivate ui
+activate pm
+
+pm -> pr : updateAndLog()
+deactivate pm
+activate pr
+
+pr -> pm : ack
+deactivate pr
+activate pm
+
+pm -> sv : ack
+deactivate pm
+
+sv ->> cl : ackChange()
+deactivate pm
+
+cl -> ed : ackChange()
+activate ed
+@enduml
