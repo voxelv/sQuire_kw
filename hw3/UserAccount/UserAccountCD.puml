@@ -16,7 +16,9 @@ class "Server" as s{
 class "Client" as c {
 +GetFromServer()
 +SendToServer()
-+Request action()
++RequestAction()
++GetFromUser()
++OutputToUser()
 }
 
 class "AccountManager" as am {
@@ -26,6 +28,7 @@ class "AccountManager" as am {
 +JoinProject()
 +LeaveProject()
 +UpdateProfile()
++StoreData()
 }
 
 class "UserAccount" as ua {
@@ -47,6 +50,7 @@ class "FriendsManager" as fm {
 +CheckOnline()
 +FriendAccept()
 +InviteToChat()
++StoreData()
 }
 
 class "FriendsList" as fl {

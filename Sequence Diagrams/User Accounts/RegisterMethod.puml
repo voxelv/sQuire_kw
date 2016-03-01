@@ -1,31 +1,33 @@
 @startuml
 
 Actor User
-User -> AccountManager : Register
+User -> Client : Register
+activate Client
+Client -> AccountManager : RequestAction(AM,Register)
+deactivate Client
 activate AccountManager
-AccountManager --> User : getFromUser()
-deactivate AccountManager
-User -> AccountManager : UsrNm,Pswd,Eml
-activate AccountManager
-AccountManager -> Client : register(UsrNm,Pswd,Eml)
+AccountManager --> Client : Register(UsrNm,Pswd,Eml)
 deactivate AccountManager
 activate Client
-Client -> Server : sendToServer(register(UsrNm,Pswd,Eml))
+Client -> User : GetFromUser(UsrNm,Pswd,Eml)
+User --> Client : UsrNm,Pswd,Eml
+Client -> Server : SendToServer(Register,UsrNm,Pswd,Eml)
 deactivate Client
 activate Server
-Server --> Client : Success
+Server --> Client : SendToClient(Success)
 deactivate Server
 activate Client
-Client --> AccountManager : sendToManager(Success)
+Client -> AccountManager : RequestAction(AM,StoreData,UsrNm,Pswd,Eml)
 deactivate Client
 activate AccountManager
-AccountManager -> UserAccount : storeInformation(UsrNm,Pswd,Eml)
+AccountManager -> UserAccount : StoreData(UsrNm,Pswd,Eml)
 deactivate AccountManager
 activate UserAccount
-UserAccount --> AccountManager : Done
+UserAccount --> AccountManager : Success
 deactivate UserAccount
 activate AccountManager
-AccountManager --> User : output("You are now registered")
+AccountManager --> Client : Success
 deactivate AccountManager
-
+activate Client
+Client --> User : OutputToUser("Registration Successful")
 @enduml
