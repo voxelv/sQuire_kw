@@ -63,19 +63,19 @@ class "Server" as sqs{
 				+GetFileInfo()
 				+UpdateFile(Key,Value)
 				}
-	class "SessionManager" as sqs_se_m{
-		-SessionList
-		+CreateSession()
-		+CloseSession()
-		+GetSession(SessionID)
-		}
-		class "Session" as sqs_se{
-			+Socket
-			+SessionID
-			+UserID
-			+ProjectID
-			+ChatIDs
-			}
+'	class "SessionManager" as sqs_se_m{
+'		-SessionList
+'		+CreateSession()
+'		+CloseSession()
+'		+GetSession(SessionID)
+'		}
+'		class "Session" as sqs_se{
+'			+Socket
+'			+SessionID
+'			+UserID
+'			+ProjectID
+'			+ChatIDs
+'			}
 	class "ChatManager" as sqs_ch_m{
 		+chatroomList
 		+createRoom(name)
@@ -96,15 +96,15 @@ class "Server" as sqs{
 sq -right- sqs : <<TCP>>
 
 	sqs *-- "1" sqs_pr_m 
-		sqs_pr_m o-- "*" sqs_pr 
-			sqs_pr o-- "*" sqs_fi 
+		sqs_pr_m o-- "*" sqs_pr : Project List
+			sqs_pr o-- "*" sqs_fi : File List
 	sqs *-- "1" sqs_ua_m 
-		sqs_ua_m o-- "*" sqs_ua  
+		sqs_ua_m o-- "*" sqs_ua : User Account List
 	sqs *-- "1" sqs_ch_m 
-		sqs_ch_m o-- "*" sqs_ch 
-			sqs_ch o-- "*" sqs_ch_mes
-	sqs *-- "1" sqs_se_m 
-		sqs_se_m o-- "*" sqs_se
+		sqs_ch_m o-- "*" sqs_ch : Chat Room List 
+			sqs_ch o-- "*" sqs_ch_mes : Message Log
+'	sqs *-- "1" sqs_se_m 
+'		sqs_se_m o-- "*" sqs_se
 
 
 
