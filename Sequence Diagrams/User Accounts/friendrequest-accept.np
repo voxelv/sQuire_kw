@@ -1,13 +1,12 @@
 @startuml
-caption Add Friend Successful Sequence Diagram
+caption Friend Request Accepted Sequence Diagram
 actor Friend as U
 actor "sQuire User" as user
 
-user -> "Friend management": friendRequest()
+user -> "Friend management": click friend request
 activate "Friend management"
-activate user
 
-"Friend management" -> "sQuire Client": getFromUser()
+"Friend management" -> "sQuire Client": friendRequest()
 activate "sQuire Client"
 
 
@@ -24,16 +23,14 @@ deactivate "sQuire Client"
 activate "Friend management"
 
 "Friend management"-> U:friendRequest()
-activate U
-U -> "Friend management" :friendAccept()
-deactivate U
-"Friend management" -> "sQuire Client" : getFromUser()
+U -> "Friend management" :click friend accept
+"Friend management" -> "sQuire Client" : friendAccept()
 deactivate "Friend management"
 activate "sQuire Client"
 
 "sQuire Client" -> "Server" : sendToServer()
 deactivate "sQuire Client"
-"Server" -> "Server:Friend array": friendUpdate()
+"Server" -> "Server - Friend array": friendUpdate()
 
 "Server" -> "sQuire Client" :sendToClient()
 deactivate "Server"
@@ -45,7 +42,6 @@ deactivate "sQuire Client"
 "Friend management" -> user : friendAccept()
 deactivate "Friend management"
 
-deactivate user
 
 
 @enduml
