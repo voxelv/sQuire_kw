@@ -60,12 +60,12 @@ class "UserAccount" as userAccount{
 }
 
 
-chat  o-- "*" chatroom : manages
-chatroom  o-- "*" msg : keeps
+chat  -- "*" chatroom : manages
+chatroom  -- "*" msg : keeps
 
-clientChat  o-- "*" clientChatroom : manages
+clientChat  -- "*" clientChatroom : manages
 userAccount  -up-  clientChat : provides user info >
-clientChatroom  o-- "*" msg : displays
+clientChatroom  -- "*" msg : displays
 
 'projectChat -r-|> clientChatroom
 
