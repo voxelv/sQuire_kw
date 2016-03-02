@@ -1,30 +1,39 @@
 @startuml
-hide circle
-hide empty members
 
-Title <b>Chat</b>\n<size:12>Authors: juts3869\n
+Title <b>Send Chat Message</b>\n<size:12>Author: juts3869\n
 
 actor User
-User -> ChatRoomView : Hits send
-activate ChatRoomView
-ChatRoomView -> ClientChatManager: sendMessage(string, channel)
-activate ClientChatManager
-ClientChatManager -> Server : sendMessages(message[])
-activate Server
-Server --> ClientChatManager : success
-deactivate Server
-ClientChatManager --> ChatRoomView : success
-deactivate ClientChatManager
+participant ChatRoomView as CRV
+participant ClientChatManager as CCM
+participant Message as M
+participant UserAccount as UA
+participant Server as S
 
-ChatRoomView-> ClientChatManager: updateMessages(message[])
-activate ClientChatManager
-ClientChatManager -> Server: updateMessages(message[])
+activate CRV
+User -> CRV : Types and hits send
+CRV -> CCM: sendMessage(string, channel)
+activate CCM
+CCM -> M : Message(string, channel)
+activate M
+M -> UA : getUserID()
+activate UA
+UA --> M : UserID
+deactivate UA
+M --> CCM : message
+deactivate M
+CCM -> S : sendMessage(message)
+activate S
+S --> CCM : success
+deactivate S
+CCM --> CRV : success
+deactivate CCM
 
-activate Server
-Server --> ClientChatManager : message[]
-deactivate Server
-ClientChatManager --> ChatRoomView : message[]
-deactivate ClientChatManager
-ChatRoomView --> User : Displays Message
+
+'/CCM -> S: updateMessages(message)
+'/activate S
+'/S --> CCM : message[]
+'/deactivate S
+'/CCM --> CRV : message[]
+CRV --> User : Displays Message
 
 @enduml
