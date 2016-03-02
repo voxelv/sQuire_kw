@@ -60,8 +60,9 @@ class "FriendsList" as fl {
 
 
 s  -r-"*" c : Communicates
-c   *-d- am : < sends requests
+c   *-d- am
 am   --  ua : manages >
-c   *-d- fm : < sends requests
+c   *-d- fm
 fm   --  fl : manages >
+
 @enduml

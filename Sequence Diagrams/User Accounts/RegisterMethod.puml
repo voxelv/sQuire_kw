@@ -1,24 +1,19 @@
 @startuml
 
 Actor User
-User -> Client : Register
 activate Client
+User -> Client : Register
 Client -> AccountManager : RequestAction(AM,Register)
-deactivate Client
 activate AccountManager
 AccountManager --> Client : Register(UsrNm,Pswd,Eml)
 deactivate AccountManager
-activate Client
 Client -> User : GetFromUser(UsrNm,Pswd,Eml)
 User --> Client : UsrNm,Pswd,Eml
 Client -> Server : SendToServer(Register,UsrNm,Pswd,Eml)
-deactivate Client
 activate Server
 Server --> Client : SendToClient(Success)
 deactivate Server
-activate Client
 Client -> AccountManager : RequestAction(AM,StoreData,UsrNm,Pswd,Eml)
-deactivate Client
 activate AccountManager
 AccountManager -> UserAccount : StoreData(UsrNm,Pswd,Eml)
 deactivate AccountManager
@@ -28,6 +23,6 @@ deactivate UserAccount
 activate AccountManager
 AccountManager --> Client : Success
 deactivate AccountManager
-activate Client
 Client --> User : OutputToUser("Registration Successful")
+
 @enduml
