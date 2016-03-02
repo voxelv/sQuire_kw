@@ -1,6 +1,9 @@
 # sQuire by Knight Writers
 CS383 Project by the Knight Writers group.
 
+##OneNote
+* [OneNote] (https://onedrive.live.com/view.aspx?resid=273538595B398734!133&ithint=onenote%2c&app=OneNote&authkey=!ABbDfXT81mMyGkQ)
+
 ## Trello Backlog
 * New: 02-19-2016
 * [Trello Backlog] (https://trello.com/invite/knightwriterscs383/f97390a46c8bb03a20cc124a75af9ae5)
