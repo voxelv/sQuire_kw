@@ -15,9 +15,9 @@ class "ChatManager" as sq_chatmgr
 class "GUI" as sq_gui
 
 class "AccountManager" as sqs_ua_m
-class "ProjectManager" as sqs_pr_m
+class "ServerProjectManager" as sqs_pr_m
 class "SessionManager" as sqs_se_m
-class "ChatManager" as sqs_ch_m
+class "ServerChatManager" as sqs_ch_m
 
 sq_c *-- sq_projmgr
 sq_c *-- sq_acntmgr
