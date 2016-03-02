@@ -1,0 +1,46 @@
+@startuml
+caption Friend Request Declined Sequence Diagram
+actor Friend as U
+actor "sQuire User" as user
+
+user -> "Friend management": click friend request
+activate "Friend management"
+
+"Friend management" -> "sQuire Client": friendRequest()
+activate "sQuire Client"
+
+
+"sQuire Client" -> "Server" : sendToServer()
+deactivate "sQuire Client"
+activate "Server"
+
+"Server" -> "sQuire Client": sendToClient()
+activate "sQuire Client"
+
+
+"sQuire Client" -> "Friend management" : sendToUser()
+deactivate "sQuire Client"
+activate "Friend management"
+
+"Friend management"-> U:friendRequest()
+U -> "Friend management" :click friend declined
+"Friend management" -> "sQuire Client" : friendDeclined()
+deactivate "Friend management"
+activate "sQuire Client"
+
+"sQuire Client" -> "Server" : sendToServer()
+deactivate "sQuire Client"
+
+"Server" -> "sQuire Client" :sendToClient()
+deactivate "Server"
+activate "sQuire Client"
+
+"sQuire Client" -> "Friend management":sendToUser()
+deactivate "sQuire Client"
+
+"Friend management" -> user : friendDeclined()
+deactivate "Friend management"
+
+
+
+@enduml
