@@ -1,0 +1,43 @@
+@startuml
+participant client_ChatManager
+participant client_ChatRoom
+participant client_UserAccount
+participant client_ServerConnection
+participant server_ClientConnection
+
+
+
+activate client_ChatManager
+
+client_ChatManager -> client_UserAccount : -getUserID()
+deactivate client_ChatManager
+activate client_UserAccount
+
+client_UserAccount --> client_ChatManager : userID
+deactivate client_UserAccount
+activate client_ChatManager
+
+client_ChatManager -> client_ServerConnection : -requestNewChatMessages()
+deactivate client_ChatManager
+activate client_ServerConnection
+
+client_ServerConnection -> server_ClientConnection : -sendRequest(newMsgs)
+deactivate client_ServerConnection
+activate server_ClientConnection
+
+server_ClientConnection --> client_ServerConnection : Messages
+deactivate server_ClientConnection
+activate client_ServerConnection
+
+client_ServerConnection --> client_ChatManager : Messages
+deactivate client_ServerConnection
+activate client_ChatManager
+
+client_ChatManager -> client_ChatRoom : -AddMessage()
+deactivate client_ChatManager
+activate client_ChatRoom
+
+client_ChatRoom --> client_ChatManager : true
+deactivate client_ChatRoom
+
+@enduml
