@@ -23,12 +23,12 @@ client_ChatManager -> client_ServerConnection : -requestNewChatMessages()
 activate client_ServerConnection
 
 client_ServerConnection -> server_ClientConnection : -sendRequest(newMsgs)
-deactivate client_ServerConnection
+'deactivate client_ServerConnection
 activate server_ClientConnection
 
 server_ClientConnection --> client_ServerConnection : Messages
 deactivate server_ClientConnection
-activate client_ServerConnection
+'activate client_ServerConnection
 
 client_ServerConnection --> client_ChatManager : Messages
 deactivate client_ServerConnection
