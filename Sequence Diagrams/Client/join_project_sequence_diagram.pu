@@ -7,7 +7,7 @@ Activate User
 
 
 User -> Client : joinProject()
-Deactivate User
+'Deactivate User
 Activate Client
 Client -> Server : getProjectList()
 Deactivate Client
@@ -43,7 +43,7 @@ Deactivate ProjectManager
 Activate Client
 Client --> User : projectJoined
 Deactivate Client
-Activate User
+'Activate User
 
 
 
