@@ -1,0 +1,78 @@
+@startuml
+
+left to right direction
+
+:User: as user
+
+
+rectangle Chat {
+(Enter Chat Room) as chat_enterRoom
+(Leave Chat Room) as chat_leaveRoom
+(Send Chat Message) as chat_sendMessage
+(Custom Chat Room) as chat_customRoom
+}
+
+rectangle Server {
+(Create User Account on Server) as s_createAccount
+(Send Edits to Server) as s_sendEdits
+(Authenticate user and Create Session) as s_authSession
+(Create Project) as s_createProject
+}
+
+rectangle Client {
+(Import Code) as c_importCode
+(Export Code) as c_exportCode
+(Compile) as c_compile
+(Execute) as c_execute
+(Open Project) as c_openProject
+(Exit Project) as c_exitProject
+}
+
+rectangle Editor {
+(View File Text by User Edits) as e_viewUser
+(Edit Code) as e_editCode
+(Lock-Edit-Unlock Line) as e_lineLock
+}
+
+rectangle "User Accounts" {
+(Reset Password) as uc_resetPassword
+(Create Account) as uc_createAccount
+(Check Status) as uc_checkStatus
+(Account Log In) as uc_login
+(Account Log Out) as uc_logout
+(Project Access Request) as uc_projectRequest
+(Project Access Accepted) as uc_projectAccept
+(Project Access Declined) as uc_projectDecline
+}
+
+user --> chat_enterRoom
+user --> chat_leaveRoom
+user --> chat_sendMessage
+user --> chat_customRoom
+
+user --> s_createAccount
+user --> s_sendEdits
+user --> s_authSession
+user --> s_createProject
+
+user --l-> c_importCode
+user --l-> c_exportCode
+user --l-> c_compile
+user --l-> c_execute
+user --l-> c_openProject
+user --l-> c_exitProject
+
+user --> e_viewUser
+user --> e_editCode
+user --> e_lineLock
+
+user --l-> uc_resetPassword
+user --l-> uc_createAccount
+user --l-> uc_checkStatus
+user --l-> uc_login
+user --l-> uc_logout
+user --l-> uc_projectRequest
+user --l-> uc_projectAccept
+user --l-> uc_projectDecline
+
+@enduml
