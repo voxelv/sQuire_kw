@@ -6,7 +6,9 @@ create table Message (
     timeSent datetime,
     fromID integer,
     channelID integer,
-    messageText varchar(240)
+    messageText varchar(240),
+    foreign key (fromID) references User(userID),
+    foreign key (channelID) references Channel(channelID)
 );
 
 create table Channel (
@@ -18,5 +20,7 @@ create table Subscriptions (
 	subID integer not null primary key,
     channelID integer,
     userID integer,
-	joinTime datetime
+	joinTime datetime,
+    foreign key (channelID) references Channel(channelID),
+    foreign key (userID) references User(userID)
 );
