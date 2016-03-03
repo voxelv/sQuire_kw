@@ -1,5 +1,6 @@
 @startuml
-caption Friend Request Accepted Sequence Diagram
+title <b>Friend Request - Accepted</b>\n<size:12>Author: guan2264</size>
+
 actor Friend as U
 actor "sQuire User" as user
 
