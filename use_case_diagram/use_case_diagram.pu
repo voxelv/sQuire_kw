@@ -14,7 +14,6 @@ rectangle Chat {
 
 rectangle Server {
 (Create User Account on Server) as s_createAccount
-(Send Edits to Server) as s_sendEdits
 (Authenticate user and Create Session) as s_authSession
 (Create Project) as s_createProject
 }
@@ -31,18 +30,17 @@ rectangle Client {
 rectangle Editor {
 (View File Text by User Edits) as e_viewUser
 (Edit Code) as e_editCode
-(Lock-Edit-Unlock Line) as e_lineLock
 }
 
 rectangle "User Accounts" {
-(Reset Password) as uc_resetPassword
-(Create Account) as uc_createAccount
-(Check Status) as uc_checkStatus
-(Account Log In) as uc_login
-(Account Log Out) as uc_logout
-(Project Access Request) as uc_projectRequest
-(Project Access Accepted) as uc_projectAccept
-(Project Access Declined) as uc_projectDecline
+(Reset Password) as ua_resetPassword
+(Create Account) as ua_createAccount
+(Check Status) as ua_checkStatus
+(Account Log In) as ua_login
+(Account Log Out) as ua_logout
+(Project Access Request) as ua_projectRequest
+(Project Access Accepted) as ua_projectAccept
+(Project Access Declined) as ua_projectDecline
 }
 
 user --> chat_enterRoom
@@ -51,7 +49,6 @@ user --> chat_sendMessage
 user --> chat_customRoom
 
 user --> s_createAccount
-user --> s_sendEdits
 user --> s_authSession
 user --> s_createProject
 
@@ -64,15 +61,14 @@ user --l-> c_exitProject
 
 user --> e_viewUser
 user --> e_editCode
-user --> e_lineLock
 
-user --l-> uc_resetPassword
-user --l-> uc_createAccount
-user --l-> uc_checkStatus
-user --l-> uc_login
-user --l-> uc_logout
-user --l-> uc_projectRequest
-user --l-> uc_projectAccept
-user --l-> uc_projectDecline
+user --l-> ua_resetPassword
+user --l-> ua_createAccount
+user --l-> ua_checkStatus
+user --l-> ua_login
+user --l-> ua_logout
+user --l-> ua_projectRequest
+user --l-> ua_projectAccept
+user --l-> ua_projectDecline
 
 @enduml
