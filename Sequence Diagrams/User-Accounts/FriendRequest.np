@@ -1,7 +1,7 @@
 @startuml
-title <b>Friend Request - Accepted</b>\n<size:12>Author: guan2264</size>
+title <b>Friend Request</b>\n<size:12>Author: guan2264</size>
 
-actor Friend as U
+actor "Friend Requested" as U
 actor "sQuire User" as user
 
 user -> "Friend management": click friend request
@@ -22,9 +22,11 @@ activate "sQuire Client"
 "sQuire Client" -> "Friend management" : sendToUser()
 deactivate "sQuire Client"
 activate "Friend management"
-
 "Friend management"-> U:friendRequest()
-U -> "Friend management" :click friend accept
+
+alt User accepted the friend request
+
+U -> "Friend management" :Yes
 "Friend management" -> "sQuire Client" : friendAccept()
 deactivate "Friend management"
 activate "sQuire Client"
@@ -43,6 +45,26 @@ deactivate "sQuire Client"
 "Friend management" -> user : friendAccept()
 deactivate "Friend management"
 
+else User declined the friend request
+U -> "Friend management" :No
+"Friend management" -> "sQuire Client" : friendDeclined()
+deactivate "Friend management"
+activate "sQuire Client"
 
+"sQuire Client" -> "Server" : sendToServer()
+deactivate "sQuire Client"
+
+"Server" -> "sQuire Client" :sendToClient()
+deactivate "Server"
+activate "sQuire Client"
+
+"sQuire Client" -> "Friend management":sendToUser()
+deactivate "sQuire Client"
+
+"Friend management" -> user : friendDeclined()
+deactivate "Friend management"
+
+
+end 
 
 @enduml
