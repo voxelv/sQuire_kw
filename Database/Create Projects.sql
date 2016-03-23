@@ -2,7 +2,7 @@
 use squiredb;
 
 create table PFile (
-	pfid integer not null primary key,
+	pfid integer not null primary key auto_increment,
     name varchar(30);
 	project integer;
 	timeCreated datetime,
@@ -12,7 +12,7 @@ create table PFile (
 );
 
 create table Project (
-	PID integer not null primary key,
+	PID integer not null primary key auto_increment,
 	name varchar(30),
 	location varchar(40)
 );

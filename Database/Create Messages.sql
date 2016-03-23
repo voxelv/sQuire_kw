@@ -2,7 +2,7 @@
 use squiredb;
 
 create table Message (
-	MID integer not null primary key,
+	MID integer not null primary key auto_increment,
     timeSent datetime,
     fromID integer,
     channelID integer,
@@ -12,12 +12,12 @@ create table Message (
 );
 
 create table Channel (
-	channelID integer not null primary key,
+	channelID integer not null primary key auto_increment,
     channelName varchar(30)
 );
 
 create table Subscriptions (
-	subID integer not null primary key,
+	subID integer not null primary key auto_increment,
     channelID integer,
     userID integer,
 	joinTime datetime,
