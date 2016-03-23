@@ -13,5 +13,13 @@ create table PFile (
 
 create table Project (
 	PID integer not null primary key,
-	name varchar(30)
+	name varchar(30),
+	location varchar(40)
+);
+
+create table ProjectAccess (
+	PID integer not null primary key,
+	userID integer not null primary key
+	foreign key (PID) references Project(PID),
+	foreign key (userID) references User(userID)
 );
