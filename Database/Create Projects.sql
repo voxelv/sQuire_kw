@@ -8,7 +8,7 @@ create table PFile (
 	timeCreated datetime,
     creatorID integer,
 	foreign key (project) references Project(PID),
-    foreign key (creatorID) references User(userID)
+    foreign key (creatorID) references Users(userID)
 );
 
 create table Project (
@@ -21,5 +21,5 @@ create table ProjectAccess (
 	PID integer not null primary key,
 	userID integer not null primary key
 	foreign key (PID) references Project(PID),
-	foreign key (userID) references User(userID)
+	foreign key (userID) references Users(userID)
 );

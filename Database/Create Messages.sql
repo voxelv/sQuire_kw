@@ -22,5 +22,5 @@ create table Subscriptions (
     userID integer,
 	joinTime datetime,
     foreign key (channelID) references Channel(channelID),
-    foreign key (userID) references User(userID)
+    foreign key (userID) references Users(userID)
 );
