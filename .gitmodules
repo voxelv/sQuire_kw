@@ -1,0 +1,3 @@
+[submodule "prototypes/slip5295/RichTextFX"]
+	path = prototypes/slip5295/RichTextFX
+	url = https://github.com/TomasMikula/RichTextFX.git
