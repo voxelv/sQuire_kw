@@ -1,17 +1,17 @@
 
 use squiredb;
 
-create table Message (
+create table Messages (
 	MID integer not null primary key auto_increment,
     timeSent datetime,
     fromID integer,
     channelID integer,
     messageText varchar(240),
-    foreign key (fromID) references User(userID),
-    foreign key (channelID) references Channel(channelID)
+    foreign key (fromID) references Users(userID),
+    foreign key (channelID) references Channels(channelID)
 );
 
-create table Channel (
+create table Channels (
 	channelID integer not null primary key auto_increment,
     channelName varchar(30)
 );
@@ -21,6 +21,6 @@ create table Subscriptions (
     channelID integer,
     userID integer,
 	joinTime datetime,
-    foreign key (channelID) references Channel(channelID),
+    foreign key (channelID) references Channels(channelID),
     foreign key (userID) references Users(userID)
 );
