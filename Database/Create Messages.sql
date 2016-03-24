@@ -3,7 +3,7 @@ use squiredb;
 
 create table Messages (
 	MID integer not null primary key auto_increment,
-    timeSent datetime,
+    timeSent timestamp,
     fromID integer,
     channelID integer,
     messageText varchar(240),
@@ -20,7 +20,7 @@ create table Subscriptions (
 	subID integer not null primary key auto_increment,
     channelID integer,
     userID integer,
-	joinTime datetime,
+	joinTime timestamp,
     foreign key (channelID) references Channels(channelID),
     foreign key (userID) references Users(userID)
 );

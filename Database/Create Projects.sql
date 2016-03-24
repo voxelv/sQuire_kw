@@ -5,7 +5,7 @@ create table PFiles (
 	pfid integer not null primary key auto_increment,
     name varchar(30);
 	project integer;
-	timeCreated datetime,
+	timeCreated timestamp,
     creatorID integer,
 	foreign key (project) references Projects(PID),
     foreign key (creatorID) references Users(userID)
@@ -21,5 +21,14 @@ create table ProjectAccess (
 	PID integer not null primary key,
 	userID integer not null primary key
 	foreign key (PID) references Projects(PID),
+	foreign key (userID) references Users(userID)
+);
+
+create table FileEdits (
+	edID integer not null primary key auto_increment,
+	pfID integer,
+	userID integer,
+	timeof timestamp,
+	foreign key (pfID) references PFiles(pfID),
 	foreign key (userID) references Users(userID)
 );
