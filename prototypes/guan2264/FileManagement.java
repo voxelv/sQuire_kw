@@ -19,7 +19,9 @@ public class FileManagement
   			String currPos = desktop;
     		Boolean isExit = false;
 			Boolean exitPositionMenu = false;
-
+			File startFileMove = null;
+			int fileMove = 0;
+			String[] tempFile = {""};
     		while(!isExit){
     			System.out.println("***Welcome to the File Management Menu***");
     			System.out.println("1. Set Current Position");
@@ -74,12 +76,6 @@ public class FileManagement
 	    								System.out.println("Please enter the valid character.");
 										break;
 	    						}
-
-
-
-
-
-
 	    						break;
 							case 2:
 								String temp = currPos.substring(0, currPos.lastIndexOf("\\"));
@@ -122,7 +118,6 @@ public class FileManagement
 						System.out.println("4. Copy");
 						System.out.println("5. Paste");
 						System.out.println("6. Rename");
-
     					System.out.println("7. Back to Main Menu");
 
 						System.out.print("Enter your choice: ");
@@ -144,8 +139,31 @@ public class FileManagement
 								break;
 							case 2:
 
-	
+								if(startFileMove == null){
+									File folder1 = new File(currPos);
+									File[] listofFile = folder1.listFiles();
+									tempFile = new String[listofFile.length];
+									int fileNum = 0;
+									for (int i = 0; i < listofFile.length; i++) {
+	      								if (listofFile[i].isFile()) {
+	        								tempFile[fileNum] = listofFile[i].getName();
+	      									fileNum++;
+	        								System.out.println( + fileNum + " - " + listofFile[i].getName());
+	      								}
+	    							}
+									System.out.print("Type in the number before the file you want to move: ");
+									fileMove = reader.nextInt();
+									startFileMove = new File(currPos + "\\" + tempFile[fileMove-1]);
+								}else{
+									startFileMove.renameTo(new File(currPos + "\\" + tempFile[fileMove-1]));
+									System.out.println("-Target File: " + tempFile[fileMove-1]);
+									System.out.println("-Moved To: " + currPos);
+
+								}
 								break;
+
+
+
 							case 3:
 								System.out.print("Enter the filename: ");
 								String deleteName = reader.next();
@@ -157,6 +175,19 @@ public class FileManagement
 	    							System.out.println("---File Delete Failed---");
 	    						}
 	
+								break;
+							case 6:
+								System.out.print("Enter the filename you want to rename: ");
+								String oldName = reader.next();
+								System.out.print("Enter the new name: ");
+								String newName = reader.next();
+
+								File file1 = new File(currPos + "//" + oldName);
+								File file2 = new File(currPos + "//" + newName);
+								
+								if (file2.exists()){ System.out.println("File Already Exists");}
+								
+								file1.renameTo(file2);
 								break;
 							case 7:
 								System.out.println("Back to Main Menu");
