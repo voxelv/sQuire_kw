@@ -1,3 +1,4 @@
+create database squiredb;
 
 use squiredb;
 
