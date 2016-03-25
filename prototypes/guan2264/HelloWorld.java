@@ -25,7 +25,7 @@ public class HelloWorld
 
 				switch(menuInput){
 					case 1:
-						System.out.println("Enter the filename: ");
+						System.out.print("Enter the filename: ");
 						String fileName = reader.next();
 
 	    				File file = new File(desktop+fileName+"");
@@ -55,6 +55,16 @@ public class HelloWorld
 
 						break;
 					case 3:
+						System.out.print("Enter the filename: ");
+						String deleteName = reader.next();
+
+	    				File deletefile = new File(desktop+deleteName+"");
+    					if(deletefile.delete()){
+    						System.out.println("File " + deletefile.getName() + " is deleted!");
+    					}else{
+    						System.out.println("File delete failed.");
+    					}
+
 						break;
 					default:
 						System.out.println("Please enter the valid number.");
