@@ -1,0 +1,10 @@
+Run Server.jar first. Nothing will show up, but the server will be running.
+
+Run Client.jar next. If the server is running, the Window will pop up, asking you for input. 
+
+Current commands:
+chat - server will respond with “hello, world!”
+closeServer - both server and client will shut down
+
+all other commands will get a response: “No Premade Response”
+
