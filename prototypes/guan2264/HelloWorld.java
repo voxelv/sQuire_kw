@@ -10,9 +10,13 @@ public class HelloWorld
     public static void main( String[] args )
     {	
     	try {
+  			String desktop = System.getProperty ("user.home") + "/Desktop/";
+  			String currPosi = desktop;
     		Boolean isExit = false;
     		while(!isExit){
+
     			System.out.println("***File Manager***");
+    			System.out.println("Current position: "+currPosi);
 				System.out.println("1. Create File");
 				System.out.println("2. Print Directory");
 				System.out.println("3. Remove File");
@@ -21,7 +25,6 @@ public class HelloWorld
 	    		Scanner reader = new Scanner(System.in);
 				int menuInput = reader.nextInt();		
 //				Thread.sleep(100);
-				String desktop = System.getProperty ("user.home") + "/Desktop/";
 
 				switch(menuInput){
 					case 1:
@@ -38,7 +41,7 @@ public class HelloWorld
 
 						break;
 					case 2:
-						File folder = new File(desktop);
+						File folder = new File(currPosi);
 						File[] listOfFiles = folder.listFiles();
 	    	    		System.out.println("-----Printing-----");
 	    	    		
