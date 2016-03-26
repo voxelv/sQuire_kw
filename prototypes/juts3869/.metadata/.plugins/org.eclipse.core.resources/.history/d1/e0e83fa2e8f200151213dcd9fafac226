@@ -1,0 +1,5 @@
+package proto_database;
+
+public class DBConnection {
+
+}
