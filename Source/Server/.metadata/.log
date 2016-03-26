@@ -29,3 +29,49 @@ Binding(ALT+COMMAND+Q P,
 		[Parameter(org.eclipse.ui.views.showView.viewId,View,null,true), Parameter(org.eclipse.ui.views.showView.secondaryId,Secondary Id,null,true), Parameter(org.eclipse.ui.views.showView.makeFast,As FastView,null,true)],,true),[org.eclipse.core.commands.Parameterization@351c7030]),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.contexts.window,,cocoa,system)
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-03-25 22:23:06.234
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [/Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/jre/lib/rt.jar is not on its project's build path]
+	at org.eclipse.jdt.internal.core.PackageFragmentRoot.getResolvedClasspathEntry(PackageFragmentRoot.java:578)
+	at org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations.getJavadocBaseLocation(JavaDocLocations.java:310)
+	at org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations.getJavadocLocation(JavaDocLocations.java:450)
+	at org.eclipse.jdt.ui.JavaUI.getJavadocLocation(JavaUI.java:985)
+	at org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations.getBaseURL(JavaDocLocations.java:629)
+	at org.eclipse.jdt.internal.ui.text.java.AbstractJavaCompletionProposal.getAdditionalProposalInfo(AbstractJavaCompletionProposal.java:595)
+	at org.eclipse.jface.text.contentassist.AdditionalInfoController$3.run(AdditionalInfoController.java:106)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1006 2016-03-25 22:23:06.235
+!MESSAGE /Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/jre/lib/rt.jar is not on its project's build path
+!SESSION 2016-03-25 22:44:48.627 -----------------------------------------------
+eclipse.buildId=4.5.0.I20150603-2000
+java.version=1.8.0_31
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.php.product -product org.eclipse.epp.package.php.product -product org.eclipse.epp.package.php.product -product org.eclipse.epp.package.php.product -keyring /Users/grant/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.php.product -product org.eclipse.epp.package.php.product -product org.eclipse.epp.package.php.product -data /Users/grant/gitHub/sQuire_kw/Source/Server -product org.eclipse.epp.package.php.product -keyring /Users/grant/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2016-03-25 22:44:51.727
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.jface 2 0 2016-03-25 22:44:54.607
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2016-03-25 22:44:54.607
+!MESSAGE A conflict occurred for ALT+COMMAND+Q P:
+Binding(ALT+COMMAND+Q P,
+	ParameterizedCommand(Command(org.eclipse.php.ui.explorer,PHP Script Explorer,
+		Shows the Script Explorer,
+		Category(org.eclipse.ui.category.views,Views,Commands for opening views,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@3a239dac,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,cocoa,system)
+Binding(ALT+COMMAND+Q P,
+	ParameterizedCommand(Command(org.eclipse.ui.views.showView,Show View,
+		Shows a particular view,
+		Category(org.eclipse.ui.category.views,Views,Commands for opening views,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@759f45f1,
+		[Parameter(org.eclipse.ui.views.showView.viewId,View,null,true), Parameter(org.eclipse.ui.views.showView.secondaryId,Secondary Id,null,true), Parameter(org.eclipse.ui.views.showView.makeFast,As FastView,null,true)],,true),[org.eclipse.core.commands.Parameterization@351c7030]),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,cocoa,system)
