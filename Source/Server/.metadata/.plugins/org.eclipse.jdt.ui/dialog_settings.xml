@@ -3,13 +3,15 @@
 	<section name="FatJarPackageWizard">
 		<item value="/Users/grant/gitHub/sQuire_kw/Source/Server" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="Server - SquireServer" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
-		<item value="SquireServer/bin/squire/Server.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="/Users/grant/gitHub/sQuire_kw/Source/Server/Server.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/Users/grant/gitHub/sQuire_kw/Source/Server/Server.jar"/>
 			<item value="SquireServer/bin/squire/Server.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
+			<item value="/Users/grant/gitHub/sQuire_kw/Source/Server.xml"/>
 			<item value=".xml"/>
 		</list>
 	</section>
