@@ -5,9 +5,9 @@
     <entry key="dbms">mysql</entry>
     <entry key="jar_file"></entry>
     <entry key="driver">com.mysql.jdbc.Driver</entry>
-    <entry key="database_name">squiredb</entry>
-    <entry key="user_name">test_user</entry>
-    <entry key="password">test_password</entry>
-    <entry key="server_name">localhost</entry>
-    <entry key="port_number">3306</entry>
+    <entry key="database_name">squire</entry>
+    <entry key="user_name">remote</entry>
+    <entry key="password">squire!</entry>
+    <entry key="server_name">squireRaspServer.ddns.net</entry>
+    <entry key="port_number">9897</entry>
 </properties>
