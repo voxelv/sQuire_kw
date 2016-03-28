@@ -1,5 +1,5 @@
 
-use squiredb;
+use squire;
 
 create table Messages (
 	MID integer not null primary key auto_increment,

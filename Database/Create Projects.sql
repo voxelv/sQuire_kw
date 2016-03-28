@@ -1,5 +1,5 @@
 
-use squiredb;
+use squire;
 
 create table PFiles (
 	pfid integer not null primary key auto_increment,

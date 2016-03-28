@@ -1,6 +1,4 @@
-create database squiredb;
-
-use squiredb;
+use squire;
 
 create table Users (
 	userID integer not null primary key auto_increment,
