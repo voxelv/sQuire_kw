@@ -7,8 +7,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+import java.sql.PreparedStatement;
 
 //Much of this code is borrowed from the Oracle tutorial on JDBC
 
@@ -41,13 +43,7 @@ public class DBConnection {
                             this.serverName +
                             ":" + this.portNumber + "/",
                     connectionProps);
-        } else if (this.dbms.equals("derby")) {
-            conn = DriverManager.getConnection(
-                    "jdbc:" + this.dbms + ":" +
-                            this.dbName +
-                            ";create=true",
-                    connectionProps);
-        }
+        } 
         System.out.println("Connected to database");
         return conn;
     }
@@ -146,7 +142,163 @@ public class DBConnection {
             return true;
         return false;
     }
+    
+    public void setDatabase(Connection con, String dbNameArg)
+    	throws SQLException{
+    	Statement s = con.createStatement();
+    	String statementString = "use " + dbNameArg;
+    	try{
+    		s.executeUpdate(statementString);
+    		System.out.println("Database set to " + dbNameArg);
+    	} catch (SQLException e) {
+            printSQLException(e);
+        }
+    }
 
+    public void insertUser(Connection con, String username)
+    	throws SQLException{
+    	
+    	PreparedStatement statement = null;
+    	String statementString = 
+    			"insert into Users (username)" +
+    			"values (?);";
+    	
+    	try {
+    		con.setAutoCommit(false);
+    		statement = con.prepareStatement(statementString);
+    		statement.setString(1, username);
+    		statement.executeUpdate();
+    		con.commit();
+    		System.out.println(username + " inserted into Users");
+    	} catch (SQLException e) {
+    		printSQLException(e);
+    		if (con != null){
+    			try {
+                    System.err.print("Transaction is being rolled back");
+                    con.rollback();
+                } catch(SQLException excep) {
+                    printSQLException(excep);
+                }
+            }
+    		
+    	} finally {
+            if (statement != null) {
+                statement.close();
+            }
+            
+            con.setAutoCommit(true);
+        }	
+    }
+    
+    public void insertChannel(Connection con, String cname)
+        	throws SQLException{
+        	
+        	PreparedStatement statement = null;
+        	String statementString = 
+        			"insert into Channels (channelName)" +
+        			"values (?);";
+        	
+        	try {
+        		con.setAutoCommit(false);
+        		statement = con.prepareStatement(statementString);
+        		statement.setString(1, cname);
+        		statement.executeUpdate();
+        		con.commit();
+        		System.out.println(cname + " inserted into Channels");
+        	} catch (SQLException e) {
+        		printSQLException(e);
+        		if (con != null){
+        			try {
+                        System.err.print("Transaction is being rolled back");
+                        con.rollback();
+                    } catch(SQLException excep) {
+                        printSQLException(excep);
+                    }
+                }
+        		
+        	} finally {
+                if (statement != null) {
+                    statement.close();
+                }
+                
+                con.setAutoCommit(true);
+            }	
+        }
+    public void insertSubscription(Connection con, int channelID, int userID, Timestamp time)
+        	throws SQLException{
+        	
+        	PreparedStatement statement = null;
+        	String statementString = 
+        			"insert into Subscriptions (ChannelID, userID, joinTime)" +
+        			"values (?, ?, ?);";
+        	
+        	try {
+        		con.setAutoCommit(false);
+        		statement = con.prepareStatement(statementString);
+        		statement.setInt(1, channelID);
+        		statement.setInt(2, userID);
+        		statement.setTimestamp(3, time);
+        		statement.executeUpdate();
+        		con.commit();
+        		System.out.println("User " + userID + " subscribed to channel " + channelID);
+        	} catch (SQLException e) {
+        		printSQLException(e);
+        		if (con != null){
+        			try {
+                        System.err.print("Transaction is being rolled back");
+                        con.rollback();
+                    } catch(SQLException excep) {
+                        printSQLException(excep);
+                    }
+                }
+        		
+        	} finally {
+                if (statement != null) {
+                    statement.close();
+                }
+                
+                con.setAutoCommit(true);
+            }	
+        }
+    
+    public void insertMessage(Connection con, int fromID, int channelID, String text, Timestamp time)
+        	throws SQLException{
+        	
+        	PreparedStatement statement = null;
+        	String statementString = 
+        			"insert into Messages (timeSent, fromID, ChannelID, messageText)" +
+        			"values (?, ?, ?, ?);";
+        	
+        	try {
+        		con.setAutoCommit(false);
+        		statement = con.prepareStatement(statementString);
+        		statement.setTimestamp(1, time);
+        		statement.setInt(2,  fromID);
+        		statement.setInt(3,  channelID);
+        		statement.setString(4, text);
+        		statement.executeUpdate();
+        		con.commit();
+        		System.out.println("Message sent from user " + fromID + " to channel " + channelID);
+        	} catch (SQLException e) {
+        		printSQLException(e);
+        		if (con != null){
+        			try {
+                        System.err.print("Transaction is being rolled back");
+                        con.rollback();
+                    } catch(SQLException excep) {
+                        printSQLException(excep);
+                    }
+                }
+        		
+        	} finally {
+                if (statement != null) {
+                    statement.close();
+                }
+                
+                con.setAutoCommit(true);
+            }	
+        }
+    
     public static void main(String[] args) {
         DBConnection dbc;
         Connection myConnection = null;
@@ -163,24 +315,18 @@ public class DBConnection {
                 return;
             }
         }
-
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
 
 
         try {
             myConnection = dbc.getConnection();
-            //      JDBCTutorialUtilities.outputClientInfoProperties(myConnection);
-            // myConnection = myJDBCTutorialUtilities.getConnection("root", "root", "jdbc:mysql://localhost:3306/");
-            //       myConnection = myJDBCTutorialUtilities.
-            //         getConnectionWithDataSource(myJDBCTutorialUtilities.dbName,"derby","", "", "localhost", 3306);
-
-            // Java DB does not have an SQL create database command; it does require createDatabase
-            DBConnection.createDatabase(myConnection,
-                    dbc.dbName,
-                    dbc.dbms);
-
-            //db_connection.cursorHoldabilitySupport(myConnection);
-            //db_connection.rowIdLifetime(myConnection);
-
+            
+            //DBConnection.createDatabase(myConnection, dbc.dbName, dbc.dbms);
+            dbc.setDatabase(myConnection, dbc.dbName);
+            dbc.insertUser(myConnection, "Jeff");
+            dbc.insertChannel(myConnection, "Channel1");
+            dbc.insertSubscription(myConnection, 1, 1, ts);
+            dbc.insertMessage(myConnection, 1, 1, "Hello world", ts);
         } catch (SQLException e) {
             DBConnection.printSQLException(e);
         } catch (Exception e) {
