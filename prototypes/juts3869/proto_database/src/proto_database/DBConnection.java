@@ -12,7 +12,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 import java.sql.PreparedStatement;
 
-//Much of this code is borrowed from the Oracle tutorial on JDBC
+//Some of this code is borrowed from the Oracle tutorial on JDBC
 
 
 public class DBConnection {
@@ -48,8 +48,7 @@ public class DBConnection {
         return conn;
     }
 
-    public static void createDatabase(Connection connArg, String dbNameArg,
-                                      String dbmsArg) {
+    public static void createDatabase(Connection connArg, String dbNameArg, String dbmsArg) {
 
         if (dbmsArg.equals("mysql")) {
             try {
