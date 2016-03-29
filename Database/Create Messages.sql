@@ -17,10 +17,10 @@ create table Channels (
 );
 
 create table Subscriptions (
-	subID integer not null primary key auto_increment,
     channelID integer,
     userID integer,
 	joinTime timestamp,
+	primary key (channelID, userID),
     foreign key (channelID) references Channels(channelID),
     foreign key (userID) references Users(userID)
 );
