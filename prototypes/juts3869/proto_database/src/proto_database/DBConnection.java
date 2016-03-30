@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 //Some of this code is borrowed from the Oracle tutorial on JDBC
 
@@ -264,12 +265,13 @@ public class DBConnection {
             }	
         }
     
-	public ResultSet query(String statementString, String[] statementArgs){
+	public ResultSet query(String statementString, String[] statementArgs)
+		throws SQLException {
 		PreparedStatement statement = null;
 		ResultSet ret = null;
 		
 		try {
-			statement = con.prepareStatement(statementString);
+			statement = this.connection.prepareStatement(statementString);
 			for(int i = 0; i < statementArgs.length ; i++)
 				statement.setString(i+1, statementArgs[i]);
 			ret = statement.executeQuery();
@@ -278,6 +280,7 @@ public class DBConnection {
 		} finally {
 			if (statement != null) { statement.close(); }
 		}
+		return ret;
 	}
 	
     public void insertMessage(int fromID, int channelID, String text, Timestamp time)
