@@ -53,14 +53,18 @@ CREATE PROCEDURE PFLTraverser
 ) 
 BEGIN 
     declare final_id int default NULL;
+    CREATE TEMPORARY TABLE IF NOT EXISTS my_temp_table select * from PFLines where 1 = 0;
     SELECT nextID 
     INTO final_id 
     FROM PFLines
     WHERE pflid = inputNo;
     IF( final_id is not null) THEN
-        INSERT INTO results(SELECT * FROM PFLines WHERE pflid = inputNo);
+	
+        INSERT INTO my_temp_table(SELECT * FROM PFLines WHERE pflid = inputNo);
         CALL PFLTraverser(final_id);   
     end if;
+    SELECT * FROM my_temp_table;
+    DROP table my_temp_table;
 END//
 delimiter ;
 
