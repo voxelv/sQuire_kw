@@ -29,6 +29,7 @@ public class Server extends Thread{
 	
 	
 	/* START OF THE THREAD CLASS */
+	/* */ 
 	private static class ServerThread extends Thread {
         private Socket socket;
         private int clientNumber;
