@@ -44,3 +44,22 @@ create table FileEdits (
 	foreign key (pfID) references PFiles(pfID),
 	foreign key (userID) references Users(userID)
 );
+
+delimiter //
+CREATE PROCEDURE PFLTraverser 
+(
+    in inputNo int
+) 
+BEGIN 
+    declare final_id int default NULL;
+    SELECT nextID 
+    INTO final_id 
+    FROM PFLines
+    WHERE pflid = inputNo;
+    IF( final_id is not null) THEN
+        INSERT INTO results(SELECT * FROM PFLines WHERE pflid = inputNo);
+        CALL PFLTraverser(final_id);   
+    end if;
+END//
+delimiter ;
+
