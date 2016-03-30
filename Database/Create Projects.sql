@@ -1,7 +1,7 @@
 
 use squire;
 
-create table PFLines {
+create table PFLines (
 	pflid integer not null primary key auto_increment,
 	nextid integer,
 	text varchar(255),
@@ -9,7 +9,7 @@ create table PFLines {
 	timeEdited timestamp,
 	foreign key (lastEditor) references Users(userID),
 	foreign key (nextid) references PFLines(pflid)
-}
+);
 
 create table Projects (
 	PID integer not null primary key auto_increment,
@@ -30,8 +30,9 @@ create table PFiles (
 );
 
 create table ProjectAccess (
-	PID integer not null primary key,
-	userID integer not null primary key,
+	PID integer not null,
+	userID integer not null,
+	primary key(PID, userID),
 	foreign key (PID) references Projects(PID),
 	foreign key (userID) references Users(userID)
 );
