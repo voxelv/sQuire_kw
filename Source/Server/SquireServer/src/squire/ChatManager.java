@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class ChatManager {
+	DBConnector db;
 	
 	public ChatManager() {
 		
@@ -53,6 +54,13 @@ public class ChatManager {
 	 */
 	public void addMessage(int userID, String message, int channelID) {
 		String query = "insert into Message (timeSent, fromID, channelID, messageText) values (?, ?, ?, ?)";
+		
+		String[] values = new String[4];
+		values[0] = "2016-03-30 15:30";
+		values[1] = "1";
+		values[2] = "1";
+		values[3] = "hello, world!";
+		
 		
 	}
 	
