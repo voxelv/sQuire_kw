@@ -343,7 +343,7 @@ public class DBConnection {
 
         try {
             dbc.setDatabase(dbc.dbName);
-           // dbc.insertUser("Jeff");
+            // dbc.insertUser("Jeff");
             //dbc.insertChannel("Channel1");
             //dbc.insertSubscription(1, 1, ts);
             dbc.insertMessage(1, 1, "Hello world", ts);
