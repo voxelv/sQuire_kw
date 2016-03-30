@@ -95,14 +95,14 @@ class "Server" as sqs{
 
 sq -right- sqs : <<TCP>>
 
-	sqs *-- "1" sqs_pr_m 
-		sqs_pr_m o-- "*" sqs_pr : Project List
-			sqs_pr o-- "*" sqs_fi : File List
-	sqs *-- "1" sqs_ua_m 
-		sqs_ua_m o-- "*" sqs_ua : User Account List
-	sqs *-- "1" sqs_ch_m 
-		sqs_ch_m o-- "*" sqs_ch : Chat Room List 
-			sqs_ch o-- "*" sqs_ch_mes : Message Log
+	sqs *-- sqs_pr_m 
+		sqs_pr_m "1" -- "*" sqs_pr : Project List
+			sqs_pr "1" -- "*" sqs_fi : File List
+	sqs *-- sqs_ua_m 
+		sqs_ua_m "1" -- "*" sqs_ua : User Account List
+	sqs *-- sqs_ch_m 
+		sqs_ch_m "1" -- "*" sqs_ch : Chat Room List 
+			sqs_ch "1" -- "*" sqs_ch_mes : Message Log
 '	sqs *-- "1" sqs_se_m 
 '		sqs_se_m o-- "*" sqs_se
 
