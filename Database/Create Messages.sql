@@ -6,7 +6,7 @@ create table Messages (
     timeSent timestamp,
     fromID integer,
     channelID integer,
-    messageText varchar(240),
+    messageText varchar(255),
     foreign key (fromID) references Users(userID),
     foreign key (channelID) references Channels(channelID)
 );
