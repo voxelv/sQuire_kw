@@ -4,5 +4,6 @@ plantuml.jar
 .metadata
 .recommenders
 
-**/.metadata
-**/.recommenders
+**/.metadata/**
+**/.recommenders/**
+**\.metadata\**
