@@ -264,6 +264,22 @@ public class DBConnection {
             }	
         }
     
+	public ResultSet query(String statementString, String[] statementArgs){
+		PreparedStatement statement = null;
+		ResultSet ret = null;
+		
+		try {
+			statement = con.prepareStatement(statementString);
+			for(int i = 0; i < statementArgs.length ; i++)
+				statement.setString(i+1, statementArgs[i]);
+			ret = statement.executeQuery();
+		} catch(SQLException e) {
+			printSQLException(e);
+		} finally {
+			if (statement != null) { statement.close(); }
+		}
+	}
+	
     public void insertMessage(int fromID, int channelID, String text, Timestamp time)
         	throws SQLException{
         	
@@ -301,6 +317,8 @@ public class DBConnection {
                 this.connection.setAutoCommit(true);
             }	
         }
+		
+	
     
     public static void main(String[] args) {
         DBConnection dbc;
