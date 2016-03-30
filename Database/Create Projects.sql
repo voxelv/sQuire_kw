@@ -1,12 +1,24 @@
 
 use squire;
 
+create table PFLines {
+	pflid integer not null primary key auto_increment,
+	nextid integer,
+	text varchar(255),
+	userID integer,
+	timeEdited timestamp,
+	foreign key (userID) references Users(userID),
+	foreign key (nextid) references PFLines(pflid)
+}
+
 create table PFiles (
 	pfid integer not null primary key auto_increment,
     pfname varchar(30),
 	pid integer,
+	pflhead integer,
 	timeCreated timestamp,
     creatorID integer,
+	foreign key (pflhead) references PFLines(pflid),
 	foreign key (pid) references Projects(PID),
     foreign key (creatorID) references Users(userID)
 );
