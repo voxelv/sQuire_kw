@@ -280,6 +280,9 @@ public class DBConnector {
 		ResultSet ret = null;
 		JSONArray output = new JSONArray();
 		
+		System.out.println("Query: "+statementString);
+		System.out.println("Args: "+statementArgs.toString());
+		
 		try {
 			statement = this.connection.prepareStatement(statementString);
 			for(int i = 0; i < statementArgs.length ; i++)

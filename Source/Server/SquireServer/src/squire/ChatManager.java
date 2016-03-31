@@ -86,6 +86,8 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	public void addMessage(String userID, String message, String channelID) throws SQLException {
+		System.out.println("Running addMsg('"+userID+"', '"+message+"', '"+channelID+"')");
+		
 		String query = "insert into Messages (fromID, channelID, messageText) values (?, ?, ?)";
 		
 		String[] values = new String[3];
@@ -114,6 +116,7 @@ public class ChatManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONArray getMessages(String userID, String lastMsgTime) throws SQLException {
+		System.out.println("Running getMessages('"+userID+"', '"+lastMsgTime+"')");
 		String query = "select "
 						+ "`Messages`.`timeSent`, " 
 						+ "`Messages`.`fromID`, " 
