@@ -126,6 +126,7 @@ public class Server extends Thread{
         		
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
+        			System.out.println(params);
         			String lastMsgReceiveTime = (String) params.get("lastReceiveTime");
         			int userID = (int) params.get("userID");
         			JSONArray t;
