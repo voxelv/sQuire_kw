@@ -144,7 +144,8 @@ public class Server extends Thread{
         		}
         		else if (action.toUpperCase().compareTo("ADDMESSAGE") == 0)
         		{
-        			chatManager.addMessage(0, "hello, world", 0);
+        			String msg = (String) params.get("msg");
+        			chatManager.addMessage(1, msg, 1);
         		}
         		else if (action.toUpperCase().compareTo("QUIT") == 0 || action.toUpperCase().compareTo("EXIT") == 0)
         		{
