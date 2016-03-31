@@ -114,19 +114,20 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONArray getMessages(String userID, String lastMsgTime) throws SQLException {
+	public JSONArray getMessages(String userID, String lastMID) throws SQLException {
 		String query;
 		String[] values;
 		JSONArray out;
-		JSONArray time;
+//		JSONArray time;
 		
-		query = "select now()";
-		values = new String[0];
-		time = this.dbc.query(query, values);
-		System.out.println("Time: "+time);
-		JSONObject timeObj = (JSONObject) time.get(0);
+//		query = "select now()";
+//		values = new String[0];
+//		time = this.dbc.query(query, values);
+//
+//		JSONObject timeObj = (JSONObject) time.get(0);
 		
 		query = "select "
+						+ "`Messages`.`MID`, "
 						+ "`Messages`.`timeSent`, " 
 						+ "`Messages`.`fromID`, " 
 						+ "`Messages`.`channelID`, " 
@@ -144,31 +145,16 @@ public class ChatManager {
 						+ "`Users`.`userID` = `Messages`.`fromID` AND "
 						+ "`Messages`.`timeSent` > `Subscriptions`.`joinTime` AND "
 						+ "`Subscriptions`.`userID` = ? AND "		// userID
-						+ "`Messages`.`timeSent` > ? "				// timestamp of last message received
+						+ "`Messages`.`MID` > ? "				// timestamp of last message received
 					+ "order by " 
 						+ "`Messages`.`timeSent` ASC;";
 		
 		values = new String[2];
 		values[0] = userID;
-		values[1] = lastMsgTime;
+		values[1] = lastMID;
 		
 		out = this.dbc.query(query, values);
-		out.add(0, timeObj);
-		
-//		JSONArray out = new JSONArray();
-//		while(res.next())
-//		{
-//			JSONObject msg = new JSONObject();
-//			
-//			msg.put("time", res.getString(1));
-//			msg.put("text", res.getString(4));
-//			msg.put("channelID", res.getString(3));
-//			msg.put("channelName", res.getString(5));
-//			msg.put("fromUserID", res.getString(2));
-//			msg.put("fromUsername", res.getString(6));
-//			
-//			out.add(msg);
-//		}
+//		out.add(0, timeObj);
 		
 		return out;
 	}
