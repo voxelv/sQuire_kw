@@ -117,13 +117,10 @@ public class Server extends Thread{
         public String runAction(String category, String action, JSONObject params) throws SQLException
         {
         	String output = null;
-        	System.out.println("Action: "+category + ":" + action);
-        	
         	
         	/* CHAT FUNCTIONS */
         	if (category.toUpperCase().compareTo("CHAT") == 0)
         	{
-        		
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
         			String lastMsgReceiveTime = (String) params.get("lastReceiveTime");

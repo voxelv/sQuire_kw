@@ -86,7 +86,6 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	public void addMessage(String userID, String message, String channelID) throws SQLException {
-		System.out.println("Running addMsg('"+userID+"', '"+message+"', '"+channelID+"')");
 		
 		String query = "insert into Messages (fromID, channelID, messageText) values (?, ?, ?)";
 		
@@ -116,8 +115,18 @@ public class ChatManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONArray getMessages(String userID, String lastMsgTime) throws SQLException {
-		System.out.println("Running getMessages('"+userID+"', '"+lastMsgTime+"')");
-		String query = "select "
+		String query;
+		String[] values;
+		JSONArray out;
+		JSONArray time;
+		
+		query = "select now()";
+		values = new String[0];
+		time = this.dbc.query(query, values);
+		System.out.println("Time: "+time);
+		JSONObject timeObj = (JSONObject) time.get(0);
+		
+		query = "select "
 						+ "`Messages`.`timeSent`, " 
 						+ "`Messages`.`fromID`, " 
 						+ "`Messages`.`channelID`, " 
@@ -139,11 +148,12 @@ public class ChatManager {
 					+ "order by " 
 						+ "`Messages`.`timeSent` ASC;";
 		
-		String[] values = new String[2];
+		values = new String[2];
 		values[0] = userID;
 		values[1] = lastMsgTime;
 		
-		JSONArray out = this.dbc.query(query, values);
+		out = this.dbc.query(query, values);
+		out.add(0, timeObj);
 		
 //		JSONArray out = new JSONArray();
 //		while(res.next())
