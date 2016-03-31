@@ -126,8 +126,10 @@ public class Server extends Thread{
         		
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
+        			String lastMsgReceiveTime = (String) params.get("lastReceiveTime");
+        			int userID = (int) params.get("userID");
         			JSONArray t;
-        			t = chatManager.getMessages(0, "2016-03-30 15:00");
+        			t = chatManager.getMessages(userID, lastMsgReceiveTime);
         			output = t.toJSONString();
         		}
         		else if (action.toUpperCase().compareTo("LEAVECHANNEL") == 0)
