@@ -85,12 +85,12 @@ public class ChatManager {
 	 * @param channelID
 	 * @throws SQLException 
 	 */
-	public void addMessage(int userID, String message, int channelID) throws SQLException {
+	public void addMessage(String userID, String message, String channelID) throws SQLException {
 		String query = "insert into Messages (fromID, channelID, messageText) values (?, ?, ?)";
 		
 		String[] values = new String[3];
-		values[0] = String.valueOf(userID);
-		values[1] = String.valueOf(channelID);
+		values[0] = userID;
+		values[1] = channelID;
 		values[2] = message;
 		
 		this.dbc.query(query, values);
@@ -113,7 +113,7 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONArray getMessages(int userID, String lastMsgTime) throws SQLException {
+	public JSONArray getMessages(String userID, String lastMsgTime) throws SQLException {
 		String query = "select "
 						+ "`Messages`.`timeSent`, " 
 						+ "`Messages`.`fromID`, " 
@@ -137,7 +137,7 @@ public class ChatManager {
 						+ "`Messages`.`timeSent` ASC;";
 		
 		String[] values = new String[2];
-		values[0] = String.valueOf(userID);
+		values[0] = userID;
 		values[1] = lastMsgTime;
 		
 		JSONArray out = this.dbc.query(query, values);

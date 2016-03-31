@@ -118,17 +118,14 @@ public class Server extends Thread{
         {
         	String output = null;
         	
-        	String testParam = (String) params.get("paramKey");
-        	
         	/* CHAT FUNCTIONS */
         	if (category.toUpperCase().compareTo("CHAT") == 0)
         	{
         		
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
-        			System.out.println(params);
         			String lastMsgReceiveTime = (String) params.get("lastReceiveTime");
-        			int userID = (int) params.get("userID");
+        			String userID = (String) params.get("userID");
         			JSONArray t;
         			t = chatManager.getMessages(userID, lastMsgReceiveTime);
         			output = t.toJSONString();
@@ -147,8 +144,11 @@ public class Server extends Thread{
         		}
         		else if (action.toUpperCase().compareTo("ADDMESSAGE") == 0)
         		{
+        			String userID = (String) params.get("userID");
         			String msg = (String) params.get("msg");
-        			chatManager.addMessage(1, msg, 1);
+        			String channelID = (String) params.get("channelID");
+        			
+        			chatManager.addMessage(userID, msg, channelID);
         		}
         		else if (action.toUpperCase().compareTo("QUIT") == 0 || action.toUpperCase().compareTo("EXIT") == 0)
         		{
