@@ -9,7 +9,6 @@ plantuml.jar
 **\.metadata\**
 
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
