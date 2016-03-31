@@ -86,7 +86,7 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	public void addMessage(int userID, String message, int channelID) throws SQLException {
-		String query = "insert into Message (timeSent, fromID, channelID, messageText) values (?, ?, ?, ?)";
+		String query = "insert into Messages (timeSent, fromID, channelID, messageText) values (?, ?, ?, ?)";
 		
 		String[] values = new String[4];
 		values[0] = "2016-03-30 15:30";

@@ -40,6 +40,7 @@ public class Server extends Thread{
             this.clientNumber = clientNumber;
             log("New connection with client# " + clientNumber + " at " + socket);
             
+            chatManager = new ChatManager();
         }
         
         
@@ -122,7 +123,7 @@ public class Server extends Thread{
         	/* CHAT FUNCTIONS */
         	if (category.toUpperCase().compareTo("CHAT") == 0)
         	{
-        		chatManager = new ChatManager();
+        		
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
         			JSONArray t;
