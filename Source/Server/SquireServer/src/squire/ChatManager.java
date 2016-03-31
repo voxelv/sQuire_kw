@@ -48,7 +48,7 @@ public class ChatManager {
 		values[0] = String.valueOf(userID);
 		values[1] = String.valueOf(channelID);
 		
-		ResultSet res = this.dbc.query(query, values);
+		this.dbc.query(query, values);
 		
 		
 		JSONArray channelList = new JSONArray();
@@ -141,22 +141,22 @@ public class ChatManager {
 		values[0] = String.valueOf(userID);
 		values[1] = lastMsgTime;
 		
-		ResultSet res = this.dbc.query(query, values);
+		JSONArray out = this.dbc.query(query, values);
 		
-		JSONArray out = new JSONArray();
-		while(res.next())
-		{
-			JSONObject msg = new JSONObject();
-			
-			msg.put("time", res.getString(1));
-			msg.put("text", res.getString(4));
-			msg.put("channelID", res.getString(3));
-			msg.put("channelName", res.getString(5));
-			msg.put("fromUserID", res.getString(2));
-			msg.put("fromUsername", res.getString(6));
-			
-			out.add(msg);
-		}
+//		JSONArray out = new JSONArray();
+//		while(res.next())
+//		{
+//			JSONObject msg = new JSONObject();
+//			
+//			msg.put("time", res.getString(1));
+//			msg.put("text", res.getString(4));
+//			msg.put("channelID", res.getString(3));
+//			msg.put("channelName", res.getString(5));
+//			msg.put("fromUserID", res.getString(2));
+//			msg.put("fromUsername", res.getString(6));
+//			
+//			out.add(msg);
+//		}
 		
 		return out;
 	}

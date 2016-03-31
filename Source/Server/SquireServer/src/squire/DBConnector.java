@@ -10,8 +10,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 //Some of this code is borrowed from the Oracle tutorial on JDBC
 
@@ -269,22 +274,42 @@ public class DBConnector {
             }	
         }
     
-	public ResultSet query(String statementString, String[] statementArgs)
+	public JSONArray query(String statementString, String[] statementArgs)
 		throws SQLException {
 		PreparedStatement statement = null;
 		ResultSet ret = null;
+		JSONArray output = new JSONArray();
 		
 		try {
 			statement = this.connection.prepareStatement(statementString);
 			for(int i = 0; i < statementArgs.length ; i++)
 				statement.setString(i+1, statementArgs[i]);
 			ret = statement.executeQuery();
+			
+			ResultSetMetaData j = ret.getMetaData();
+			
+			String[] colNames = new String[j.getColumnCount()];
+			for (int i = 0; i < j.getColumnCount(); i++)
+			{
+				colNames[i] = j.getColumnName(i+1);
+			}
+			
+			while(ret.next())
+			{
+				JSONObject row = new JSONObject();
+				for (int i = 0; i < j.getColumnCount(); i++)
+				{
+					row.put(colNames[i], ret.getString(i+1));
+				}
+				output.add(row);
+			}
+			
 		} catch(SQLException e) {
 			printSQLException(e);
 		} finally {
 			if (statement != null) { statement.close(); }
 		}
-		return ret;
+		return output;
 	}
 	
     public void insertMessage(int fromID, int channelID, String text, Timestamp time)
@@ -294,7 +319,6 @@ public class DBConnector {
         	String statementString = 
         			"insert into Messages (timeSent, fromID, ChannelID, messageText)" +
         			"values (?, ?, ?, ?);";
-        	
         	try {
         		this.connection.setAutoCommit(false);
         		statement = this.connection.prepareStatement(statementString);
