@@ -284,24 +284,29 @@ public class DBConnector {
 			statement = this.connection.prepareStatement(statementString);
 			for(int i = 0; i < statementArgs.length ; i++)
 				statement.setString(i+1, statementArgs[i]);
-			ret = statement.executeQuery();
+//			ret = statement.executeQuery();
+			boolean queryType = statement.execute();
 			
-			ResultSetMetaData j = ret.getMetaData();
-			
-			String[] colNames = new String[j.getColumnCount()];
-			for (int i = 0; i < j.getColumnCount(); i++)
+			if (queryType)	// if query type is select, get the data
 			{
-				colNames[i] = j.getColumnName(i+1);
-			}
-			
-			while(ret.next())
-			{
-				JSONObject row = new JSONObject();
+				ret = statement.getResultSet();
+				ResultSetMetaData j = ret.getMetaData();
+				
+				String[] colNames = new String[j.getColumnCount()];
 				for (int i = 0; i < j.getColumnCount(); i++)
 				{
-					row.put(colNames[i], ret.getString(i+1));
+					colNames[i] = j.getColumnName(i+1);
 				}
-				output.add(row);
+				
+				while(ret.next())
+				{
+					JSONObject row = new JSONObject();
+					for (int i = 0; i < j.getColumnCount(); i++)
+					{
+						row.put(colNames[i], ret.getString(i+1));
+					}
+					output.add(row);
+				}
 			}
 			
 		} catch(SQLException e) {
