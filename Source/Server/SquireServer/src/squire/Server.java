@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import java.sql.SQLException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -90,6 +90,9 @@ public class Server extends Thread{
 						
 					} catch (ParseException e) {
 						log("Was not able to parse the input");
+					} catch (SQLException e) {
+						log("SQL Exception");
+						e.printStackTrace();
 					}
                     
                     out.println(outArr);	// send the final array back to client
@@ -110,7 +113,7 @@ public class Server extends Thread{
             System.out.println(message);
         }
         
-        public String runAction(String category, String action, JSONObject params)
+        public String runAction(String category, String action, JSONObject params) throws SQLException
         {
         	String output = null;
         	
@@ -123,7 +126,7 @@ public class Server extends Thread{
         		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
         		{
         			JSONArray t;
-        			t = chatManager.getMessages(0, 0);
+        			t = chatManager.getMessages(0, "2016-03-30 15:00");
         			output = t.toJSONString();
         		}
         		else if (action.toUpperCase().compareTo("LEAVECHANNEL") == 0)
