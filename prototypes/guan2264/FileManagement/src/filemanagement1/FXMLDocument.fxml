@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -30,13 +31,23 @@
                 </Menu>
               </menus>
             </MenuBar>
+            <HBox prefHeight="29.0" prefWidth="628.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#createFile" prefHeight="23.0" prefWidth="55.0" text="New" />
+                  <Pane prefHeight="23.0" prefWidth="10.0" />
+                  <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="55.0" text="Delete" />
+                  <TextField fx:id="position_output" prefHeight="6.0" prefWidth="456.0" />
+                  <Button layoutX="75.0" layoutY="10.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="55.0" text="Apply" />
+               </children>
+            </HBox>
             <HBox prefHeight="353.0" prefWidth="628.0">
                <children>
-                  <TreeView fx:id="directory_content" prefHeight="347.0" prefWidth="221.0" />
+                  <TreeView fx:id="directory_content" onMouseClicked="#file_select" prefHeight="347.0" prefWidth="221.0" />
                   <TextArea fx:id="file_content" prefHeight="347.0" prefWidth="428.0" />
                </children>
             </HBox>
          </children>
       </VBox>
+      <TextField fx:id="system_info" layoutY="372.0" prefHeight="23.0" prefWidth="628.0" />
    </children>
 </AnchorPane>

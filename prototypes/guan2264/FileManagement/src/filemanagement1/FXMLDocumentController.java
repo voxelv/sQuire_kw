@@ -14,9 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.TreeItem;
-
+import javafx.scene.input.MouseEvent;
+import java.lang.StringBuilder;
 
 
 /**
@@ -28,19 +30,70 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Label label;
     @FXML TextArea file_content;
     @FXML TreeView<String> directory_content;
-    
+    @FXML TextField system_info;
+    @FXML TextField position_output;
+
     @FXML
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
         file_content.setText("Hello World!");
 
     }
+    @FXML
+    private void file_select(MouseEvent mouse){
+        if(mouse.getClickCount() == 2){
+            TreeItem<String> item = directory_content.getSelectionModel().getSelectedItem();
+//            url.setText(item.getValue());
+            position_output.setText(getCurrPosition(item));
+            
+        }
+    }
     
+    
+    private String getCurrPosition(TreeItem<String> file){
+        
+        StringBuilder currPosition = new StringBuilder(homePosition);
+        printpath(file, currPosition);
+       // currPosition = printpath(file,currPosition);
+
+        System.out.println(currPosition); 
+        return currPosition.toString();
+    }
+    
+    
+    private StringBuilder printpath(TreeItem<String> file, StringBuilder temp){
+        if(file.getParent().getParent()!= null){
+            printpath(file.getParent(), temp);
+        }
+        temp.append("/");
+        temp.append(file.getValue().toString());
+        return temp;
+    }
+    
+    @FXML
+    private void createFile(){
+        //System.out.println(url.getText());
+    
+    }
+    
+    
+    
+    
+    
+    private String homeDirectory;
+    private String homePosition;
+
+    @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         String desktop = System.getProperty ("user.home");
-        File currentDir = new File("C:\\Users\\Feng\\Documents\\uWebKit temp2");
+//        File home = new File("C:\\Users\\Feng\\Documents\\uWebKit temp2");
+        File home = new File(desktop + "/desktop");
+        File currentDir = home;
+        homePosition = home.getPath();
+        homeDirectory = home.getName().toString();
         findFiles(currentDir,null, null);
+        position_output.setText(homeDirectory);
     }    
     public void findFiles(File dir, TreeItem<File> parent, TreeItem<String> parentt){
         TreeItem<String> fileName = new TreeItem<>(dir.getName());
