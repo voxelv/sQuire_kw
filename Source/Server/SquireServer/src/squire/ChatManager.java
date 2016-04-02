@@ -7,7 +7,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class ChatManager {
-	DBConnector dbc;
+	private DBConnector dbc;
+	private int userID;
 	
 	public ChatManager() {
 		try {
@@ -19,61 +20,148 @@ public class ChatManager {
 
         try {
             dbc.setDatabase(dbc.dbName);
-            //dbc.insertUser("Jeff");
-            //dbc.insertChannel("Channel1");
-            //dbc.insertSubscription(1, 1, ts);
-            //dbc.insertMessage(1, 1, "Hello world", ts);
         } catch (SQLException e) {
             DBConnector.printSQLException(e);
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
-        
-        
-        
 //        dbc.closeConnection();
-		
 	}
 	
 	/**
-	 * Unsubscribe a user from a channel
+	 * void setUserID (int userID)
+	 * Set the userID when the user logs in
 	 * @param userID
-	 * @param channelID
-	 * @return JSONArray - list of channels still subscribed to
-	 * @throws SQLException 
 	 */
-	public JSONArray leaveChannel(int userID, int channelID) throws SQLException {
-		String query = "delete from Subscriptions where userID=? and channelID=?";
+	public void setUserID(int userID)
+	{
+		this.userID = userID;
+	}
+	
+	/**
+	 * Unsubscribe user from a channel
+	 * @param String channelName
+	 * @return JSONArray - list of channels still subscribed to
+	 */
+	public JSONArray leaveChannel(String channelName)
+	{
+		
+		String query = "Delete `sub` "
+				+ "FROM"
+					+ "`Subscriptions` `sub` "
+				+ "JOIN "
+					+ "`Channels` `chan` "
+				+ "ON "
+					+ "`chan`.`channelID` = `sub`.`channelID` "
+				+ "WHERE "
+					+ "`chan`.`channelName` = ? AND "
+					+ "`Subscriptions`.`userID` = ?";
+		
 		String[] values = new String[2];
-		values[0] = String.valueOf(userID);
+		values[0] = channelName;
+		values[1] = String.valueOf(this.userID);
+		
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		JSONArray channelList = this.getChannels();
+		
+		return channelList;
+	}
+	
+	/**
+	 * Unsubscribe user from a channel
+	 * @param int channelID
+	 * @return JSONArray - list of channels still subscribed to
+	 */
+	public JSONArray leaveChannel(int channelID) 
+	{
+		String query = "DELETE from `Subscriptions` where `userID` = ? and `channelID` = ?";
+		String[] values = new String[2];
+		values[0] = String.valueOf(this.userID);
 		values[1] = String.valueOf(channelID);
 		
-		this.dbc.query(query, values);
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		JSONArray channelList = this.getChannels();
+		
+		return channelList;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public JSONArray getChannels()
+	{
+		String query =	"select "
+						+ "`Channels`.`channelID`, "
+						+ "`Channels`.`channelName`  "
+					+ "from "
+						+ "`Channels`, "
+						+ "`Subscriptions` "
+					+ "where "
+						+ "`Subscriptions`.`channelID` = `Channels`.`channelID` AND "
+						+ "`Subscriptions`.`userID` = ?";
+		
+		String[] values = new String[1];
+		values[0] = String.valueOf(this.userID);
 		
 		JSONArray channelList = new JSONArray();
-		String chan1 = "testChannel1";
-		String chan2 = "testChannel2";
-		channelList.add(chan1);
-		channelList.add(chan2);
+		try {
+			channelList = this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return channelList;
+	}
+	
+	
+	/**
+	 * Join channel by name
+	 * @param channelName
+	 * @return JSONArray - list of channels still subscribed to
+	 */
+	public JSONArray joinChannel(String channelName)
+	{
+		String query = "Insert into "
+					+ "Subscriptions (channelID, userID) "
+						+ "select "
+							+ "channelID, "
+							+ "? "		// userID
+						+ "from "
+							+ "Channels "
+						+ "where "
+							+ "channelName = ?";
+		
+		String[] values = new String[2];
+		values[0] = String.valueOf(this.userID);
+		values[1] = channelName;
+		JSONArray channelList = new JSONArray();
 		
 		return channelList;
 	}
 	
 	/**
 	 * Subscribe a user to a channel
-	 * @param userID
 	 * @param channelID
 	 * @return JSONArray - list of channels user is subscribed to
 	 */
-	public JSONArray joinChannel(int userID, int channelID) {
+	public JSONArray joinChannel(int channelID) {
 		String query = "insert into Subscriptions (channelID, userID, joinTime) values (?, ?, ?)";
 		
 		JSONArray channelList = new JSONArray();
-		String chan1 = "testChannel1";
-		String chan2 = "testChannel2";
-		channelList.add(chan1);
-		channelList.add(chan2);
 		
 		return channelList;
 	}
@@ -85,12 +173,12 @@ public class ChatManager {
 	 * @param channelID
 	 * @throws SQLException 
 	 */
-	public void addMessage(String userID, String message, String channelID) throws SQLException {
+	public void addMessage(String message, String channelID) throws SQLException {
 		
 		String query = "insert into Messages (fromID, channelID, messageText) values (?, ?, ?)";
 		
 		String[] values = new String[3];
-		values[0] = userID;
+		values[0] = String.valueOf(this.userID);
 		values[1] = channelID;
 		values[2] = message;
 		
@@ -99,10 +187,10 @@ public class ChatManager {
 	
 	/**
 	 * Get all messages for a user since a given time
-	 * @param userID
-	 * @param lastMsgTime
+	 * @param lastMID - last Message ID
 	 * @return	JSONArray array [
 	 * 				object {
+	 * 					"MID": <Message ID>
 	 * 					"time": <time>
 	 * 					"text": <text>
 	 * 					"channelID": <channelID>
@@ -114,17 +202,10 @@ public class ChatManager {
 	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONArray getMessages(String userID, String lastMID) throws SQLException {
+	public JSONArray getMessages(String lastMID) throws SQLException {
 		String query;
 		String[] values;
 		JSONArray out;
-//		JSONArray time;
-		
-//		query = "select now()";
-//		values = new String[0];
-//		time = this.dbc.query(query, values);
-//
-//		JSONObject timeObj = (JSONObject) time.get(0);
 		
 		query = "select "
 						+ "`Messages`.`MID`, "
@@ -150,7 +231,7 @@ public class ChatManager {
 						+ "`Messages`.`timeSent` ASC;";
 		
 		values = new String[2];
-		values[0] = userID;
+		values[0] = String.valueOf(this.userID);
 		values[1] = lastMID;
 		
 		out = this.dbc.query(query, values);

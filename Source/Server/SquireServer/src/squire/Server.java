@@ -13,7 +13,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Server extends Thread{
+
+
+/**
+ * @author Grant Wade
+ * 
+ */
+public class Server{
 	public static void main(String[] args) throws IOException {
 		System.out.println("Server started.");
         int clientNumber = 0;
@@ -34,6 +40,7 @@ public class Server extends Thread{
         private Socket socket;
         private int clientNumber;
         private ChatManager chatManager;
+        private int userID = 0;
 
         public ServerThread(Socket socket, int clientNumber) {
             this.socket = socket;
@@ -41,6 +48,8 @@ public class Server extends Thread{
             log("New connection with client# " + clientNumber + " at " + socket);
             
             chatManager = new ChatManager();
+            
+            chatManager.setUserID(this.userID);
         }
         
         
@@ -118,46 +127,56 @@ public class Server extends Thread{
         {
         	String output = null;
         	
-        	/* CHAT FUNCTIONS */
-        	if (category.toUpperCase().compareTo("CHAT") == 0)
+        	/************************** CHAT FUNCTIONS **************************/
+        	if (category.compareToIgnoreCase("CHAT") == 0 && this.userID > 0)
         	{
-        		if (action.toUpperCase().compareTo("GETMESSAGES") == 0)
+        		if (action.compareToIgnoreCase("GETMESSAGES") == 0)
         		{
         			String lastMID = (String) params.get("lastMID");
-        			String userID = (String) params.get("userID");
         			JSONArray t;
-        			t = chatManager.getMessages(userID, lastMID);
+        			t = chatManager.getMessages(lastMID);
         			output = t.toJSONString();
         		}
-        		else if (action.toUpperCase().compareTo("LEAVECHANNEL") == 0)
+        		else if (action.compareToIgnoreCase("LEAVECHANNEL") == 0)
         		{
         			JSONArray t;
-        			t = chatManager.leaveChannel(0, 0);
+        			t = chatManager.leaveChannel(0);
         			output = t.toJSONString();
         		}
-        		else if (action.toUpperCase().compareTo("JOINCHANNEL") == 0)
+        		else if (action.compareToIgnoreCase("JOINCHANNEL") == 0)
         		{
         			JSONArray t;
-        			t = chatManager.joinChannel(0, 0);
+        			t = chatManager.joinChannel(0);
         			output = t.toJSONString();
         		}
-        		else if (action.toUpperCase().compareTo("ADDMESSAGE") == 0)
+        		else if (action.compareToIgnoreCase("ADDMESSAGE") == 0)
         		{
-        			String userID = (String) params.get("userID");
         			String msg = (String) params.get("msg");
         			String channelID = (String) params.get("channelID");
         			
-        			chatManager.addMessage(userID, msg, channelID);
+        			chatManager.addMessage(msg, channelID);
         		}
-        		else if (action.toUpperCase().compareTo("QUIT") == 0 || action.toUpperCase().compareTo("EXIT") == 0)
+        		else if (action.compareToIgnoreCase("QUIT") == 0 || action.compareToIgnoreCase("EXIT") == 0)
         		{
         			System.exit(0);
         		}
-        			
-        		
         	}
-        	/* FILE FUNCTIONS */
-        	else if (category.toUpperCase().compareTo("FILE") == 0)
+        	
+        	
+        	/************************** LOGIN FUNCTIONS **************************/
+        	else if (category.compareToIgnoreCase("LOGIN") == 0)
+        	{
+        		if (action.compareToIgnoreCase("Login") == 0)
+        		{
+        			// login, change the userID attached to this thread, and the chat manager
+        			this.userID = 1;	// Temp
+        			chatManager.setUserID(this.userID);
+        		}
+        	}
+        	
+        	
+        	/************************** FILE FUNCTIONS **************************/
+        	else if (category.compareToIgnoreCase("FILE") == 0)
         	{
         		
         	}
@@ -170,4 +189,102 @@ public class Server extends Thread{
         	return output;
         }
 	}
+	
 }
+
+/*
+ * @hide @startuml
+hide circle
+hide empty members
+
+Title <b>Server Classes</b>
+
+class "Client" as sq 
+class "Server" as sqs{
+	-AccountManager
+	-ProjectManager
+	-SessionManager
+	-ChatManager
+	+AccountManagerMethods()
+	+ProjectManagerMethods()
+	+SessionManagerMethods()
+	+ChatManagerMethods(GUIDs)
+	}
+	class "AccountManager" as sqs_ua_m{
+		-AccountList
+		+CreateAccount(Name, Email)
+		+Login(LoginInfo)
+		+Logout(UserID)
+		+GetUserDetails(Name)
+		+SetUserDetails(UserUpdateInfo)
+		}
+		class "UserAccount" as sqs_ua {
+			+first_name
+			+last_name
+			+user_name
+			-password
+			+register()
+			+login()
+			+logout()
+			}
+	class "ProjectManager" as sqs_pr_m{
+		-ProjectList
+		+CreateProject(Name)
+		+OpenProject(Name)
+		+DeleteProject(Name)
+		+GetProject(Name)
+		+GetProject(ProjectID)
+		+UpdateProject(ProjectUpdateInfo)
+		}
+		class "Project" as sqs_pr{
+			-ProjectID
+			-ProjectDescription
+			-ProjectSettings
+			-FileIDs
+			-OwnerUserIDs
+			+GetProjectID()
+			+GetProjectDescription()
+			+GetProjectSettings()
+			+GetProjectFiles()
+			+GetProjectOwners()
+			+UpdateProject(Key,Value)
+			+UpdateFile(FileUpdateInfo)
+			}
+			class "File" as sqs_fi{
+				-FileID
+				-FileName
+				-FileDescription
+				-FileContent
+				+GetFileInfo()
+				+UpdateFile(Key,Value)
+				}
+
+	class "ChatManager" as sqs_ch_m{
+		Uses DBConnector to manipulate the database;
+		manages Chat Channels, Chat Messages, etc
+		==
+		-DBConnector dbc
+		-int userID
+		__
+		+setUserID (int userID) (void)
+		+addMessage (String message, String channelID) (void)
+		+leaveChannel (String channelName) (JSONArray)
+		+leaveChannel (int channelID) (JSONArray)
+		+joinChannel (String channelName) (JSONArray)
+		+joinChannel (int channelID) (JSONArray)
+		+getMessages(String lastMID) (JSONArray)
+	}
+	
+sq -right- sqs : <<TCP>>
+
+	sqs *-- sqs_pr_m 
+		sqs_pr_m "1" -- "*" sqs_pr : Project List
+			sqs_pr "1" -- "*" sqs_fi : File List
+	sqs *-- sqs_ua_m 
+		sqs_ua_m "1" -- "*" sqs_ua : User Account List
+	sqs *-- sqs_ch_m
+
+
+
+@enduml
+ */
