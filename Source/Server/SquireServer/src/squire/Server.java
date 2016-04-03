@@ -139,14 +139,18 @@ public class Server{
         		}
         		else if (action.compareToIgnoreCase("LEAVECHANNEL") == 0)
         		{
+        			String channel = (String) params.get("channel");
+        			
         			JSONArray t;
-        			t = chatManager.leaveChannel(0);
+        			t = chatManager.leaveChannel(channel);
         			output = t.toJSONString();
         		}
         		else if (action.compareToIgnoreCase("JOINCHANNEL") == 0)
         		{
+        			String channel = (String) params.get("channel");
+        			
         			JSONArray t;
-        			t = chatManager.joinChannel(0);
+        			t = chatManager.joinChannel(channel);
         			output = t.toJSONString();
         		}
         		else if (action.compareToIgnoreCase("ADDMESSAGE") == 0)
