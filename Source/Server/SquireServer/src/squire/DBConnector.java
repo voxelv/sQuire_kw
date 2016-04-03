@@ -276,6 +276,8 @@ public class DBConnector {
     
 	public JSONArray query(String statementString, String[] statementArgs)
 		throws SQLException {
+//		System.out.println("Query: "+statementString);
+		
 		PreparedStatement statement = null;
 		ResultSet ret = null;
 		JSONArray output = new JSONArray();

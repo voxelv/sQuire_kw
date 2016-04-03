@@ -125,12 +125,12 @@ public class Server{
         
         public String runAction(String category, String action, JSONObject params) throws SQLException
         {
-//        	System.out.println("Cat: '"+category+"' Action: '"+action+"' params: '"+params+"'");
         	String output = null;
         	
         	/************************** CHAT FUNCTIONS **************************/
         	if (category.compareToIgnoreCase("CHAT") == 0 && this.userID > 0)
         	{
+        		
         		if (action.compareToIgnoreCase("GETMESSAGES") == 0)
         		{
         			String lastMID = (String) params.get("lastMID");
@@ -192,6 +192,16 @@ public class Server{
         	{
         		
         	}
+        	
+        	/************************** SERVER FUNCTIONS **************************/
+        	else if (category.compareToIgnoreCase("SERVER") == 0)
+        	{
+        		if (action.compareToIgnoreCase("quit") == 0)
+        		{
+        			System.exit(0);
+        		}
+        	}
+        	
         	/* UNKNOWN/NO CATEGORY */
         	else
         	{

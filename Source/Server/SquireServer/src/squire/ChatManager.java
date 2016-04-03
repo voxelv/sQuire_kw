@@ -55,7 +55,7 @@ public class ChatManager {
 					+ "`chan`.`channelID` = `sub`.`channelID` "
 				+ "WHERE "
 					+ "`chan`.`channelName` = ? AND "
-					+ "`Subscriptions`.`userID` = ?";
+					+ "`sub`.`userID` = ?";
 		
 		String[] values = new String[2];
 		values[0] = channelName;
@@ -135,6 +135,7 @@ public class ChatManager {
 	 */
 	public JSONArray joinChannel(String channelName)
 	{
+		System.out.println("Joining Channel: '"+channelName +"'");
 		String query = "Insert into "
 					+ "Subscriptions (channelID, userID) "
 						+ "select "
@@ -145,9 +146,19 @@ public class ChatManager {
 						+ "where "
 							+ "channelName = ?";
 		
+//		System.out.println("Query: '"+query + "'");
+		
 		String[] values = new String[2];
 		values[0] = String.valueOf(this.userID);
 		values[1] = channelName;
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		System.out.println("0:" + values[0] + "; 1: "+values[1]);
+		
 		JSONArray channelList = new JSONArray();
 		
 		return channelList;
