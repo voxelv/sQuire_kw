@@ -125,6 +125,7 @@ public class Server{
         
         public String runAction(String category, String action, JSONObject params) throws SQLException
         {
+//        	System.out.println("Cat: '"+category+"' Action: '"+action+"' params: '"+params+"'");
         	String output = null;
         	
         	/************************** CHAT FUNCTIONS **************************/
@@ -168,13 +169,20 @@ public class Server{
         	
         	
         	/************************** LOGIN FUNCTIONS **************************/
-        	else if (category.compareToIgnoreCase("LOGIN") == 0)
+        	else if (category.compareToIgnoreCase("USER") == 0)
         	{
         		if (action.compareToIgnoreCase("Login") == 0)
         		{
         			// login, change the userID attached to this thread, and the chat manager
-        			this.userID = 1;	// Temp
+        			String requestUserID = (String) params.get("userID");
+        			this.userID = Integer.parseInt(requestUserID);	// Temp
+        			
         			chatManager.setUserID(this.userID);
+        			
+        			JSONObject ret = new JSONObject();
+        			ret.put("userID", String.valueOf(this.userID));
+        			
+        			output = ret.toJSONString();
         		}
         	}
         	
@@ -187,7 +195,7 @@ public class Server{
         	/* UNKNOWN/NO CATEGORY */
         	else
         	{
-        		output = new String("No Premade Response");
+        		output = new JSONObject().toJSONString();
         	}
         	
         	return output;
