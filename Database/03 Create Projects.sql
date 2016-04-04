@@ -1,6 +1,13 @@
 
 use squire;
 
+
+create table Projects (
+	PID integer not null primary key auto_increment,
+	pname varchar(30),
+	location varchar(40)
+);
+
 create table PFLines (
 	pflid integer not null primary key auto_increment,
 	nextid integer,
@@ -9,12 +16,6 @@ create table PFLines (
 	timeEdited timestamp,
 	foreign key (lastEditor) references Users(userID),
 	foreign key (nextid) references PFLines(pflid)
-);
-
-create table Projects (
-	PID integer not null primary key auto_increment,
-	pname varchar(30),
-	location varchar(40)
 );
 
 create table PFiles (
