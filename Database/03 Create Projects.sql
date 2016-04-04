@@ -1,6 +1,4 @@
-
 use squire;
-
 
 create table Projects (
 	PID integer not null primary key auto_increment,
@@ -18,14 +16,25 @@ create table PFLines (
 	foreign key (nextid) references PFLines(pflid)
 );
 
+create table PDirs (
+	pdid integer not null primary key auto_increment,
+	pdname varchar(30),
+	pid integer,
+	parentid integer,
+	foreign key (pid) references Projects(PID),
+	foreign key (parentid) references PDirs (parentid)	
+);
+
 create table PFiles (
 	pfid integer not null primary key auto_increment,
     pfname varchar(30),
 	pid integer,
+	pdid integer,
 	pflhead integer,
 	timeCreated timestamp,
     creatorID integer,
 	foreign key (pflhead) references PFLines(pflid),
+	foreign key (pdid) references PDirs(pdis),
 	foreign key (pid) references Projects(PID),
     foreign key (creatorID) references Users(userID)
 );
