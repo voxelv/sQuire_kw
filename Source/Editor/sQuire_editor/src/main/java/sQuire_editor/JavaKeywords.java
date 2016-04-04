@@ -1,21 +1,20 @@
-
 package sQuire_editor;
-//package org.fxmisc.richtext.demo;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.StyleSpans;
-import org.fxmisc.richtext.StyleSpansBuilder;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
 
 public class JavaKeywords extends Application {
 
@@ -80,6 +79,7 @@ public class JavaKeywords extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+    	System.out.println("STARTING");
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
@@ -88,11 +88,14 @@ public class JavaKeywords extends Application {
         });
         codeArea.replaceText(0, 0, sampleCode);
 
-        Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
-        scene.getStylesheets().add(JavaKeywordsAsync.class.getResource("java-keywords.css").toExternalForm());
+        System.out.println("codeArea Setup");
+        Scene scene = new Scene(new StackPane(codeArea), 600, 400);
+        scene.getStylesheets().add(JavaKeywords.class.getResource("resources/java-keywords.css").toExternalForm());
+        System.out.println("show");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Java Keywords Demo");
         primaryStage.show();
+      
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
