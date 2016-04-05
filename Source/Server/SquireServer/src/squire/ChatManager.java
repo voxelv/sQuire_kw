@@ -45,7 +45,7 @@ public class ChatManager {
 	 */
 	public JSONArray leaveChannel(String channelName)
 	{
-		
+//		System.out.println("Leaving Channel: "+channelName);
 		String query = "Delete `sub` "
 				+ "FROM"
 					+ "`Subscriptions` `sub` "
@@ -80,6 +80,7 @@ public class ChatManager {
 	 */
 	public JSONArray leaveChannel(int channelID) 
 	{
+		
 		String query = "DELETE from `Subscriptions` where `userID` = ? and `channelID` = ?";
 		String[] values = new String[2];
 		values[0] = String.valueOf(this.userID);
@@ -105,7 +106,8 @@ public class ChatManager {
 	{
 		String query =	"select "
 						+ "`Channels`.`channelID`, "
-						+ "`Channels`.`channelName`  "
+						+ "`Channels`.`channelName`, "
+						+ "`Subscriptions`.`joinTime` "
 					+ "from "
 						+ "`Channels`, "
 						+ "`Subscriptions` "
@@ -135,31 +137,41 @@ public class ChatManager {
 	 */
 	public JSONArray joinChannel(String channelName)
 	{
-		System.out.println("Joining Channel: '"+channelName +"'");
-		String query = "Insert into "
+//		System.out.println("Joining Channel: '"+channelName +"'");
+		channelName = channelName.substring(0, 1).toUpperCase() + channelName.substring(1);
+		String query = "INSERT IGNORE INTO Channels (channelName) values (?)";
+		String[] values1 = new String[1];
+		values1[0] = channelName;
+		try {
+			this.dbc.query(query, values1);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		query = "INSERT IGNORE INTO "
 					+ "Subscriptions (channelID, userID) "
-						+ "select "
+						+ "SELECT "
 							+ "channelID, "
 							+ "? "		// userID
-						+ "from "
+						+ "FROM "
 							+ "Channels "
-						+ "where "
+						+ "WHERE "
 							+ "channelName = ?";
 		
-//		System.out.println("Query: '"+query + "'");
+		String[] values2 = new String[2];
+		values2[0] = String.valueOf(this.userID);
+		values2[1] = channelName;
 		
-		String[] values = new String[2];
-		values[0] = String.valueOf(this.userID);
-		values[1] = channelName;
 		try {
-			this.dbc.query(query, values);
+			this.dbc.query(query, values2);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 //		System.out.println("0:" + values[0] + "; 1: "+values[1]);
 		
-		JSONArray channelList = new JSONArray();
+		JSONArray channelList = this.getChannels();
 		
 		return channelList;
 	}
@@ -184,16 +196,38 @@ public class ChatManager {
 	 * @param channelID
 	 * @throws SQLException 
 	 */
-	public void addMessage(String message, String channelID) throws SQLException {
+	public void addMessage(String message, String channelID) {
 		
-		String query = "insert into Messages (fromID, channelID, messageText) values (?, ?, ?)";
+		String query = "INSERT INTO Messages (fromID, channelID, messageText) VALUES (?, ?, ?)";
 		
 		String[] values = new String[3];
 		values[0] = String.valueOf(this.userID);
 		values[1] = channelID;
 		values[2] = message;
 		
-		this.dbc.query(query, values);
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Run just after login. Will reset the join time of channels
+	 */
+	public void onLogin()
+	{
+		String query = "UPDATE Subscriptions SET joinTime=CURRENT_TIMESTAMP where userID=?";
+		String[] values = new String[1];
+		values[0] = String.valueOf(this.userID);
+		
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -246,7 +280,6 @@ public class ChatManager {
 		values[1] = lastMID;
 		
 		out = this.dbc.query(query, values);
-//		out.add(0, timeObj);
 		
 		return out;
 	}

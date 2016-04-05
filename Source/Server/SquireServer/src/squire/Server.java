@@ -130,7 +130,11 @@ public class Server{
         	/************************** CHAT FUNCTIONS **************************/
         	if (category.compareToIgnoreCase("CHAT") == 0 && this.userID > 0)
         	{
-        		
+        		if (action.compareToIgnoreCase("GETCHANNELS") == 0)
+        		{
+        			JSONArray t = chatManager.getChannels();
+        			output = t.toJSONString();
+        		}
         		if (action.compareToIgnoreCase("GETMESSAGES") == 0)
         		{
         			String lastMID = (String) params.get("lastMID");
@@ -178,6 +182,8 @@ public class Server{
         			this.userID = Integer.parseInt(requestUserID);	// Temp
         			
         			chatManager.setUserID(this.userID);
+        			
+        			chatManager.onLogin();
         			
         			JSONObject ret = new JSONObject();
         			ret.put("userID", String.valueOf(this.userID));
