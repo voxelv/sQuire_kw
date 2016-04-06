@@ -99,7 +99,7 @@ public class JavaKeywords extends Application {
         });
         
         codeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	System.out.println("Caret at: " + newvalue);
+        	System.out.println("Caret Line: " + codeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
         });
         
         codeArea.currentParagraphProperty().addListener(change ->{
