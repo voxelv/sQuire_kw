@@ -8,7 +8,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -27,9 +26,9 @@ public class GUIProto {
         frame.getContentPane().add(dataField, "North");
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         
-//        server = new ServerConnection("squireraspserver.ddns.net", 9898);		// From Anywhere
+        server = new ServerConnection("squireraspserver.ddns.net", 9898);		// From Anywhere
 //        server = new ServerConnection("192.168.0.249", 9898);					// From same network as raspberry pi server
-        this.server = new ServerConnection("localhost", 9898);					// From same computer as server program
+//        this.server = new ServerConnection("localhost", 9898);					// From same computer as server program
     }
     
     public void fakeLogin()
@@ -42,7 +41,6 @@ public class GUIProto {
     	
         String result = (String) server.sendSingleRequest("User", "Login", params);
     	
-        
         JSONObject loginObj = null;
 		try {
 //			System.out.println(stringResult);

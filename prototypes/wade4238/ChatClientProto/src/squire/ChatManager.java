@@ -61,19 +61,23 @@ public class ChatManager {
     	updateChannels( manualHelper.initJoinChannels() );
     }
     
-    public String parseMessage(JSONObject msg)
+    public Message parseMessage(JSONObject msg)
     {
 //    	System.out.println(msg);
     	String output = new String();
     	Chatroom room = this.channelByServerID.get(Integer.parseInt( (String)msg.get("channelID") ));
     	
-    	output += (String) msg.get("timeSent") + " ";
-    	output += "[" + (String) msg.get("channelName") + "]";
-    	output += "[" + room.clientID + "] ";
-    	output += (String) msg.get("userName") + ": ";
-    	output += (String) msg.get("messageText");
+    	Message newMsg = new Message();
+    	newMsg.channelName = (String) msg.get("channelName");
+    	newMsg.fromUserID = Integer.parseInt( (String)msg.get("channelID") );
+    	newMsg.fromUsername = (String) msg.get("userName");
+    	newMsg.MID = Integer.parseInt( (String) msg.get("MID") );
+    	newMsg.serverChannelID = Integer.parseInt( (String)msg.get("channelID") );
+    	newMsg.text = (String) msg.get("messageText");
+    	newMsg.time = (String) msg.get("timeSent");
+    	newMsg.clientChannelID = room.clientID;
     	
-    	return output;
+    	return newMsg;
     }
     
     public void addMessageToGUI(String outString)
@@ -432,17 +436,8 @@ public class ChatManager {
             params.put("lastMID", this.manager.lastMID);
             params.put("userID", userID);
         	
-            // sendSingleRequest(category, actioncommand, param object)
-//            response = server.sendSingleRequest("Chat", "getMessages", params);
             String stringResult = (String) server.sendSingleRequest("Chat", "getMessages", params);
             /**************************** END OF REQUEST ****************************/
-            
-//            responseObj = (JSONObject) response;					// create the JSON response object
-            
-//            JSONArray msgArray = new JSONArray();
-            
-//            String stringResult = (String) responseObj.get("result");
-//            System.out.println(stringResult);
             
             JSONArray msgArray = null;
     		try {
@@ -456,7 +451,10 @@ public class ChatManager {
             for (int i = 0; i < msgArray.size(); i++)
             {
             	JSONObject msg = (JSONObject) msgArray.get(i);
-            	String outString = this.manager.parseMessage(msg);
+            	Message msgObj = this.manager.parseMessage(msg);
+            	this.manager.channelByServerID.get( msgObj.serverChannelID ).addMsg(msgObj);
+            	
+            	String outString = msgObj.getPrintString();
 
             	this.manager.addMessageToGUI(outString);
             	
@@ -472,7 +470,7 @@ public class ChatManager {
     	private int serverID;
     	private int clientID;
     	private String joinTime;
-    	private JSONArray msgList;
+    	private ArrayList<Message> msgList;
     	public Boolean found;
     	
     	public Chatroom(String name, int ID, String joinTime)
@@ -495,21 +493,36 @@ public class ChatManager {
     		msgList.add(m);
     	}
     	
-    	public JSONArray getMsgs()
+    	public ArrayList<Message> getMsgs()
     	{
     		return this.msgList;
     	}
     	
-    	private class Message {
-        	public int MID;
-        	public String time;
-        	public String text;
-        	public int serverChannelID;
-        	public String channelName;
-        	public int fromUserID;
-        	public String fromUsername;
-        	
-        }
+    }
+    
+    private class Message {
+    	public int MID = -1;
+    	public String time = new String();
+    	public String text = new String();
+    	public int serverChannelID = -1;
+    	public int clientChannelID = -1;
+    	public String channelName = new String();
+    	public int fromUserID = -1;
+    	public String fromUsername = new String();
+    	
+    	
+    	public String getPrintString()
+    	{
+    		String out = new String();
+    		
+    		out += "[" + clientChannelID + "]";
+    		out += "[" + channelName + "] ";
+    		out += "[" + time + "] ";
+    		out += "[" + fromUsername + "]: ";
+    		out += text;
+    		
+    		return out;
+    	}
     }
     
     

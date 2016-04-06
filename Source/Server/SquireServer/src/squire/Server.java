@@ -64,8 +64,8 @@ public class Server{
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
                 // Send a welcome message to the client.
-                out.println("Registered Client# " + clientNumber + ".");
-//                out.println("Enter a line with only a period to quit\n");
+                out.println("Registered as Client# " + clientNumber + ".");
+                out.println("\n");
 
                 // Get messages from the client, line by line; return them
                 // capitalized
