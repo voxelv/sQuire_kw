@@ -12,11 +12,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-//import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
+
+import com.sun.javafx.scene.control.skin.VirtualScrollBar;
 
 public class JavaKeywords extends Application {
 
@@ -121,15 +123,12 @@ public class JavaKeywords extends Application {
     		}
         });
         
-        StackPane myPane = new StackPane();
-        myPane.getChildren().addAll(codeArea);
-        Scene scene = new Scene(myPane, 600, 400);
+        Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
         scene.getStylesheets().add(JavaKeywords.class.getResource("resources/java-keywords.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Java Keywords Demo");
         primaryStage.show();
         codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
-        computeHighlighting(codeArea.getText());
       
     }
 
