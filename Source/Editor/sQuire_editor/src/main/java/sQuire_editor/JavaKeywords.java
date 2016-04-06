@@ -128,6 +128,7 @@ public class JavaKeywords extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Java Keywords Demo");
         primaryStage.show();
+        codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
         computeHighlighting(codeArea.getText());
       
     }
