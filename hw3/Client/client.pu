@@ -24,12 +24,12 @@ class "ChatManager" as sq_chatmgr
 class "Server" as sq_server
 class "GUI" as sq_gui
 
-sq_c o-left- sq_server : Communicates With\nServer Over TCP
+sq_c -left- sq_server : Communicates With\nServer Over TCP
 
-sq_c *-- sq_projmgr :  Manage Projects
-sq_c *-- sq_acntmgr : Manage Account
-sq_c *-- sq_chatmgr : Manage Chat
-sq_c *-- sq_gui : Displays
+sq_c *-- sq_projmgr
+sq_c *-- sq_acntmgr
+sq_c *-- sq_chatmgr
+sq_c *-- sq_gui
 
 
 @enduml
