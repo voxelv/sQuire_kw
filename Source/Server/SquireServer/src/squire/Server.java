@@ -64,8 +64,8 @@ public class Server{
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
                 // Send a welcome message to the client.
-                out.println("Hello, you are client #" + clientNumber + ".");
-                out.println("Enter a line with only a period to quit\n");
+                out.println("Registered Client# " + clientNumber + ".");
+//                out.println("Enter a line with only a period to quit\n");
 
                 // Get messages from the client, line by line; return them
                 // capitalized
@@ -125,6 +125,7 @@ public class Server{
         
         public String runAction(String category, String action, JSONObject params) throws SQLException
         {
+//        	System.out.println("Cat: " + category + "; action: "+action + ";Params: "+params);
         	String output = null;
         	
         	/************************** CHAT FUNCTIONS **************************/

@@ -2,6 +2,8 @@ package squire;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.io.*;
 
 import javax.swing.JTextArea;
@@ -21,19 +23,33 @@ public class ChatManager {
     private ChatHelper autoHelper;
     private ChatHelper manualHelper;
     private int lastChannel = -1;
-    private JSONArray channels;
-    private JSONObject channelsObj;
-    private JSONArray channelCache;
+    
+    private Boolean helperBusy;
+    
+    private HashMap<Integer, Chatroom> channelByLocalID;
+    private HashMap<Integer, Chatroom> channelByServerID;
+    private ArrayList<Chatroom> channelList;
+    
+    private HashMap<Integer, Chatroom> cacheChannelByLocalID;
+    private HashMap<Integer, Chatroom> cacheChannelByServerID;
+    
     private JTextArea messageArea;
     
     public ChatManager(JTextField dataField, JTextArea messageArea, ServerConnection server) 
     {
+    	helperBusy = false;
+    	
+    	channelByLocalID = new HashMap<Integer, Chatroom>();
+    	channelByServerID = new HashMap<Integer, Chatroom>();
+    	channelList = new ArrayList<Chatroom>();
+    	
+    	cacheChannelByLocalID = new HashMap<Integer, Chatroom>();
+    	cacheChannelByServerID = new HashMap<Integer, Chatroom>();
+    	
+    	
     	userID = "1";	// temp
     	lastMID = "0";	// permanent
     	this.server = server;
-    	channels = new JSONArray();
-    	channelsObj = new JSONObject();
-    	channelCache = new JSONArray();
     	
     	this.messageArea = messageArea;
     	
@@ -41,16 +57,19 @@ public class ChatManager {
     	autoHelper.start();
     	
     	manualHelper = new ChatHelper(this, server, userID, messageArea, dataField);
+    	
     	updateChannels( manualHelper.initJoinChannels() );
     }
     
     public String parseMessage(JSONObject msg)
     {
-    	System.out.println(msg);
+//    	System.out.println(msg);
     	String output = new String();
+    	Chatroom room = this.channelByServerID.get(Integer.parseInt( (String)msg.get("channelID") ));
     	
     	output += (String) msg.get("timeSent") + " ";
-    	output += "[" + (String) msg.get("channelName") + "] ";
+    	output += "[" + (String) msg.get("channelName") + "]";
+    	output += "[" + room.clientID + "] ";
     	output += (String) msg.get("userName") + ": ";
     	output += (String) msg.get("messageText");
     	
@@ -64,7 +83,6 @@ public class ChatManager {
     
     public void enterText(String enteredText)
     {
-//    	System.out.println("Received: "+enteredText);
     	// System command
     	if (enteredText.substring(0, 1).compareTo("/") == 0)
     	{
@@ -79,14 +97,14 @@ public class ChatManager {
     		else
     			command = enteredText.substring(1);
     		
-    		System.out.println("Got system command: '" + command + "'; arg: '" + arg + "'");
+//    		System.out.println("Got system command: '" + command + "'; arg: '" + arg + "'");
     		
     		try {
     			// Channel number
-    			int channelID = Integer.parseInt(command);
-    			this.lastChannel = channelID;
+    			int localChannelID = Integer.parseInt(command);
+    			this.lastChannel = localChannelID;
     			
-    			addMessage(arg, channelID);
+    			addMessage(arg, localChannelID);
     			
 			} catch (Exception e) {
 				// it's a real system command, not a channel. Do stuff here
@@ -100,8 +118,8 @@ public class ChatManager {
 				}
 				else if (command.compareToIgnoreCase("channels") == 0)
 				{
-					for (int i = 0; i < this.channels.size(); i++)
-						this.addMessageToGUI("Channel: "+ this.channels.get(i));
+					for (int i = 0; i < this.channelList.size(); i++)
+						this.addMessageToGUI("Channel: "+ this.channelList.get(i).getChannelInfo());
 				}
 				else if (command.compareToIgnoreCase("server") == 0)
 				{
@@ -112,79 +130,107 @@ public class ChatManager {
     	else		// plain text for chat
     	{
     		this.addMessage(enteredText, lastChannel);
+    	} 
+    	
+    }
+    
+    /**
+     * Only called internally. Removes references in indexes to channel, alerts user of the change.
+     * @param clientID
+     */
+    private void removeChannelIndex(int clientID)
+    {
+    	Chatroom leavingRoom = this.channelByLocalID.get(clientID); 
+    	String channelName = leavingRoom.name;
+    	int serverID = leavingRoom.serverID;
+    	
+    	this.channelByLocalID.remove(clientID);
+    	this.channelByServerID.remove(serverID);
+    	this.channelList.remove(leavingRoom);
+    	
+    	// Send message to user
+    	this.addMessageToGUI("Left Channel: [" + clientID + "] " + channelName);
+    }
+    
+    /**
+     * Only called internally. Creates the chatroom object, indexes it properly, alerts user of the change.
+     * @param JSONObject channel
+     */
+    private Chatroom addChannelIndex(JSONObject channel)
+    {
+    	String channelName = (String) channel.get("channelName");
+    	int channelID = Integer.parseInt( (String)channel.get("channelID")  );
+    	String joinTime = (String) channel.get("joinTime");
+    	
+    	// If the chatroom already exists, just return
+    	Chatroom room;
+    	if ( (room = this.channelByServerID.get(channelID)) != null)
+    	{
+    		return room;
     	}
     	
+    	room = new Chatroom( channelName, channelID, joinTime);
+    	
+    	this.channelByServerID.put(channelID, room);
+    	
+    	// Find if the chatroom has a cached clientID
+    	int clientID = 0;
+    	Chatroom cachedRoom = this.cacheChannelByServerID.get(channelID);
+    	if (cachedRoom != null)
+    	{
+    		Chatroom roomWithClientID = this.channelByLocalID.get(cachedRoom.clientID);
+    		
+    		// If there aren't any chatrooms using the clientID, use it.
+    		if ( roomWithClientID == null )
+    			clientID = cachedRoom.clientID;
+    	}
+    	
+    	// Search for a new client ID
+    	if (clientID == 0)
+    	{
+    		clientID = 1;
+			
+			while (this.channelByLocalID.get(clientID) != null)
+				clientID++;
+    	}
+    	
+    	room.clientID = clientID;
+    	
+    	this.cacheChannelByServerID.put(channelID, room);
+    	this.cacheChannelByLocalID.put(clientID, room);
+    	
+    	this.channelByServerID.put(channelID, room);
+    	this.channelByLocalID.put(clientID, room);
+    	this.channelList.add(room);
+    	
+    	// Send message to user
+    	this.addMessageToGUI("Joined Channel: [" + clientID + "] " + channelName);
+    	
+    	return room;
     }
     
     public void updateChannels(JSONArray newChannelList)
     {
-    	
-    	if (newChannelList.size() == 0)
-    	{
-    		for (int i = 0; i < this.channels.size(); i++)
-    		{
-    			this.addMessageToGUI("Left Channel: " + this.channels.get(i));
-    		}
-    		this.channels = newChannelList;
-    		return;
-    	}
-    	
+    	// go through the new channels
     	for (int i = 0; i < newChannelList.size(); i++)
     	{
     		JSONObject newChannel = (JSONObject) newChannelList.get(i);
     		
-    		Boolean found = false;
-    		int newChannelID = Integer.parseInt((String) newChannel.get("channelID"));
+    		// Try to join new channel.
+    		Chatroom room = this.addChannelIndex(newChannel);
     		
-    		for (int j = 0; j < this.channels.size(); j++)
-    		{
-    			JSONObject existingChannel = (JSONObject) this.channels.get(j);
-
-    			int existingChannelID = Integer.parseInt((String) existingChannel.get("channelID"));
-    			if (existingChannelID == newChannelID)
-    			{
-    				found = true;
-    				if (existingChannel.get("found") == null)
-    					existingChannel.put("found", true);
-    				break;
-    			}
-    			if (existingChannel.get("found") == null)
-    				existingChannel.put("found", false);
-    		}
-    		
-    		if (found == false)	// didn't find the new channel among old channels, it's a new one. Just joined it
-    		{
-    			this.addMessageToGUI("Joined Channel: " + newChannel);
-    			newChannel.put("found", true);
-    			this.channels.add(newChannel);
-    			
-    			Boolean foundInCache = false;
-    			for (int k = 0; k < this.channelCache.size(); k++)
-    			{
-    				JSONObject t = (JSONObject) this.channelCache.get(k);
-    				if ( Integer.parseInt((String) t.get("channelID")) == Integer.parseInt((String) newChannel.get("channelID")) )
-    					foundInCache = true;
-    			}
-    			if (!foundInCache)
-    				this.channelCache.add(newChannel);
-    		}
+    		room.found = true;
     	}
-    	
     	
     	// Go through existing channels to see if any weren't found in the new list. Leave those channels
-    	for (int i = 0; i < this.channels.size(); i++)
+    	for (int i = 0; i < this.channelList.size(); i++)
     	{
-    		JSONObject chan = (JSONObject) this.channels.get(i);
-    		if (chan.get("found") == null || (Boolean) chan.get("found") == false)	// leave channel announce
-    		{
-    			this.addMessageToGUI("Left Channel: " + chan);
-    			this.channels.remove(i);
-    		}
-    		else
-    			chan.remove("found");
+    		Chatroom room = this.channelList.get(i);
+    		if (!room.found)
+    			this.removeChannelIndex(room.clientID);
+    		room.found = false;
     	}
     	
-    	System.out.println("Cache: " + this.channelCache);
     }
     
     public void sendServerCommand(String command)
@@ -212,7 +258,12 @@ public class ChatManager {
     	manualHelper.updateMessages(messageArea);
     }
     
-    
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /************************* CHATHELPER CLASS****************************************/
     public class ChatHelper extends Thread{
     	private BufferedReader in;
         private PrintWriter out;
@@ -256,7 +307,6 @@ public class ChatManager {
         	
         	/**************************** START OF REQUEST ****************************/
         	params = new JSONObject();		// Create parameter object
-	    	
         	Object response = server.sendSingleRequest("Chat", "GetChannels", params);	// send a single request
             
             /**************************** END OF REQUEST ****************************/
@@ -271,6 +321,7 @@ public class ChatManager {
 				channelList = new JSONArray();
 			}
         	
+			
             return channelList;
         }
         
@@ -286,15 +337,18 @@ public class ChatManager {
             /**************************** END OF REQUEST ****************************/
         }
         
-        public void addMessage(String msg, int channelID)
+        public void addMessage(String msg, int localChannelID)
         {
         	JSONObject params;
+        	
+//        	String channelID = (String) this.manager.channelsObjByLocalID.get(String.valueOf(localChannelID));
+        	int serverChannelID = this.manager.channelByLocalID.get(localChannelID).serverID;
         	
         	/**************************** START OF REQUEST ****************************/
         	params = new JSONObject();		// Create parameter object
 	
             params.put("msg", msg);
-            params.put("channelID", String.valueOf(channelID));
+            params.put("channelID", String.valueOf(serverChannelID) );
         	
 //            System.out.println("Adding message: "+params);
             server.sendSingleRequest("Chat", "addMessage", params);	// send a single request
@@ -361,7 +415,20 @@ public class ChatManager {
         	/**************************** START OF REQUEST ****************************/
             
         	params = new JSONObject();		// Create parameter object
-
+        	
+        	// Prevent concurrent requests for messages from autoHelper and manualHelper by 
+        	// Waiting until the other helper is not busy construct and do the request
+        	while (this.manager.helperBusy)
+        	{
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        	
+        	this.manager.helperBusy = true;
             params.put("lastMID", this.manager.lastMID);
             params.put("userID", userID);
         	
@@ -391,29 +458,36 @@ public class ChatManager {
             	JSONObject msg = (JSONObject) msgArray.get(i);
             	String outString = this.manager.parseMessage(msg);
 
-//            	messageArea.insert(outString + "\n", 0);
             	this.manager.addMessageToGUI(outString);
             	
             	String thisMID = (String) msg.get("MID");
             	this.manager.lastMID = thisMID;
-            	
-            }   
+            }
+            this.manager.helperBusy = false;
         }// End of last Function
     }// End of the ChatHelper Class
     
     private class Chatroom {
     	private String name;
-    	private int ID;
+    	private int serverID;
+    	private int clientID;
     	private String joinTime;
     	private JSONArray msgList;
+    	public Boolean found;
     	
     	public Chatroom(String name, int ID, String joinTime)
     	{
     		this.name = name;
-    		this.ID = ID;
+    		this.serverID = ID;
     		this.joinTime = joinTime;
+    		this.clientID = 0;
     		
     		msgList = new JSONArray();
+    	}
+    	
+    	public String getChannelInfo()
+    	{
+    		return ( this.name + "; srvID[" + this.serverID + "]; joinTime[" + this.joinTime + "]; clientID[" + this.clientID + "]" ); 
     	}
     	
     	public void addMsg(Message m)

@@ -27,13 +27,14 @@ public class GUIProto {
         frame.getContentPane().add(dataField, "North");
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         
-//        server = new ServerConnection("squireraspserver.ddns.net", 9898);
-//        server = new ServerConnection("192.168.0.249", 9898);
-        this.server = new ServerConnection("localhost", 9898);
+//        server = new ServerConnection("squireraspserver.ddns.net", 9898);		// From Anywhere
+//        server = new ServerConnection("192.168.0.249", 9898);					// From same network as raspberry pi server
+        this.server = new ServerConnection("localhost", 9898);					// From same computer as server program
     }
     
     public void fakeLogin()
     {
+    	
     	/**************************** START OF REQUEST ****************************/
     	JSONObject params = new JSONObject();		// Create parameter object
 
@@ -54,14 +55,10 @@ public class GUIProto {
 			
 		}
         
-        
-//        String requestUserID = (String) result.get("userID");
-//        this.userID = Integer.parseInt(requestUserID);
-        
         if (this.userID > 0)
         {
-        	chat = new ChatManager(dataField, messageArea, this.server);
         	
+        	chat = new ChatManager(dataField, messageArea, this.server);
         	dataField.addActionListener(new ActionListener() {
             	public void actionPerformed(ActionEvent e) {
             		chat.enterText(dataField.getText());
@@ -74,6 +71,8 @@ public class GUIProto {
         {
         	System.exit(0);
         }
+        
+        
         /**************************** END OF REQUEST ****************************/
     }
     
@@ -83,6 +82,7 @@ public class GUIProto {
         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.frame.pack();
         client.frame.setVisible(true);
+        
         
         client.fakeLogin();
     }
