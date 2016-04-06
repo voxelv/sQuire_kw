@@ -304,9 +304,7 @@ public class DBConnector {
 				{
 					JSONObject row = new JSONObject();
 					for (int i = 0; i < j.getColumnCount(); i++)
-					{
 						row.put(colNames[i], ret.getString(i+1));
-					}
 					output.add(row);
 				}
 			}
