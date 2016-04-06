@@ -1,5 +1,6 @@
 package sQuire_editor;
 
+import java.io.Console;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -7,6 +8,7 @@ import java.util.regex.Pattern;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -77,24 +79,49 @@ public class JavaKeywords extends Application {
         launch(args);
     }
 
+    private String prevLine="";
+    private int prevLineNum=0;
+    
     @Override
     public void start(Stage primaryStage) {
     	System.out.println("STARTING");
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-
+        codeArea.replaceText(0, 0, sampleCode);
+        
         codeArea.richChanges().subscribe(change -> {
             codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
         });
-        codeArea.replaceText(0, 0, sampleCode);
-
+        
+        codeArea.currentParagraphProperty().addListener(change ->{
+        	if (codeArea.getCurrentParagraph() != prevLineNum)
+        		{
+            		if (codeArea.getText(prevLineNum) != prevLine)
+            		{
+            			if (codeArea.getText(prevLineNum) == "")
+            			{
+            				System.out.printf("%d : '%s' -> '%s'\n", prevLineNum, prevLine, "DELETED");
+            			}
+            			else
+            			{
+            				System.out.printf("%d : '%s' -> '%s'\n", prevLineNum, prevLine, codeArea.getText(prevLineNum));
+            			}
+            		}
+        		prevLineNum = codeArea.getCurrentParagraph();
+    			prevLine = codeArea.getText(prevLineNum);
+    		}
+        });
+        
         System.out.println("codeArea Setup");
-        Scene scene = new Scene(new StackPane(codeArea), 600, 400);
+        StackPane myPane = new StackPane();
+        myPane.getChildren().addAll(codeArea);
+        Scene scene = new Scene(myPane, 600, 400);
         scene.getStylesheets().add(JavaKeywords.class.getResource("resources/java-keywords.css").toExternalForm());
         System.out.println("show");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Java Keywords Demo");
         primaryStage.show();
+        computeHighlighting(codeArea.getText());
       
     }
 
