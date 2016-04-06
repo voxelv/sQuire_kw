@@ -84,13 +84,22 @@ public class JavaKeywords extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-    	System.out.println("STARTING");
         CodeArea codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.replaceText(0, 0, sampleCode);
         
         codeArea.richChanges().subscribe(change -> {
             codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
+        });
+        
+        codeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
+        	System.out.println("Selected text is now: \"" + newvalue + "\"");
+        	System.out.println("Interval: " + codeArea.getSelection().getStart() + " to " + codeArea.getSelection().getEnd());
+        	
+        });
+        
+        codeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
+        	System.out.println("Caret at: " + newvalue);
         });
         
         codeArea.currentParagraphProperty().addListener(change ->{
@@ -112,12 +121,10 @@ public class JavaKeywords extends Application {
     		}
         });
         
-        System.out.println("codeArea Setup");
         StackPane myPane = new StackPane();
         myPane.getChildren().addAll(codeArea);
         Scene scene = new Scene(myPane, 600, 400);
         scene.getStylesheets().add(JavaKeywords.class.getResource("resources/java-keywords.css").toExternalForm());
-        System.out.println("show");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Java Keywords Demo");
         primaryStage.show();
