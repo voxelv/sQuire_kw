@@ -10,21 +10,9 @@ public class ChatManager {
 	private DBConnector dbc;
 	private int userID;
 	
-	public ChatManager() {
-		try {
-            dbc = new DBConnector();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            dbc.setDatabase(dbc.dbName);
-        } catch (SQLException e) {
-            DBConnector.printSQLException(e);
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
+	public ChatManager(DBConnector dbc) {
+		
+		this.dbc = dbc;
 //        dbc.closeConnection();
 	}
 	

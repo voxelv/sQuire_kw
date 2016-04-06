@@ -40,6 +40,8 @@ public class Server{
         private Socket socket;
         private int clientNumber;
         private ChatManager chatManager;
+        private AccountManager accountManager;
+        private DBConnector dbc;
         private int userID = 0;
 
         public ServerThread(Socket socket, int clientNumber) {
@@ -47,7 +49,25 @@ public class Server{
             this.clientNumber = clientNumber;
             log("New connection with client# " + clientNumber + " at " + socket);
             
-            chatManager = new ChatManager();
+            // Create the dbconnector
+            try {
+                dbc = new DBConnector();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+            // Set database to squire
+            try {
+                dbc.setDatabase(dbc.dbName);
+            } catch (SQLException e) {
+                DBConnector.printSQLException(e);
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+            }
+            
+            chatManager = new ChatManager(dbc);
+            accountManager = new AccountManager(dbc);
             
             chatManager.setUserID(this.userID);
         }
