@@ -3,6 +3,7 @@ package sQuire_editor;
 import java.io.Console;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.Paragraph;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
@@ -101,8 +103,27 @@ public class JavaKeywords extends Application {
         });
         
         codeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	System.out.println("Caret Line: " + codeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
+        	//System.out.println("Caret Line: " + codeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
         });
+        
+        codeArea.setOnKeyReleased(event->{
+        	System.out.print(event.getCode());
+        });
+        
+        codeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
+        	if (newvalue.getLength()>0)
+        	{
+        		System.out.println("Selection: " + newvalue);
+        	}
+        });
+               
+//        int parCounter = 0;
+//        for(Iterator<Paragraph<Collection<String>, Collection<String>>> par = codeArea.getParagraphs().iterator(); par.hasNext();)
+//        {
+//        	parCounter++;
+//        	Paragraph<Collection<String>, Collection<String>> item = par.next();
+//        	System.out.println(Integer.toString(parCounter) + item.getText());
+//        }
         
         codeArea.currentParagraphProperty().addListener(change ->{
         	if (codeArea.getCurrentParagraph() != prevLineNum)
