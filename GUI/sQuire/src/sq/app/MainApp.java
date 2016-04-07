@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sq.app.view.LoginPaneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -79,14 +80,14 @@ public class MainApp extends Application {
 	        dialogStage.setScene(scene);
 
 	        // Set the person into the controller.
-	        //PersonEditDialogController controller = loader.getController();
-	        //controller.setDialogStage(dialogStage);
+	        LoginPaneController controller = loader.getController();
+	        controller.setDialogStage(dialogStage);
 	        //controller.setPerson(person);
 
 	        // Show the dialog and wait until the user closes it
 	        dialogStage.showAndWait();
 
-	        return false;//controller.isOkClicked();
+	        return controller.isOkClicked();
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	        return false;
