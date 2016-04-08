@@ -26,6 +26,8 @@ public class MainViewController implements Initializable{
         
         // initialize your logic here: all @FXML variables will have been injected
         
+        editorCodeArea.doHighlight();
+        
         editorCodeArea.richChanges().subscribe(change -> {
             editorCodeArea.doHighlight();
         });
@@ -38,6 +40,8 @@ public class MainViewController implements Initializable{
         
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
         	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
+        	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
+        	editorCodeArea.getScene().getStylesheets().add(DiffCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
         });
         
         editorCodeArea.setOnKeyReleased(event->{
