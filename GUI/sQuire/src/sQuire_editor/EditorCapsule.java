@@ -1,28 +1,16 @@
 package sQuire_editor;
 
-import java.io.Console;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.Paragraph;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
-import com.sun.javafx.scene.control.skin.VirtualScrollBar;
-
-public class JavaKeywords extends Application {
+public class EditorCapsule extends CodeArea {
 
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
@@ -78,39 +66,32 @@ public class JavaKeywords extends Application {
         "}"
     });
 
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    private String prevLine="";
-    private int prevLineNum=0;
     
-    @Override
-    public void start(Stage primaryStage) {
-        CodeArea codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.replaceText(0, 0, sampleCode);
+
+    public EditorCapsule() {
+		super();
+        this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+        this.replaceText(0, 0, sampleCode);
         
-        codeArea.richChanges().subscribe(change -> {
-            codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
+        this.richChanges().subscribe(change -> {
+            this.setStyleSpans(0, computeHighlighting(this.getText()));
         });
         
-        codeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
+        this.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
         	System.out.println("Selected text is now: \"" + newvalue + "\"");
-        	System.out.println("Interval: " + codeArea.getSelection().getStart() + " to " + codeArea.getSelection().getEnd());
+        	System.out.println("Interval: " + this.getSelection().getStart() + " to " + this.getSelection().getEnd());
         	
         });
         
-        codeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	//System.out.println("Caret Line: " + codeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
+        this.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
+        	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
         });
         
-        codeArea.setOnKeyReleased(event->{
+        this.setOnKeyReleased(event->{
         	System.out.print(event.getCode());
         });
         
-        codeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
+        this.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
         	if (newvalue.getLength()>0)
         	{
         		System.out.println("Selection: " + newvalue);
@@ -118,40 +99,41 @@ public class JavaKeywords extends Application {
         });
                
 //        int parCounter = 0;
-//        for(Iterator<Paragraph<Collection<String>, Collection<String>>> par = codeArea.getParagraphs().iterator(); par.hasNext();)
+//        for(Iterator<Paragraph<Collection<String>, Collection<String>>> par = this.getParagraphs().iterator(); par.hasNext();)
 //        {
 //        	parCounter++;
 //        	Paragraph<Collection<String>, Collection<String>> item = par.next();
 //        	System.out.println(Integer.toString(parCounter) + item.getText());
 //        }
         
-        codeArea.currentParagraphProperty().addListener(change ->{
-        	if (codeArea.getCurrentParagraph() != prevLineNum)
+        this.currentParagraphProperty().addListener(change ->{
+        	if (this.getCurrentParagraph() != prevLineNum)
         		{
-            		if (codeArea.getText(prevLineNum) != prevLine)
+            		if (this.getText(prevLineNum) != prevLine)
             		{
-            			if (codeArea.getText(prevLineNum) == "")
+            			if (this.getText(prevLineNum) == "")
             			{
             				System.out.printf("%d : '%s' -> '%s'\n", prevLineNum, prevLine, "DELETED");
             			}
             			else
             			{
-            				System.out.printf("%d : '%s' -> '%s'\n", prevLineNum, prevLine, codeArea.getText(prevLineNum));
+            				System.out.printf("%d : '%s' -> '%s'\n", prevLineNum, prevLine, this.getText(prevLineNum));
             			}
             		}
-        		prevLineNum = codeArea.getCurrentParagraph();
-    			prevLine = codeArea.getText(prevLineNum);
+        		prevLineNum = this.getCurrentParagraph();
+    			prevLine = this.getText(prevLineNum);
     		}
         });
         
-        Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
-        scene.getStylesheets().add(JavaKeywords.class.getResource("resources/java-keywords.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Java Keywords Demo");
-        primaryStage.show();
-        codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText()));
-      
-    }
+        getScene().getStylesheets().add(EditorCapsule.class.getResource("resources/java-keywords.css").toExternalForm());
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("Java Keywords Demo");
+//        primaryStage.show();
+        this.setStyleSpans(0, computeHighlighting(this.getText()));
+	}
+
+    private String prevLine="";
+    private int prevLineNum=0;
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
