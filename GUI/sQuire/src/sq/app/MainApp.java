@@ -48,9 +48,9 @@ public class MainApp extends Application {
 		
 		initRootLayout();
 		
-		showLoginPane();
-		
 		showMainView();
+		
+		showLoginPane();
 		
 	}
 	
