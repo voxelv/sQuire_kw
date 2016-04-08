@@ -3,19 +3,16 @@ package sq.app;
 import java.io.IOException;
 
 import javafx.application.Application;
-<<<<<<< 9eb44e162eb8bce4cadd6d06e3ba83c430b3c803
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.User;
-=======
 import javafx.event.EventHandler;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sQuire_editor.DiffCodeArea;
->>>>>>> Syntax Highlighting WORKING woot!
 import sq.app.view.LoginPaneController;
 import sq.app.view.MainViewController;
 import javafx.fxml.FXMLLoader;
