@@ -3,8 +3,11 @@ package sq.app;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sq.app.model.User;
 import sq.app.view.LoginPaneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +19,18 @@ public class MainApp extends Application {
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	
+	private ObservableList<User> userData = FXCollections.observableArrayList();
+	
+	public MainApp(){
+		userData.add(new User("Chris"));
+		userData.add(new User("Scott"));
+		userData.add(new User("Feng"));
+		userData.add(new User("Jessie"));
+	}
+	
+	public ObservableList<User> getUserData(){
+		return userData;
+	}
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -28,6 +43,8 @@ public class MainApp extends Application {
 		showMainView();
 		
 		showLoginPane();
+		
+		
 		
 	}
 	
