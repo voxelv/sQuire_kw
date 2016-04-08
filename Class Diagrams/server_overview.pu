@@ -6,36 +6,24 @@ class "Client" as sq
 
 class "Server" as sqs
 
-	class "AccountManager" as sqs_ua_m
-		class "UserAccount" as sqs_ua
+	class "AccountManager" as sqs_acc
 		
-	class "ProjectManager" as sqs_pr_m
-		class "Project" as sqs_pr
-			class "File" as sqs_fi
-		
-	class "SessionManager" as sqs_se_m
-		class "Session" as sqs_se
-		
-	class "ChatManager" as sqs_ch_m
-		class "ChatRoom" as sqs_ch_rm
+	class "ProjectManager" as sqs_proj
 
-sq -right- sqs : <<TCP>>
+	class "ChatManager" as sqs_chat
 
-sqs o-- "1" sqs_pr_m 
-	sqs_pr_m *-- "*" sqs_pr 
-		'sqs_pr o-right-- sqs_ua : "Project Owners"
-		sqs_pr *-- "1..*" sqs_fi 
-sqs o-- "1" sqs_ua_m
-	sqs_ua_m *-- "*" sqs_ua 
-sqs o-- "1" sqs_ch_m
-	sqs_ch_m *-- "*" sqs_ch_rm
-sqs o-- "1" sqs_se_m
-	sqs_se_m *-- "*" sqs_se
+	class "DBConnector" as sqs_dbc
 
-'sqs_se o-- "1" sqs_ua 
-'sqs_se o-- "1" sqs_pr 
+sq -right- sqs : <<JSONS over TCP>>
+ 
+sqs *-- sqs_acc
+sqs *-- sqs_proj
+sqs *-- sqs_chat
+sqs *-- sqs_dbc
 
-
+sqs_dbc -u- sqs_acc :Sends info
+sqs_dbc -u- sqs_proj :Sends info
+sqs_dbc -u- sqs_chat :Sends info
 
 
 
