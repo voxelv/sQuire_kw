@@ -8,11 +8,11 @@ import javafx.collections.ObservableList;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.User;
+import sq.app.model.editor.EditorCodeArea;
 import javafx.event.EventHandler;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import sQuire_editor.DiffCodeArea;
 import sq.app.view.LoginPaneController;
 import sq.app.view.MainViewController;
 import javafx.fxml.FXMLLoader;
@@ -79,7 +79,7 @@ public class MainApp extends Application {
 
 	        // Set the person into the controller.
 	        MainViewController controller = loader.getController();
-	        MainView.getStylesheets().add(DiffCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
+	        MainView.getStylesheets().add(EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
 			
 			rootLayout.setCenter(MainView);
 		} catch (IOException e){

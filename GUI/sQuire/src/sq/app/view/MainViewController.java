@@ -7,8 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import sQuire_editor.DiffCodeArea;
-import sQuire_editor.EditorCapsule;
+import sq.app.model.editor.EditorCodeArea;
 
 public class MainViewController implements Initializable{
 	
@@ -18,7 +17,7 @@ public class MainViewController implements Initializable{
     private StackPane editorStackPane;
     
     @FXML
-    private DiffCodeArea editorCodeArea;
+    private EditorCodeArea editorCodeArea;
     
     @Override // This method is called by the FXMLLoader when initialization is complete
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -41,7 +40,7 @@ public class MainViewController implements Initializable{
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
         	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
         	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
-        	editorCodeArea.getScene().getStylesheets().add(DiffCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
+        	editorCodeArea.getScene().getStylesheets().add(EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
         });
         
         editorCodeArea.setOnKeyReleased(event->{
@@ -82,10 +81,5 @@ public class MainViewController implements Initializable{
             		editorCodeArea.prevLine = editorCodeArea.getText(editorCodeArea.prevLineNum);
     		}
         });
-    }
-
-    public void setScene(Scene scene) {
-    	this.scene = scene;
-    	scene.getStylesheets().add(EditorCapsule.class.getResource("resources/java-keywords.css").toExternalForm());
     }
 }

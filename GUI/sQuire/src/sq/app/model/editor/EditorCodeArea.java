@@ -1,4 +1,4 @@
-package sQuire_editor;
+package sq.app.model.editor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import org.fxmisc.richtext.StyleSpansBuilder;
 
 import javafx.stage.Stage;
 
-public class DiffCodeArea extends CodeArea{
+public class EditorCodeArea extends CodeArea{
 
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
@@ -71,7 +71,7 @@ public class DiffCodeArea extends CodeArea{
     public String prevLine="";
     public int prevLineNum=0;
     
-	public DiffCodeArea() {
+	public EditorCodeArea() {
 		super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
