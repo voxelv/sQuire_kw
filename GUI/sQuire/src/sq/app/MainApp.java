@@ -9,6 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.User;
 import sq.app.view.LoginPaneController;
+import sq.app.view.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -40,11 +41,9 @@ public class MainApp extends Application {
 		
 		initRootLayout();
 		
-		showMainView();
-		
 		showLoginPane();
 		
-		
+		showMainView();
 		
 	}
 	
@@ -73,11 +72,16 @@ public class MainApp extends Application {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("view/MainView.fxml"));
 			AnchorPane MainView = (AnchorPane) loader.load();
+
+	        // Set the person into the controller.
+	        MainViewController controller = loader.getController();
 			
 			rootLayout.setCenter(MainView);
 		} catch (IOException e){
 			e.printStackTrace();
 		}
+		
+		
 	}
 	
 	
