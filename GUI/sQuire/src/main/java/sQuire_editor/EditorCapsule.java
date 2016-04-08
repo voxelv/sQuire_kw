@@ -67,7 +67,6 @@ public class EditorCapsule extends CodeArea {
     });
 
     
-
     public EditorCapsule() {
 		super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
