@@ -22,7 +22,7 @@ public class ChatManager {
     private String lastMID;
     private ChatHelper autoHelper;
     private ChatHelper manualHelper;
-    private int lastChannel = -1;
+    private int defaultChannel = -1;
     
     private Boolean helperBusy;
     
@@ -46,7 +46,6 @@ public class ChatManager {
     	cacheChannelByLocalID = new HashMap<Integer, Chatroom>();
     	cacheChannelByServerID = new HashMap<Integer, Chatroom>();
     	
-    	
     	userID = "1";	// temp
     	lastMID = "0";	// permanent
     	this.server = server;
@@ -61,10 +60,15 @@ public class ChatManager {
     	updateChannels( manualHelper.initJoinChannels() );
     }
     
+    /**
+     * @param JSONObject msg
+     * @return Message Obj
+     * 
+     * Take a message Object that is returned from the server, and create a new Message Object from it.
+     */
     public Message parseMessage(JSONObject msg)
     {
 //    	System.out.println(msg);
-    	String output = new String();
     	Chatroom room = this.channelByServerID.get(Integer.parseInt( (String)msg.get("channelID") ));
     	
     	Message newMsg = new Message();
@@ -80,11 +84,21 @@ public class ChatManager {
     	return newMsg;
     }
     
+    /**
+     * @param outString
+     * 
+     * Add text to GUI. This will need to be changed when we move to the final GUI
+     */
     public void addMessageToGUI(String outString)
     {
     	messageArea.insert(outString + "\n", 0);
     }
     
+    /**
+     * @param enteredText
+     * 
+     * Take entered text, parse for system command, delegate actions to other objects if necessary.
+     */
     public void enterText(String enteredText)
     {
     	// System command
@@ -101,12 +115,10 @@ public class ChatManager {
     		else
     			command = enteredText.substring(1);
     		
-//    		System.out.println("Got system command: '" + command + "'; arg: '" + arg + "'");
-    		
     		try {
     			// Channel number
     			int localChannelID = Integer.parseInt(command);
-    			this.lastChannel = localChannelID;
+    			this.defaultChannel = localChannelID;
     			
     			addMessage(arg, localChannelID);
     			
@@ -133,9 +145,20 @@ public class ChatManager {
     	}
     	else		// plain text for chat
     	{
-    		this.addMessage(enteredText, lastChannel);
+    		if (defaultChannel >= 0)
+    			this.addMessage(enteredText, defaultChannel);
+    		else
+    			this.alertUserNoChannels();
     	} 
     	
+    }
+    
+    /**
+     * Send the message to the user that they are no longer in any channels, and how to join a new one. 
+     */
+    private void alertUserNoChannels()
+    {
+    	this.addMessageToGUI("... You are not currently part of any channels,\n... Type /join <channelName> to join a channel\n...  e.g: '/join Global'");
     }
     
     /**
@@ -154,6 +177,30 @@ public class ChatManager {
     	
     	// Send message to user
     	this.addMessageToGUI("Left Channel: [" + clientID + "] " + channelName);
+    	
+    	if (this.defaultChannel == clientID)
+    	{
+    		this.defaultChannel = -1;
+    		
+    		// if still part of channels, change default channel
+    		if (this.channelList.size() > 0)
+    		{
+    			Chatroom newDefault = this.channelList.get(0);
+    			this.changeDefaultChannel(newDefault.clientID);
+    		}
+    	}
+    }
+    
+    /**
+     * @param clientID
+     * 
+     * Change the default channel the user will send messages to if channelID omitted
+     */
+    private void changeDefaultChannel(int clientID)
+    {
+    	this.defaultChannel = clientID;
+    	
+		this.addMessageToGUI("New Default Channel: " + this.channelByLocalID.get(clientID).getChannelInfo());
     }
     
     /**
@@ -210,9 +257,20 @@ public class ChatManager {
     	// Send message to user
     	this.addMessageToGUI("Joined Channel: [" + clientID + "] " + channelName);
     	
+    	if (this.defaultChannel == -1)
+    		this.changeDefaultChannel(clientID);
+    	
     	return room;
     }
     
+    /**
+     * @param JSONArray newChannelList
+     * 			of JSONObject channel
+     * 
+     * Compare the new channel list to the current channel list. <br>
+     * Leave any channels not in the new list, join any channels not<br>
+     * in the old list.
+     */
     public void updateChannels(JSONArray newChannelList)
     {
     	// go through the new channels
@@ -235,28 +293,56 @@ public class ChatManager {
     		room.found = false;
     	}
     	
+    	if (newChannelList.size() == 0)
+    		this.alertUserNoChannels();
     }
     
+    /**
+     * @param String command
+     * 
+     * send system command to server
+     */
     public void sendServerCommand(String command)
     {
     	manualHelper.sendServerCommand(command);
     }
     
+    /**
+     * @param channelName
+     * 
+     * Leave channel specified.
+     */
     public void leaveChannel(String channelName)
     {
     	updateChannels( manualHelper.leaveChannel(channelName) );
     }
     
+    /**
+     * @param channelName
+     * 
+     * Join channel specified. If channel doesn't exist, create it.
+     */
     public void joinChannel(String channelName)
     {
     	updateChannels( manualHelper.joinChannel(channelName) );
     }
     
+    /**
+     * @param msg
+     * @param channelID
+     * 
+     * Add message to the channel specified
+     */
     public void addMessage(String msg, int channelID)
     {
     	manualHelper.addMessage(msg, channelID);
     }
     
+    /**
+     * @param messageArea
+     * 
+     * Request a refresh for messages from the server
+     */
     public void updateMessages(JTextArea messageArea)
     {
     	manualHelper.updateMessages(messageArea);
@@ -305,6 +391,11 @@ public class ChatManager {
             }
         }
         
+        /**
+         * @return JSONArray
+         * 
+         * Fetch channel list from server when client first started up.
+         */
         public JSONArray initJoinChannels()
         {
         	JSONObject params;
@@ -329,6 +420,11 @@ public class ChatManager {
             return channelList;
         }
         
+        /**
+         * @param command
+         * 
+         * Send system command to Server
+         */
         public void sendServerCommand(String command)
         {
         	JSONObject params;
@@ -341,11 +437,16 @@ public class ChatManager {
             /**************************** END OF REQUEST ****************************/
         }
         
+        /**
+         * @param msg
+         * @param localChannelID
+         * 
+         * Add message to the channel specified
+         */
         public void addMessage(String msg, int localChannelID)
         {
         	JSONObject params;
         	
-//        	String channelID = (String) this.manager.channelsObjByLocalID.get(String.valueOf(localChannelID));
         	int serverChannelID = this.manager.channelByLocalID.get(localChannelID).serverID;
         	
         	/**************************** START OF REQUEST ****************************/
@@ -354,15 +455,17 @@ public class ChatManager {
             params.put("msg", msg);
             params.put("channelID", String.valueOf(serverChannelID) );
         	
-//            System.out.println("Adding message: "+params);
             server.sendSingleRequest("Chat", "addMessage", params);	// send a single request
             
             /**************************** END OF REQUEST ****************************/
-            
-            
-//            dataField.selectAll();
         }
         
+        /**
+         * @param channelName
+         * @return JSONArray channelList
+         * 
+         * Join channel by name
+         */
         public JSONArray joinChannel(String channelName)
         {
         	/**************************** START OF REQUEST ****************************/
@@ -386,6 +489,12 @@ public class ChatManager {
             return channelList;
         }
         
+        /**
+         * @param channelName
+         * @return JSONArray channelList
+         * 
+         * Leave channel by name
+         */
         public JSONArray leaveChannel(String channelName)
         {
         	/**************************** START OF REQUEST ****************************/
@@ -409,12 +518,14 @@ public class ChatManager {
             return channelList;
         }
         
+        /**
+         * @param messageArea
+         * 
+         * Fetch new messages from Server, put them on screen
+         */
         public void updateMessages(JTextArea messageArea)
         {
         	JSONObject params;
-        	Object response;
-        	JSONObject responseObj;
-        	String result;
         	
         	/**************************** START OF REQUEST ****************************/
             
@@ -465,6 +576,13 @@ public class ChatManager {
         }// End of last Function
     }// End of the ChatHelper Class
     
+    
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /*************************** CHATROOM CLASS****************************************/
     private class Chatroom {
     	private String name;
     	private int serverID;
@@ -480,7 +598,7 @@ public class ChatManager {
     		this.joinTime = joinTime;
     		this.clientID = 0;
     		
-    		msgList = new JSONArray();
+    		msgList = new ArrayList<Message>();
     	}
     	
     	public String getChannelInfo()
@@ -500,6 +618,12 @@ public class ChatManager {
     	
     }
     
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**********************************************************************************/
+    /**************************** MESSAGE CLASS****************************************/
     private class Message {
     	public int MID = -1;
     	public String time = new String();
