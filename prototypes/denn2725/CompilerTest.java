@@ -19,7 +19,7 @@ public class CompilerTest {
     												+ "System.out.println(\"This program is coded as strings within the CompilerTest Class\");\n"
     												+ "System.out.println(\"And hey look, it works!\");\n"
     												+ "}\n"
-    												+ "\n");
+    												+ "}\n");
     	String f3PackName = "testing.";
     	String f3ClassName = "PrintTest";
     	JavaFileObject file1 = new Compiler().new InMemoryJavaFileObject(className, contents.toString());
