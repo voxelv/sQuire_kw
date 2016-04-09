@@ -24,6 +24,10 @@ public class User {
 		return Username.get();
 	}
 	
+	public void setUsername(String Username) {
+        this.Username.set(Username);
+    }
+	
 	public StringProperty UsernameProperty(){
 		return Username;
 	}
@@ -32,13 +36,21 @@ public class User {
 		return Email.get();
 	}
 	
-	public StringProperty EmailProperty(){
-		return Email;
+	public void setEmail(String Email) {
+        this.Email.set(Email);
+    }
+	
+	public StringProperty EmailProperty(User name){
+		return name.Email;
 	}
 	
 	public String getPassword(){
 		return Password.get();
 	}
+	
+	public void setPassword(String Password) {
+        this.Password.set(Password);
+    }
 	
 	public StringProperty PasswordProperty(){
 		return Password;
