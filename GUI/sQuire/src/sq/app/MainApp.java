@@ -20,15 +20,15 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private User user;
-	private User chris;
-	private User chris2;
+	//private User user;
+	//private User chris;
+	//private User chris2;
 	public static ArrayList<User> list = new ArrayList<User>();
 	
 	
 	
 	public MainApp(){
-		user = new User("username");
+		/*user = new User("username");
 		user.setEmail("email@email.com");
 		user.setPassword("password");
 		
@@ -49,7 +49,7 @@ public class MainApp extends Application {
 	        	System.out.println(d);
 	    }
 		
-		System.out.println("hello " + user.getUsername() + " " + chris.getUsername() + " " );
+		System.out.println("hello " + user.getUsername() + " " + chris.getUsername() + " " );*/
 	}
 	
 	public static List<User> getList(){
