@@ -170,7 +170,7 @@ public class DBConnector {
 	* Identifies if the SQLException for a given state should be ignored.
 	* @params sqlState 	The string of the SQLState of the given exception.
 	* @return boolean	True if the SQLException should be ignored,
-	*					flase otherwise.
+	*					false otherwise.
 	*/
     public static boolean ignoreSQLException(String sqlState) {
         if (sqlState == null) {
@@ -202,127 +202,7 @@ public class DBConnector {
         }
     }
 
-	/**
-	* Inserts a user into the database.
-	* @params username 	The username of the user to be inserted into the database
-	*/
-    public void insertUser(String username)
-    	throws SQLException{
-    	
-    	PreparedStatement statement = null;
-    	String statementString = 
-    			"insert into Users (username)" +
-    			"values (?);";
-    	
-    	try {
-    		this.connection.setAutoCommit(false);
-    		statement = this.connection.prepareStatement(statementString);
-    		statement.setString(1, username);
-    		statement.executeUpdate();
-    		this.connection.commit();
-    		System.out.println(username + " inserted into Users");
-    	} catch (SQLException e) {
-    		printSQLException(e);
-    		if (this.connection != null){
-    			try {
-                    System.err.print("Transaction is being rolled back");
-                    this.connection.rollback();
-                } catch(SQLException excep) {
-                    printSQLException(excep);
-                }
-            }
-    		
-    	} finally {
-            if (statement != null) {
-                statement.close();
-            }
-            
-            this.connection.setAutoCommit(true);
-        }	
-    }
-    
-	/**
-	* Inserts a chat channel into the database.
-	* @params cname 	The name of the channel to be inserted into the database
-	*/
-    public void insertChannel(String cname)
-        	throws SQLException{
-        	
-        	PreparedStatement statement = null;
-        	String statementString = 
-        			"insert into Channels (channelName)" +
-        			"values (?);";
-        	
-        	try {
-        		this.connection.setAutoCommit(false);
-        		statement = this.connection.prepareStatement(statementString);
-        		statement.setString(1, cname);
-        		statement.executeUpdate();
-        		this.connection.commit();
-        		System.out.println(cname + " inserted into Channels");
-        	} catch (SQLException e) {
-        		printSQLException(e);
-        		if (this.connection != null){
-        			try {
-                        System.err.print("Transaction is being rolled back");
-                        this.connection.rollback();
-                    } catch(SQLException excep) {
-                        printSQLException(excep);
-                    }
-                }
-        		
-        	} finally {
-                if (statement != null) {
-                    statement.close();
-                }
-                
-                this.connection.setAutoCommit(true);
-            }	
-        }
-		
-	/**
-	* Inserts a chat subscription into the database.
-	* @params channelID 	The ID of the channel to be subscribed to in the database
-	* @params userID		The ID of the user to subscribe
-	* @params time			The time at which the user subscribed
-	*/
-    public void insertSubscription(int channelID, int userID, Timestamp time)
-        	throws SQLException{
-        	
-        	PreparedStatement statement = null;
-        	String statementString = 
-        			"insert into Subscriptions (ChannelID, userID, joinTime)" +
-        			"values (?, ?, ?);";
-        	
-        	try {
-        		this.connection.setAutoCommit(false);
-        		statement = this.connection.prepareStatement(statementString);
-        		statement.setInt(1, channelID);
-        		statement.setInt(2, userID);
-        		statement.setTimestamp(3, time);
-        		statement.executeUpdate();
-        		this.connection.commit();
-        		System.out.println("User " + userID + " subscribed to channel " + channelID);
-        	} catch (SQLException e) {
-        		printSQLException(e);
-        		if (this.connection != null){
-        			try {
-                        System.err.print("Transaction is being rolled back");
-                        this.connection.rollback();
-                    } catch(SQLException excep) {
-                        printSQLException(excep);
-                    }
-                }
-        		
-        	} finally {
-                if (statement != null) {
-                    statement.close();
-                }
-                
-                this.connection.setAutoCommit(true);
-            }	
-        }
-    
+        
 	/**
 	* Executes a given SQL query on the database.
 	* @params statementString	A string containing the query.
@@ -372,48 +252,7 @@ public class DBConnector {
 		return output;
 	}
 	
-	/**
-	* Inserts a chat message into the database.
-	* @params fromID	The ID of the sending user.
-	* @params channelID The ID of the channel the message belongs to.
-	* @params text		The message contents.
-	* @params time		The time the message was sent.
-	*/
-    public void insertMessage(int fromID, int channelID, String text, Timestamp time)
-        	throws SQLException{
-        	
-        	PreparedStatement statement = null;
-        	String statementString = 
-        			"insert into Messages (timeSent, fromID, ChannelID, messageText)" +
-        			"values (?, ?, ?, ?);";
-        	try {
-        		this.connection.setAutoCommit(false);
-        		statement = this.connection.prepareStatement(statementString);
-        		statement.setTimestamp(1, time);
-        		statement.setInt(2,  fromID);
-        		statement.setInt(3,  channelID);
-        		statement.setString(4, text);
-        		statement.executeUpdate();
-        		this.connection.commit();
-        		System.out.println("Message sent from user " + fromID + " to channel " + channelID);
-        	} catch (SQLException e) {
-        		printSQLException(e);
-        		if (this.connection != null){
-        			try {
-                        System.err.print("Transaction is being rolled back");
-                        this.connection.rollback();
-                    } catch(SQLException excep) {
-                        printSQLException(excep);
-                    }
-                }
-        		
-        	} finally {
-                if (statement != null) {
-                    statement.close();
-                }
-                
-                this.connection.setAutoCommit(true);
-            }	
-        }
+	
+	
 }
 
