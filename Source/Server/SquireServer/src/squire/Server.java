@@ -33,7 +33,6 @@ public class Server{
         }
     }
 	
-	
 	/* START OF THE THREAD CLASS */
 	/* */ 
 	private static class ServerThread extends Thread {
@@ -193,23 +192,39 @@ public class Server{
         	}
         	
         	
-        	/************************** LOGIN FUNCTIONS **************************/
+        	/************************** USER ACCOUNT FUNCTIONS **************************/
         	else if (category.compareToIgnoreCase("USER") == 0)
         	{
         		if (action.compareToIgnoreCase("Login") == 0)
         		{
+        			String uName = (String) params.get("username");
+        			String pWord = (String) params.get("password");
+        			
         			// login, change the userID attached to this thread, and the chat manager
-        			String requestUserID = (String) params.get("userID");
-        			this.userID = Integer.parseInt(requestUserID);	// Temp
+        			String loginSuccess = this.accountManager.Login( uName, pWord );
+        			this.userID = this.accountManager.GetUserAccountID();
         			
-        			chatManager.setUserID(this.userID);
-        			
-        			chatManager.onLogin();
+        			if (this.userID > 0)
+        			{
+	        			chatManager.setUserID(this.userID);
+	        			chatManager.onLogin();
+        			}
         			
         			JSONObject ret = new JSONObject();
         			ret.put("userID", String.valueOf(this.userID));
         			
         			output = ret.toJSONString();
+        		}
+        		else if (action.compareToIgnoreCase("createAccount") == 0)
+        		{
+        			String fName = (String) params.get("fName");
+        			String lName = (String) params.get("lName");
+        			String uName = (String) params.get("uName");
+        			String email = (String) params.get("email");
+        			String pWord = (String) params.get("pWord");
+        			
+        			String result = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
+        			
         		}
         	}
         	
@@ -240,100 +255,3 @@ public class Server{
 	}
 	
 }
-
-/*
- * @hide @startuml
-hide circle
-hide empty members
-
-Title <b>Server Classes</b>
-
-class "Client" as sq 
-class "Server" as sqs{
-	-AccountManager
-	-ProjectManager
-	-SessionManager
-	-ChatManager
-	+AccountManagerMethods()
-	+ProjectManagerMethods()
-	+SessionManagerMethods()
-	+ChatManagerMethods(GUIDs)
-	}
-	class "AccountManager" as sqs_ua_m{
-		-AccountList
-		+CreateAccount(Name, Email)
-		+Login(LoginInfo)
-		+Logout(UserID)
-		+GetUserDetails(Name)
-		+SetUserDetails(UserUpdateInfo)
-		}
-		class "UserAccount" as sqs_ua {
-			+first_name
-			+last_name
-			+user_name
-			-password
-			+register()
-			+login()
-			+logout()
-			}
-	class "ProjectManager" as sqs_pr_m{
-		-ProjectList
-		+CreateProject(Name)
-		+OpenProject(Name)
-		+DeleteProject(Name)
-		+GetProject(Name)
-		+GetProject(ProjectID)
-		+UpdateProject(ProjectUpdateInfo)
-		}
-		class "Project" as sqs_pr{
-			-ProjectID
-			-ProjectDescription
-			-ProjectSettings
-			-FileIDs
-			-OwnerUserIDs
-			+GetProjectID()
-			+GetProjectDescription()
-			+GetProjectSettings()
-			+GetProjectFiles()
-			+GetProjectOwners()
-			+UpdateProject(Key,Value)
-			+UpdateFile(FileUpdateInfo)
-			}
-			class "File" as sqs_fi{
-				-FileID
-				-FileName
-				-FileDescription
-				-FileContent
-				+GetFileInfo()
-				+UpdateFile(Key,Value)
-				}
-
-	class "ChatManager" as sqs_ch_m{
-		Uses DBConnector to manipulate the database;
-		manages Chat Channels, Chat Messages, etc
-		==
-		-DBConnector dbc
-		-int userID
-		__
-		+setUserID (int userID) (void)
-		+addMessage (String message, String channelID) (void)
-		+leaveChannel (String channelName) (JSONArray)
-		+leaveChannel (int channelID) (JSONArray)
-		+joinChannel (String channelName) (JSONArray)
-		+joinChannel (int channelID) (JSONArray)
-		+getMessages(String lastMID) (JSONArray)
-	}
-	
-sq -right- sqs : <<TCP>>
-
-	sqs *-- sqs_pr_m 
-		sqs_pr_m "1" -- "*" sqs_pr : Project List
-			sqs_pr "1" -- "*" sqs_fi : File List
-	sqs *-- sqs_ua_m 
-		sqs_ua_m "1" -- "*" sqs_ua : User Account List
-	sqs *-- sqs_ch_m
-
-
-
-@enduml
- */

@@ -26,9 +26,9 @@ public class GUIProto {
         frame.getContentPane().add(dataField, "North");
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         
-//        server = new ServerConnection("squireraspserver.ddns.net", 9898);		// From Anywhere
+        server = new ServerConnection("squireraspserver.ddns.net", 9898);		// From Anywhere
 //        server = new ServerConnection("192.168.0.249", 9898);					// From same network as raspberry pi server
-        this.server = new ServerConnection("localhost", 9898);					// From same computer as server program
+//        this.server = new ServerConnection("localhost", 9898);					// From same computer as server program
     }
     
     public void fakeLogin()
