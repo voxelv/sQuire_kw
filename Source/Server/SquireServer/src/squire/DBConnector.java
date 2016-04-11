@@ -36,6 +36,10 @@ public class DBConnector {
     private int portNumber;
     private Properties prop;
 
+	/**
+	* Creates and returns the Java SQL Connection, after properties have been set.
+	* @return the Java SQL Connection
+	*/
     public Connection getConnection() throws SQLException, ClassNotFoundException {
         //Class.forName("com.mysql.jdbc.Driver");
 
@@ -54,7 +58,13 @@ public class DBConnector {
         System.out.println("Connected to database");
         return conn;
     }
-
+	
+	/**
+	* Creates a database with the specified name at this connection.
+	* @params dbNameArg the name of the database to be created
+	* @params dbmsArg   the name of the type of database to be created,
+	* 					in this case, "mysql"
+	*/
     public void createDatabase(String dbNameArg, String dbmsArg) {
 
         if (dbmsArg.equals("mysql")) {
@@ -72,6 +82,9 @@ public class DBConnector {
         }
     }
 
+	/**
+	* Closes the current connection.
+	*/
     public void closeConnection() {
         System.out.println("Releasing all open resources ...");
         try {
@@ -83,7 +96,9 @@ public class DBConnector {
             printSQLException(sqle);
         }
     }
-
+	/**
+	* Constructs this DBConnector, setting its properties and its Java SQL Connection
+	*/
     public DBConnector() throws ClassNotFoundException,
     		SQLException {
 //        super();
@@ -91,6 +106,9 @@ public class DBConnector {
         this.connection = this.getConnection(); 
     }
 
+	/**
+	* Sets the properties for this DBConnector.
+	*/
     private void setProperties() {
 //        this.prop = new Properties();
 //        FileInputStream fis = new FileInputStream(fileName);
@@ -124,6 +142,10 @@ public class DBConnector {
 
     }
 
+	/**
+	* Prints a SQLException with theSQLState, Error Code, and Message.
+	* @params ex 	the SQLException to be printed
+	*/
     public static void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
@@ -142,6 +164,12 @@ public class DBConnector {
         }
     }
 
+	/**
+	* Identifies if the SQLException for a given state should be ignored.
+	* @params sqlState 	The string of the SQLState of the given exception.
+	* @return boolean	True if the SQLException should be ignored,
+	*					flase otherwise.
+	*/
     public static boolean ignoreSQLException(String sqlState) {
         if (sqlState == null) {
             System.out.println("The SQL state is not defined!");
@@ -156,6 +184,10 @@ public class DBConnector {
         return false;
     }
     
+	/**
+	* Sets the name of the database for the SQL Connection to use.
+	* @params dbNameArg	The name of the database to use.
+	*/
     public void setDatabase(String dbNameArg)
     	throws SQLException{
     	Statement s = this.connection.createStatement();
@@ -168,6 +200,10 @@ public class DBConnector {
         }
     }
 
+	/**
+	* Inserts a user into the database.
+	* @params username 	The username of the user to be inserted into the database
+	*/
     public void insertUser(String username)
     	throws SQLException{
     	
@@ -203,6 +239,10 @@ public class DBConnector {
         }	
     }
     
+	/**
+	* Inserts a chat channel into the database.
+	* @params cname 	The name of the channel to be inserted into the database
+	*/
     public void insertChannel(String cname)
         	throws SQLException{
         	
@@ -237,6 +277,13 @@ public class DBConnector {
                 this.connection.setAutoCommit(true);
             }	
         }
+		
+	/**
+	* Inserts a chat subscription into the database.
+	* @params channelID 	The ID of the channel to be subscribed to in the database
+	* @params userID		The ID of the user to subscribe
+	* @params time			The time at which the user subscribed
+	*/
     public void insertSubscription(int channelID, int userID, Timestamp time)
         	throws SQLException{
         	
@@ -274,6 +321,12 @@ public class DBConnector {
             }	
         }
     
+	/**
+	* Executes a given SQL query on the database.
+	* @params statementString	A string containing the query.
+	* @params statementArgs		An array of the arguments to be placed into the statement.
+	* @return 					The results of the query, as a JSONArray
+	*/
 	public JSONArray query(String statementString, String[] statementArgs)
 		throws SQLException {
 //		System.out.println("Query: "+statementString);
@@ -317,6 +370,13 @@ public class DBConnector {
 		return output;
 	}
 	
+	/**
+	* Inserts a chat message into the database.
+	* @params fromID	The ID of the sending user.
+	* @params channelID The ID of the channel the message belongs to.
+	* @params text		The message contents.
+	* @params time		The time the message was sent.
+	*/
     public void insertMessage(int fromID, int channelID, String text, Timestamp time)
         	throws SQLException{
         	
