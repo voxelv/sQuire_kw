@@ -1,28 +1,31 @@
 @startuml
 
 Actor User
+User -> GUI : Register
+activate GUI
+GUI -> LoginPaneController : register
+activate LoginPaneController
+LoginPaneController -> Client : reg(Usr, Email, Pwd)
 activate Client
-User -> Client : Register
-Client -> AccountManager : RequestAction(AM,Register)
-activate AccountManager
-AccountManager --> Client : Register(UsrNm,Pswd,Eml)
-deactivate AccountManager
-Client -> User : GetFromUser(UsrNm,Pswd,Eml)
-User --> Client : UsrNm,Pswd,Eml
-Client -> Server : SendToServer(Register,UsrNm,Pswd,Eml)
+Client -> Server : SendInstruction(Reg, (Usr, Email, Pwd))
 activate Server
-Server --> Client : SendToClient(Success)
+Server --> Client : Success
 deactivate Server
-Client -> AccountManager : RequestAction(AM,StoreData,UsrNm,Pswd,Eml)
+Client --> LoginPaneController :Success
+LoginPaneController --> GUI : Success
+deactivate LoginPaneController
+GUI --> User :You are registered!
+Client -> AccountManager : Update Profile
 activate AccountManager
-AccountManager -> UserAccount : StoreData(UsrNm,Pswd,Eml)
+AccountManager -> UserAccount : StoreData(Usr, Email, Pwd)
 deactivate AccountManager
 activate UserAccount
-UserAccount --> AccountManager : Success
+UserAccount --> AccountManager :Success
 deactivate UserAccount
 activate AccountManager
-AccountManager --> Client : Success
+AccountManager --> Client :Success
 deactivate AccountManager
-Client --> User : OutputToUser("Registration Successful")
+
+
 
 @enduml
