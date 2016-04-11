@@ -37,7 +37,7 @@ public class GUIProto {
     	/**************************** START OF REQUEST ****************************/
     	JSONObject params = new JSONObject();		// Create parameter object
 
-    	params.put("userID", "1");
+    	params.put("userID", "8");
     	
         String result = (String) server.sendSingleRequest("User", "Login", params);
     	
