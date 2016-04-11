@@ -1,59 +1,62 @@
 use squire;
 
 create table Projects (
-	PID integer not null primary key auto_increment,
+	PID integer unsigned not null primary key auto_increment,
 	pname varchar(30),
 	location varchar(40)
 );
 
 create table PFLines (
-	pflid integer not null primary key auto_increment,
-	nextid integer,
+	pflid integer unsigned not null primary key auto_increment,
+	nextid integer unsigned DEFAULT NULL,
 	text varchar(255),
-	lastEditor integer,
+	lastEditor integer unsigned DEFAULT NULL,
 	timeEdited timestamp,
 	foreign key (lastEditor) references Users(userID),
 	foreign key (nextid) references PFLines(pflid)
 );
 
-create table PDirs (
-	pdid integer not null primary key auto_increment,
-	pdname varchar(30),
-	pid integer,
-	parentid integer,
-	foreign key (pid) references Projects(PID),
-	foreign key (parentid) references PDirs (parentid)	
+CREATE TABLE PDirs (
+  pdid integer unsigned NOT NULL AUTO_INCREMENT,
+  pdname varchar(30),
+  pid integer unsigned DEFAULT NULL,
+  parentid integer unsigned DEFAULT NULL,
+  PRIMARY KEY (pdid),
+  FOREIGN KEY (parentid) REFERENCES PDirs (pdid),
+  FOREIGN KEY (pid) REFERENCES Projects(PID)
 );
 
-create table PFiles (
-	pfid integer not null primary key auto_increment,
-    pfname varchar(30),
-	pid integer,
-	pdid integer,
-	pflhead integer,
-	timeCreated timestamp,
-    creatorID integer,
-	foreign key (pflhead) references PFLines(pflid),
-	foreign key (pdid) references PDirs(pdis),
-	foreign key (pid) references Projects(PID),
-    foreign key (creatorID) references Users(userID)
+CREATE TABLE PFiles (
+  pfid int(11) unsigned NOT NULL AUTO_INCREMENT,
+  pfname varchar(30),
+  pid int unsigned DEFAULT NULL,
+  pdid int(11) unsigned DEFAULT NULL,
+  pflhead int unsigned DEFAULT NULL, 
+  timeCreated timestamp,
+  creatorID int UNSIGNED DEFAULT NULL,
+    PRIMARY KEY (pfid),
+  FOREIGN KEY (pflhead) REFERENCES PFLines (pflid),
+  FOREIGN KEY (pdid) REFERENCES PDirs (pdid),
+  FOREIGN KEY (pid) REFERENCES Projects (PID),
+  FOREIGN KEY (creatorID) REFERENCES Users (userID)
 );
 
 create table ProjectAccess (
-	PID integer not null,
-	userID integer not null,
+	PID integer unsigned not null,
+	userID integer unsigned not null,
 	primary key(PID, userID),
 	foreign key (PID) references Projects(PID),
 	foreign key (userID) references Users(userID)
 );
 
 create table FileEdits (
-	edID integer not null primary key auto_increment,
-	pfID integer,
-	userID integer,
+	edID int unsigned not null auto_increment,
+	pfID int unsigned NOT NULL,
+	userID int unsigned,
 	timeof timestamp,
-	foreign key (pfID) references PFiles(pfID),
-	foreign key (userID) references Users(userID)
+	PRIMARY KEY(edID),
+	FOREIGN KEY (pfID) REFERENCES PFiles (pfid),
+	FOREIGN KEY (userID) REFERENCES Users (userID)
 );
 
 delimiter //
