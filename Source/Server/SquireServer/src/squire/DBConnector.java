@@ -18,8 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
-//Some of this code is borrowed from the Oracle tutorial on JDBC
-
+/**
+* Connector for a mySQL database.
+* @author Jesse Jutson
+*/
 
 public class DBConnector {
 
