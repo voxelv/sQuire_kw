@@ -1,0 +1,103 @@
+@startuml
+hide circle
+hide empty members
+
+title <b>ProjectManager</b>\n<size:12>Authors: slip5295, denn2725</size>\n<size:12>Reviewed by: Group</size>
+
+class "Client" as sq_c
+
+class "ProjectManager" as sq_projmgr {
+    -server : Server
+    -projects : Project[]
+    -userTracker : UserTracker
+    -editQueue : EditQueue
+    -editor : Editor
+    +updateToServer()
+}
+
+class "Server" as sq_server
+
+class "Project" as proj {
+    -owners : UserAccount[]
+    -participants : UserAccount[]
+    -isOnline : boolean
+    -onlineUsers : UserAccount[]
+    -lastUpdated : String
+    +downloadProjectPackage()
+    +importProjectPackage()
+    +compileProject()
+    +runProject()
+    +debugProject()
+}
+
+class "File" as file {
+    -filename : String
+    -filepath : String
+    -
+    +doFileStuff()
+}
+
+class "Editor" as editor {
+    -currentFile : File
+    -currentView : View
+    +setView(View)
+}
+
+class "View" as a_view <<Abstract>>{
+    +displayView()
+}
+
+class "UserEditsView" as ue_view {
+    -databaseHook
+}
+
+class "SyntaxColoringView" as sc_view {
+    -interpreterHook
+}
+
+class "UserTracker" as projmgr_utrack {
+    -loc : Location
+    -focus : String
+    +update()
+}
+
+
+class "AtomicEdit" as editq_atomedit {
+    -type : String
+    -loc : Location
+    -val : Object
+    +packForTransport() : TCPPacket
+}
+
+
+class "Compiler" {
+	-classOutputFolder : String
+	+InMemoryJavaFileObject(className, code)
+	+compile(files)
+	+runIt(mainClass)
+	
+}
+
+sq_c *-- sq_projmgr
+
+sq_c -left- sq_server : Communicates With over TCP
+
+sq_projmgr -- projmgr_utrack : Tracks Users Edits
+sq_projmgr o-- "*" proj
+
+proj o-- "*" file
+proj -- Compiler : Compiles and Runs
+
+sq_c *-- "*" editor
+editor o-- a_view
+editor -- editq_atomedit : Creates and Stores
+a_view <|-- ue_view
+a_view <|-- sc_view
+
+editor -- file : Edits
+
+
+
+projmgr_utrack -- editq_atomedit : Generates
+
+@enduml
