@@ -16,7 +16,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -102,10 +105,13 @@ public class FileGUIController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     	conn = Main.GetConnection();
     	IniTree();
+    	curr_position.setText("sQuire Project");
+ //       create_button.lookup(".arrow").setStyle("-fx-padding: 0;");
+
     }
 
     public TreeItem<String> IniTree() {
-        TreeItem<String> tree_root = new TreeItem<>("sQuire");
+        TreeItem<String> tree_root = new TreeItem<>("sQuire Project");
     	tree_root.setExpanded(true);
     	try {
 			String query = "SELECT * FROM Projects";
@@ -143,15 +149,83 @@ public class FileGUIController implements Initializable {
     	}
 		return (int) array[i][0];
     }
-/*************************************************/
+/******************************************************************************/
     @FXML TextField curr_position;
-    @FXML
-    private void file_select(MouseEvent mouse){
+    @FXML private void file_select(MouseEvent mouse){
         if(mouse.getClickCount() == 2){
             TreeItem<String> item = structure_tree.getSelectionModel().getSelectedItem();
-//            url.setText(item.getValue());
+            selected = item;
             curr_position.setText(item.getValue());
 
+            TreeItem<String> tree_root = new TreeItem<>(item.getValue());
+	        structure_tree.setRoot(tree_root);
         }
     }
+/******************************************************************************/
+
+    @FXML private void HomeButton(){
+    	conn = Main.GetConnection();
+    	IniTree();
+    	curr_position.setText("sQuire Project");
+    	selected = null;
+    	currPID = 0;
+    }
+
+/******************************************************************************/
+    TreeItem<String> selected = null;
+    @FXML private void DeleteButton() throws SQLException{
+    	conn = Main.GetConnection();
+    	if(selected == null){
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Warning");
+            alert.setContentText("No project or file selected.");
+            alert.showAndWait();
+    	} else if(selected.getParent()==null || selected.getParent().getValue() == "sQuire Project"){
+    		System.out.println("Delete Whole Project");
+    		String deleteProj = "DELETE FROM Projects WHERE pname LIKE '" + selected.getValue() + "'";
+    		Statement s = conn.createStatement();
+            s.executeUpdate(deleteProj);
+        	IniTree();
+        	curr_position.setText("sQuire Project");
+        	selected = null;
+        	currPID = 0;
+
+    	} else {
+    		selected.getParent().getChildren().remove(selected);
+    	}
+
+    }
+
+/******************************************************************************/
+    int currPID = 0;
+    @FXML private void CreateFolder() throws SQLException{
+    	conn = Main.GetConnection();
+
+    	String currFolderName = "";
+
+/*    	String query = "SELECT * FROM Projects";
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(query);
+
+        while (rs.next()){
+        	int id = rs.getInt("PID");
+        	if(currID != id){ break;}
+        	currID++;
+//        	String ProjectName = rs.getString("pname");
+        }
+*/
+        TextInputDialog dialog = new TextInputDialog("");
+    	dialog.setTitle("Create Folder");
+    	dialog.setHeaderText("Folder");
+    	dialog.setContentText("Please enter the folder name:");
+    	Optional<String> result = dialog.showAndWait();
+    	if (result.isPresent()){
+    		currFolderName  = result.get();
+    	}
+    }
+
+
+/*****/
+    @FXML MenuButton create_button;
 }
