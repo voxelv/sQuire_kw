@@ -18,7 +18,7 @@ create table Messages (
 
 create table Subscriptions (
     channelID integer unsigned,
-    userID integer unsigned DEFAULT NULL,
+    userID integer unsigned,
 	joinTime timestamp,
 	primary key (channelID, userID),
     foreign key (channelID) references Channels(channelID),
