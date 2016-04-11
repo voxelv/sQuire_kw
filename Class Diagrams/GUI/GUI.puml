@@ -1,0 +1,46 @@
+@startuml
+hide circles
+
+Title <b>GUI</b>\n<size:12>Authors: ocke8865</size>\n<size:12>Reviewed by:</size>
+
+
+class "MainApp"{
+-primaryStage
+-rootLayout
++initRootLayout()
++showMainView()
++showChatPane()
++showLoginPane()
+}
+
+class "ChatPaneController"{
+-Message
+-History
+-ChannelBox
++initialize()
++SendMessage()
+}
+
+class "LoginPaneController"{
+-Username
+-Email
+-Password1
+-Password2
++goodInput()
++matches()
+}
+
+class "MainViewController"{
+-editorStackPane
+-editorCodeArea
++initialize()
+}
+
+
+
+MainApp  -d- MainViewController : Starts >
+MainApp  -d- ChatPaneController : Starts >
+MainApp  -d- LoginPaneController : Starts >
+
+
+@enduml

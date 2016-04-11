@@ -2,28 +2,69 @@
 hide circle
 hide empty members
 
-class "Client" as sq
+Title Server \n<size:12>Author: Jesse Jutson\n
 
+class "Client" as sq
 class "Server" as sqs
+    class "ServerThread" as sqs_thread {
+'   -log(String message)
+'   +runAction(String category, String action, JSONObject params)
+'     -Socket socket
+'    -int clientNumber
+'     -int userID
+'     +run()
+'     +ServerThread(Socket socket, int clientNumber)
+    }
 
 	class "AccountManager" as sqs_acc
-		
 	class "ProjectManager" as sqs_proj
+	class "ChatManager" as sqs_chat{
+'	    -int userID
+'	    +ChatManager(DBConnector dbc)
+'	    +setUserID(int userID)
+'	    +JSONArray leaveChannel(String channelName)
+'	    +JSONArray leaveChannel(int channelID)
+'	    +JSONArray getChannels()
+'	    +JSONArray joinChannel(String channelName)
+'	    +JSONArray joinChannel(int channelID)
+'	    +addMessage(String message, String channelID)
+'	    +onLogin()
+'	    +JSONArray getMessages(String lastMID)
+	}
+	class "DBConnector" as sqs_dbc {
+'	    + Strings settings
+'	    -Connection connection
+'	    -String driver
+'	    - String serverName
+'	    - int portNumber
+'	    - Properties prop
+'	    + DBConnector()
+'	    + getConnection()
+'	    + createDatabase(String dbNameArg, String dbmsArg)
+'	    + closeConnection()
+'	    + setProperties()
+'	    + printSQLException
+'	    + ignoreSQLException(String sqlState)
+'	    + setDatabase(String dbNameArg)
+'	    + JSONArray query(String statementString, String[] statementArgs)
+	}
 
-	class "ChatManager" as sqs_chat
+sq -r- sqs : <<JSON over TCP>>
 
-	class "DBConnector" as sqs_dbc
+sqs *-- sqs_thread
+sqs_thread *-- sqs_acc
+sqs_thread *-- sqs_proj
+sqs_thread *-- sqs_chat
+sqs_thread *-- sqs_dbc
 
-sq -right- sqs : <<JSONS over TCP>>
- 
-sqs *-- sqs_acc
-sqs *-- sqs_proj
-sqs *-- sqs_chat
-sqs *-- sqs_dbc
+sqs_dbc -u- sqs_acc :Sends account info
+sqs_dbc -u- sqs_proj :Sends project info
+sqs_dbc -u- sqs_chat :Sends chat info
 
-sqs_dbc -u- sqs_acc :Sends info
-sqs_dbc -u- sqs_proj :Sends info
-sqs_dbc -u- sqs_chat :Sends info
+
+
+
+
 
 
 

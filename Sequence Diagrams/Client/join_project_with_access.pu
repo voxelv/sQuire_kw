@@ -1,0 +1,46 @@
+@startuml
+
+title <b>Join Project</b>\n(User Has Access to Project)\n<size:12>Author: slip5295</size>\n<size:12>Editor: juts3869</size>
+
+Actor User
+Activate User
+
+User -> Client : joinProject()
+Activate Client
+
+Client -> Server : getProjectList()
+Activate Server
+
+Server --> Client : projectList
+Deactivate Server
+
+Client --> User : projectList
+
+User -> Client : selectProject()
+
+Client -> Server : setProject()
+Activate Server
+
+Server -> ProjectManager : getProject()
+Activate ProjectManager
+
+ProjectManager -> Project : requestProject()
+Activate Project
+
+    
+    Project -> Project : createFileStructure()
+    Project --> ProjectManager : project
+    Deactivate Project
+
+
+    ProjectManager --> Server : project
+    Deactivate ProjectManager
+
+    Server --> Client : projectReady
+    Deactivate Server
+    Deactivate ProjectManager
+
+    Client --> User : projectJoined
+    Deactivate Client
+
+@enduml

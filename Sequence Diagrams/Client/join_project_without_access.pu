@@ -1,0 +1,94 @@
+@startuml
+
+title <b>Join Project</b>\n(User Does Not Have Access to Project)\n<size:12>Author: slip5295</size>\n<size:12>Editor: juts3869</size>
+
+Actor "Project Owner" as ProjectOwner
+
+Actor User
+Activate User
+
+User -> Client : joinProject()
+Activate Client
+
+Client -> Server : getProjectList()
+Activate Server
+
+Server --> Client : projectList
+Deactivate Server
+
+Client --> User : projectList
+
+User -> Client : selectProject()
+
+Client -> Server : setProject()
+Activate Server
+
+Server -> ProjectManager : getProject()
+Activate ProjectManager
+
+ProjectManager -> Project : requestProject()
+Activate Project
+
+Project --> ProjectManager : accessDenied
+Deactivate Project
+
+ProjectManager --> Server : accessDenied
+Deactivate ProjectManager
+
+    Server -> User : promptRequestAccessYesNo()
+    
+    alt Yes
+        User --> Server : Yes
+        Server -> ProjectManager : requestAccessToProject()
+        Activate ProjectManager
+        
+        ProjectManager -> ProjectOwner : userRequest()
+
+        Activate ProjectOwner
+        
+        ProjectOwner --> ProjectManager : accept
+        Deactivate ProjectOwner
+        
+        ProjectManager --> Server : accessGranted
+        Deactivate ProjectManager
+        ''''''
+
+        Server -> ProjectManager : getProject()
+        Activate ProjectManager
+
+        ProjectManager -> Project : requestProject()
+        Activate Project
+
+
+            Project -> Project : createFileStructure()
+            Project --> ProjectManager : project
+            Deactivate Project
+
+
+            ProjectManager --> Server : project
+            Deactivate ProjectManager
+
+            Server --> Client : projectReady
+            Deactivate Server
+            Deactivate ProjectManager
+
+            Client --> User : projectJoined
+    
+    else No
+        Activate Server
+        User --> Server : No
+        
+        Server --> Client : accessDenied
+        Deactivate Server
+
+        Client --> User: noProjectJoined
+    end
+
+
+
+
+
+
+
+
+@enduml

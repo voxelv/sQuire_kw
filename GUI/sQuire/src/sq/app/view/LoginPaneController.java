@@ -1,19 +1,18 @@
 package sq.app.view;
 
+//import java.util.List;
+//import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import sq.app.MainApp;
-import sq.app.model.User;
+//import sq.app.model.User;
 
 public class LoginPaneController {
 	private boolean okClicked = false;
@@ -64,18 +63,29 @@ public class LoginPaneController {
 	private boolean goodInput(){
 		String errorMessage = "";
 		
+		//User temp;
+		
 		if(Username.getText() == null || Username.getText().length() <= 4){
 			errorMessage += "No valid Username (at least 4 characters)!\n";
-		}
+		} 
+		
 		if(Email.getText() == null || Email.getText().length() == 0 || matches(Email.getText()) == false){
 			errorMessage += "No valid Email!\n";
 		}
+		
 		if(Password1.getText().equals(Password2.getText())){
 		}else{
 			errorMessage += "Passwords do not match!\n";
 		}
+		
+		
 		if (errorMessage.length() == 0) {
-            return true;
+			
+			//if(serverResponse(Username, Email, Password1) == false){
+			//	errorMessage = "Username, email, and Password do not match!";
+			//}else{
+				return true;
+			//}
 		} else {
 			Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(dialogStage);
@@ -93,8 +103,5 @@ public class LoginPaneController {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(str);
 		return matcher.find();
 	}
-	//public void setMainApp(MainApp mainApp){
-	//	this.mainApp = mainApp;
-	//}
 
 }

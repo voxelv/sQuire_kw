@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import sq.app.model.editor.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sq.app.view.MainViewController">
+<AnchorPane prefHeight="700.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65">
    <children>
       <SplitPane dividerPositions="0.175" prefHeight="700.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -16,11 +16,12 @@
                <children>
                   <SplitPane dividerPositions="0.8" orientation="VERTICAL" prefHeight="698.0" prefWidth="894.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                        <StackPane fx:id="editorStackPane">
+                    	<StackPane fx:id="editorStackPane">
                         	<children>
                         		<EditorCodeArea fx:id="editorCodeArea" />
                         	</children>
                         </StackPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="129.0" prefWidth="892.0" />
                     </items>
                   </SplitPane>
