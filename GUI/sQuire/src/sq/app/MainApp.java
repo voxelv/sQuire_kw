@@ -98,6 +98,7 @@ public class MainApp extends Application {
 			loader.setLocation(MainApp.class.getResource("view/MainView.fxml"));
 			AnchorPane MainView = (AnchorPane) loader.load();
 			
+			
 			rootLayout.setCenter(MainView);
 		} catch (IOException e){
 			e.printStackTrace();

@@ -25,8 +25,6 @@ public class MainViewController implements Initializable{
         
         // initialize your logic here: all @FXML variables will have been injected
         
-        editorCodeArea.doHighlight();
-        
         editorCodeArea.richChanges().subscribe(change -> {
             editorCodeArea.doHighlight();
         });
@@ -81,5 +79,7 @@ public class MainViewController implements Initializable{
             		editorCodeArea.prevLine = editorCodeArea.getText(editorCodeArea.prevLineNum);
     		}
         });
+        
+        editorCodeArea.doHighlight();
     }
 }
