@@ -327,7 +327,11 @@ public class ProjectManager {
 		}
 	}
 	
-	public JSONArray removeLine (int lineID){
+	public JSONArray removeLine (String lineID){
+		String firstquery = "Select nextid from PFLines where pflid = ?;";
+		String firstvalues = new String[1];
+		firstvalues[0] = lineID;
+		
 		String upquery = "Update pflid" +
 						 "set nextID = ?" +
 						 "where nextID = ?";
@@ -339,10 +343,13 @@ public class ProjectManager {
 								"PFLID = ?";
 		String[] values = new String[1];
 		values[0] = lineID;
-		
+
+		JSONArray nextID = new JSONArray();
 		try {
 			//Get what line the to-be-deleted line points to
 			//upvalues[0] = that
+			nextID = this.dbc.query(firstquery, firstvalues);
+			upvalues[0] = (String) nextID.get("nextid");
 			this.dbc.query(upquery, upvalues);
 			this.dbc.query(query, values)
 		} catch (SQLException e) {
