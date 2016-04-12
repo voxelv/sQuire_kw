@@ -229,8 +229,8 @@ public class Server{
         	}
         	
         	
-        	/************************** FILE FUNCTIONS **************************/
-        	else if (category.compareToIgnoreCase("FILE") == 0)
+        	/************************** PROJECT FUNCTIONS **************************/
+        	else if (category.compareToIgnoreCase("PROJECT") == 0)
         	{
         		
         	}

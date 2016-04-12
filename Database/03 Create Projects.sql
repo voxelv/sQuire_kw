@@ -34,11 +34,13 @@ CREATE TABLE PFiles (
   pflhead int unsigned DEFAULT NULL, 
   timeCreated timestamp,
   creatorID int UNSIGNED DEFAULT NULL,
-    PRIMARY KEY (pfid),
+  lockuser int UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (pfid),
   FOREIGN KEY (pflhead) REFERENCES PFLines (pflid),
   FOREIGN KEY (pdid) REFERENCES PDirs (pdid),
   FOREIGN KEY (pid) REFERENCES Projects (PID),
-  FOREIGN KEY (creatorID) REFERENCES Users (userID)
+  FOREIGN KEY (creatorID) REFERENCES Users (userID),
+  FOREIGN KEY (lockuser) REFERENCES Users (userID)
 );
 
 create table ProjectAccess (

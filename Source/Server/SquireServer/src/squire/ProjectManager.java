@@ -297,7 +297,7 @@ public class ProjectManager {
 		}
 	}
 	
-	public JSONArray removeDirectory (int dirID){
+	public void removeDirectory (String dirID){
 		String query = "Delete from PDirs" + 
 							"where" +
 								"PID = ?";
@@ -312,7 +312,7 @@ public class ProjectManager {
 		}
 	}
 
-	public JSONArray removeFile (int fileID){
+	public JSONArray removeFile (String fileID){
 		String query = "Delete from PFiles" + 
 							"where" +
 								"PFID = ?";
@@ -327,7 +327,7 @@ public class ProjectManager {
 		}
 	}
 	
-	public JSONArray removeLine (String lineID){
+	public void removeLine (String lineID){
 		String firstquery = "Select nextid from PFLines where pflid = ?;";
 		String firstvalues = new String[1];
 		firstvalues[0] = lineID;
@@ -351,6 +351,42 @@ public class ProjectManager {
 			nextID = this.dbc.query(firstquery, firstvalues);
 			upvalues[0] = (String) nextID.get("nextid");
 			this.dbc.query(upquery, upvalues);
+			this.dbc.query(query, values)
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void lockLine (String lineID){
+		
+		String query = "Update PFLines" +
+							"set lockuser = ?"
+							"where" +
+								"PFLID = ?";
+		String[] values = new String[2];
+		values[0] = this.userID;
+		values[1] = lineID;
+		
+		try {
+			this.dbc.query(query, values)
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void unlockLine (String lineID){
+		
+		String query = "Update PFLines" +
+							"set lockuser = ?"
+							"where" +
+								"PFLID = ?";
+		String[] values = new String[2];
+		values[0] = "NULL";
+		values[1] = lineID;
+		
+		try {
 			this.dbc.query(query, values)
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
