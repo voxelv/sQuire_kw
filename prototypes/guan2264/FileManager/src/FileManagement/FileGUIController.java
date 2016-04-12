@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -39,7 +40,7 @@ public class FileGUIController implements Initializable {
     private static final TreeItem ProjectName = null;
 	private static final TreeItem<String> treeItem = null;
 	public static Connection conn = null;
-
+	int MyuserID = 2;
 /*
     public static void Main(String[] args) throws ClassNotFoundException {
         try {
@@ -57,9 +58,16 @@ public class FileGUIController implements Initializable {
 
     @FXML
     public void CreateProject() throws SQLException, ClassNotFoundException{
+
+
+        TextInputDialog dialog = new TextInputDialog("");
+    	dialog.setTitle("Create Project");
+    	dialog.setHeaderText("sQuire Project");
+    	dialog.setContentText("Please enter the project name:");
+    	Optional<String> result = dialog.showAndWait();
     	conn = Main.GetConnection();
     	int currID = 1;
-
+    	boolean isExist = false;
     	String currProjName = "";
 
     	String query = "SELECT * FROM Projects";
@@ -72,17 +80,41 @@ public class FileGUIController implements Initializable {
         	currID++;
 //        	String ProjectName = rs.getString("pname");
         }
-
-        TextInputDialog dialog = new TextInputDialog("");
-    	dialog.setTitle("Create Project");
-    	dialog.setHeaderText("sQuire Project");
-    	dialog.setContentText("Please enter the project name:");
-    	Optional<String> result = dialog.showAndWait();
     	if (result.isPresent()){
     	    currProjName = result.get();
-    	    Statement s = conn.createStatement();
-            String sql = "INSERT INTO Projects(PID,pname)VALUE('" + currID + "','" + currProjName + "')";
-            s.executeUpdate(sql);
+
+        	query = "SELECT PID FROM ProjectAccess where userID like '" + MyuserID + "'";
+            //Statement st1 = conn.createStatement();
+            ResultSet rs1 = st.executeQuery(query);
+
+            while(rs1.next()){
+
+            	int myPid = rs1.getInt("PID");
+
+            	String query2 = "SELECT pname FROM Projects where PID like '" + myPid + "'";
+                Statement st2 = conn.createStatement();
+            	ResultSet re2 = st2.executeQuery(query2);
+            	if(re2.next()){
+            		String projName = re2.getString("pname");
+                	if( Objects.equals(projName,currProjName)){
+                		isExist = true;
+                        Alert alert = new Alert(AlertType.WARNING);
+                        alert.setTitle("Warning");
+                        alert.setHeaderText("Warning");
+                        alert.setContentText("Project name already exist.");
+                        alert.showAndWait();
+                        break;
+                	}
+            	}
+            }
+
+            if(isExist == false){
+            	Statement s = conn.createStatement();
+            	String sql = "INSERT INTO Projects(PID,pname)VALUE('" + currID + "','" + currProjName + "')";
+            	s.executeUpdate(sql);
+            	sql = "INSERT INTO ProjectAccess(PID, userID)VALUE('" + currID + "','" + MyuserID + "')";
+            	s.executeUpdate(sql);
+            }
     	}
     	IniTree();
     }
@@ -114,15 +146,23 @@ public class FileGUIController implements Initializable {
         TreeItem<String> tree_root = new TreeItem<>("sQuire Project");
     	tree_root.setExpanded(true);
     	try {
-			String query = "SELECT * FROM Projects";
+			String query = "SELECT * FROM ProjectAccess WHERE userID like '" + MyuserID + "'";
 	        Statement st;
 			st = conn.createStatement();
 	        ResultSet rs = st.executeQuery(query);
 	        while (rs.next()){
-	        	String ProjectName = rs.getString("pname");
 	        	int PID = rs.getInt("PID");
-	        	TreeItem<String> ProjName = new TreeItem<>(ProjectName);
-	        	tree_root.getChildren().add(ProjName);
+	        	System.out.println(PID);
+	        	query = "SELECT pname FROM Projects WHERE PID like '" + PID + "'";
+	        	Statement st1 = conn.createStatement();
+	        	ResultSet rs1 = st1.executeQuery(query);
+
+		        rs1.next();
+		        String ProjectName = rs1.getString("pname");
+		        TreeItem<String> ProjName = new TreeItem<>(ProjectName);
+		        tree_root.getChildren().add(ProjName);
+
+
 	        }
 	        structure_tree.setRoot(tree_root);
 	        } catch (SQLException e) {
@@ -175,6 +215,7 @@ public class FileGUIController implements Initializable {
     TreeItem<String> selected = null;
     @FXML private void DeleteButton() throws SQLException{
     	conn = Main.GetConnection();
+    	int deletePID = 0;
     	if(selected == null){
             Alert alert = new Alert(AlertType.WARNING);
             alert.setTitle("Warning");
@@ -183,6 +224,35 @@ public class FileGUIController implements Initializable {
             alert.showAndWait();
     	} else if(selected.getParent()==null || selected.getParent().getValue() == "sQuire Project"){
     		System.out.println("Delete Whole Project");
+    		String query = "SELECT PID FROM Projects where pname like '" + selected.getValue() + "'";
+    	    Statement st = conn.createStatement();
+    	    ResultSet rs = st.executeQuery(query);
+    	    while(rs.next()){
+    	    	int tempPID = rs.getInt("PID");
+    	    	System.out.println(tempPID);
+    	    	query = "SELECT PID FROM ProjectAccess WHERE PID LIKE '" + tempPID +"' AND userID like '" + MyuserID + "' LIMIT 1";
+        	    Statement st1 = conn.createStatement();
+        	    ResultSet rs1 = st1.executeQuery(query);
+        	    if(rs1.next()){ deletePID = rs1.getInt("PID");}
+    	    }
+    	    System.out.println(deletePID);
+    	    if(deletePID != 0){
+    	    	String deleteProj = "DELETE FROM ProjectAccess WHERE PID LIKE '" + deletePID + "' AND userID like '" + MyuserID + "' LIMIT 1";
+    	  	    System.out.println(deleteProj);
+    	    	Statement st2 = conn.createStatement();
+    	    	st2.executeUpdate(deleteProj);
+
+    	    	Statement st3 = conn.createStatement();
+    	    	String deleteProj2 = "DELETE FROM Projects WHERE PID LIKE '" + deletePID + "'";
+    	  	    System.out.println(deleteProj2);
+    	    	st3.executeUpdate(deleteProj2);
+    	    }
+        	IniTree();
+        	curr_position.setText("sQuire Project");
+        	selected = null;
+        	currPID = 0;
+    	    	/*        	query = "SELECT PID FROM ProjectAccess where userID like '" + MyuserID + "'";
+
     		String deleteProj = "DELETE FROM Projects WHERE pname LIKE '" + selected.getValue() + "'";
     		Statement s = conn.createStatement();
             s.executeUpdate(deleteProj);
@@ -190,7 +260,7 @@ public class FileGUIController implements Initializable {
         	curr_position.setText("sQuire Project");
         	selected = null;
         	currPID = 0;
-
+*/
     	} else {
     		selected.getParent().getChildren().remove(selected);
     	}
