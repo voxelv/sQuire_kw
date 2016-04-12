@@ -232,7 +232,147 @@ public class Server{
         	/************************** PROJECT FUNCTIONS **************************/
         	else if (category.compareToIgnoreCase("PROJECT") == 0)
         	{
-        		
+        		if (action.compareToIgnoreCase("getProjects") == 0)
+        		{
+        						
+        			String result = this.projectManager.getProjects();
+        			
+        		}
+				else if (action.compareToIgnoreCase("getProjectAccessEntries") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        						
+        			String result = this.projectManager.getProjectsAccessEntries(projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("getDirectories") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        						
+        			String result = this.projectManager.getDirectories(projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("getFiles") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        						
+        			String result = this.projectManager.getFiles(projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("getDirectories") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        						
+        			String result = this.projectManager.getDirectories(projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("getLines") == 0)
+        		{
+					String fileID = (String) params.get("fileID");
+        						
+        			String result = this.projectManager.getLines(fileID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createProject") == 0)
+        		{
+					String projectNAme = (String) params.get("projectName");
+        						
+        			String result = this.projectManager.createProject(projectName);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createProjectAccess") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+					String newUserID = (String) params.get("newUserID");
+         						
+        			this.projectManager.createProjectAccess(newUserID, projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createDirectory") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        			String dirName = (String) params.get("dirName");
+					
+        			this.projectManager.createDirectory(projectName, dirName);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createSubdirectory") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        			String dirName = (String) params.get("dirName");
+					String parentDirID = (String) params.get("parentDirID");
+					
+        			this.projectManager.createDirectory(projectID, dirName, parentDirID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createFile") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        			String dirID = (String) params.get("dirID");
+					String fileName = (String) params.get("fileName");
+					
+        			String result = this.projectManager.createDirectory(fileName, projectID, dirID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("createLine") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        			String dirID = (String) params.get("dirID");
+					String fileName = (String) params.get("fileName");
+					
+        			String result = this.projectManager.createLine (text, nextLineID, timeEdited);
+        			
+        		}
+				else if (action.compareToIgnoreCase("removeProject") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+					
+        			this.projectManager.removeProject(projectID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("removeProjectAccess") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+					String accUserID = (String) params.get("accUserID");
+					
+        			this.projectManager.removeProjectAccess(projectID, accUserID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("removeDirectory") == 0)
+        		{
+					String dirID = (String) params.get("dirID");
+					
+        			this.projectManager.removeDirectory(dirID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("removeFile") == 0)
+        		{
+					String fileID = (String) params.get("fileID");
+					
+        			this.projectManager.removeFile(fileID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("removeLine") == 0)
+        		{
+					String lineID = (String) params.get("lineID");
+					
+        			this.projectManager.removeLine(lineID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("lockLine") == 0)
+        		{
+					String lineID = (String) params.get("lineID");
+					
+        			this.projectManager.lockLine(lineID);
+        			
+        		}
+				else if (action.compareToIgnoreCase("unlockLine") == 0)
+        		{
+					String lineID = (String) params.get("lineID");
+					
+        			this.projectManager.unlockLine(lineID);
+        			
+        		}
         	}
         	
         	/************************** SERVER FUNCTIONS **************************/

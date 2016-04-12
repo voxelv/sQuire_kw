@@ -158,11 +158,13 @@ public class ProjectManager {
 		
 		
 		JSONArray projectID = new JSONArray();
+		String pid;
 		try {
 			this.dbc.query(query, values)
 			projectID = this.dbc.query(query2, values2);
 			//parse JSONArray to add access to self.
-			// addAccess()
+			pid = (String) projectID.get("PID");
+			createProjectAccess(String.valueOf(this.userID), pid)
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -243,12 +245,12 @@ public class ProjectManager {
 		return FileID;
 	}
 	
-	public JSONArray createLine (String text, String nextLineID, String lastEditor, String timeEdited){
+	public JSONArray createLine (String text, String nextLineID, String timeEdited){
 		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = nextLineID;
-		values[2] = lastEditor;
+		values[2] = String.valueOf(this.userID);
 		values[3] = timeEdited;
 		
 		String query2 = "Select LAST_INSERT_ID();";
@@ -257,7 +259,7 @@ public class ProjectManager {
 		JSONArray pflid = new JSONArray();
 		try {
 			this.dbc.query(query, values);
-			pflid = this.dbc.query(quer2, values2);
+			pflid = this.dbc.query(query2, values2);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -312,7 +314,7 @@ public class ProjectManager {
 		}
 	}
 
-	public JSONArray removeFile (String fileID){
+	public void removeFile (String fileID){
 		String query = "Delete from PFiles" + 
 							"where" +
 								"PFID = ?";
