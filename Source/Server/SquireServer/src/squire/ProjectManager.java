@@ -121,7 +121,7 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLines (String PFileID) throws SQLException{
-		String query =	"PFLTraverser("
+		String query =	"call PFLTraverser("
 						+ "select "
 							+ "`pflhead` "
 						+ "from "
