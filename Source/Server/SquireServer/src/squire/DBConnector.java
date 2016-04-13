@@ -258,34 +258,34 @@ public class DBConnector {
 	* @params statementArgs		An array of the arguments to be placed into the statement.
 	* @return 					The results of the query, as a JSONArray
 	*/
-	public JSONArray transaction(String[] statementString, String[][] statementArgs)
+	public JSONArray[] transaction(String[] statementString, String[][] statementArgs)
 		throws SQLException {
 //		System.out.println("Query: "+statementString);
 		
-		PreparedStatement statement[] = new PreparedStatement[statementString.length()];
-		ResultSet ret[] = new ResultSet[statementString.length()];
-		JSONArray output[] = new JSONArray[statementString.length()];
-		boolean querytype[] = new boolean[statementString.length()];
+		PreparedStatement statement[] = new PreparedStatement[statementString.length];
+		ResultSet ret[] = new ResultSet[statementString.length];
+		JSONArray output[] = new JSONArray[statementString.length];
+		boolean queryType[] = new boolean[statementString.length];
 		
 		try {
 			this.connection.setAutoCommit(false);
 			
 			//prepare each statement
-			for(int j = 0; j < statementString.length(); j++){
+			for(int j = 0; j < statementString.length; j++){
 				statement[j] = this.connection.prepareStatement(statementString[j]);
 				for(int i = 0; i < statementArgs[j].length ; i++)
-					statement.setString(i+1, statementArgs[j][i]);
+					statement[j].setString(i+1, statementArgs[j][i]);
 //				ret = statement.executeQuery();
-				boolean queryType = statement.execute();
+				queryType[j] = statement[j].execute();
 			}
 			this.connection.commit();
 			
-			for(int j = 0; j < statementString.length(); j++){
+			for(int j = 0; j < statementString.length; j++){
 				output[j] = new JSONArray();
 				if (queryType[j])	// if query type is select, get the data
 				{
-					ret = statement.getResultSet();
-					ResultSetMetaData data = ret.getMetaData();
+					ret[j] = statement[j].getResultSet();
+					ResultSetMetaData data = ret[j].getMetaData();
 				
 					String[] colNames = new String[data.getColumnCount()];
 					for	(int i = 0; i < data.getColumnCount(); i++)
@@ -293,11 +293,11 @@ public class DBConnector {
 						colNames[i] = data.getColumnName(i+1);
 					}
 				
-					while(ret.next())
+					while(ret[j].next())
 					{
 						JSONObject row = new JSONObject();
 						for (int i = 0; i < data.getColumnCount(); i++)
-							row.put(colNames[i], ret.getString(i+1));
+							row.put(colNames[i], ret[j].getString(i+1));
 						output[j].add(row);
 					}
 					
@@ -314,7 +314,11 @@ public class DBConnector {
 	            }
 	        }
 		} finally {
-			if (statement != null) { statement.close(); }
+			for (int j = 0; j < statement.length; j++)
+			{
+				if (statement[j] != null) { statement[j].close(); }
+			}
+			
 			this.connection.setAutoCommit(true);
 		}
 		return output;
