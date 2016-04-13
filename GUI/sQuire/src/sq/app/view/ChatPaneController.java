@@ -31,6 +31,7 @@ public class ChatPaneController {
 	private void initialize() {
 		channelBox.setValue("Gen");
 		channelBox.setItems(channelList);
+		History.setEditable(false);
     }
 	
 	public ChatPaneController(){

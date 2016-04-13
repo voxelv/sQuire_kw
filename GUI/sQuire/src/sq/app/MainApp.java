@@ -9,10 +9,8 @@ import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.User;
-import sq.app.model.editor.EditorCodeArea;
 //import sq.app.view.ChatPaneController;
 import sq.app.view.LoginPaneController;
-import sq.app.view.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -25,35 +23,10 @@ public class MainApp extends Application {
 	//private User user;
 	//private User chris;
 	//private User chris2;
-	public static ArrayList<User> list = new ArrayList<User>();
+	
+	
 	
 	public MainApp(){
-		/*user = new User("username");
-		user.setEmail("email@email.com");
-		user.setPassword("password");
-		
-		chris = new User("chris");
-		chris.setEmail("chris@email.com");
-		chris.setPassword("abc");
-		
-		chris2 = new User("chris");
-		chris2.setEmail("chris2@email.com");
-		chris2.setPassword("abc");
-		
-		list.add(user);
-		list.add(chris);
-		list.add(chris2);
-		
-		for(User d : list){
-	        if(d.getUsername() != null && d.getUsername().contains("chris"))
-	        	System.out.println(d);
-	    }
-		
-		System.out.println("hello " + user.getUsername() + " " + chris.getUsername() + " " );*/
-	}
-	
-	public static List<User> getList(){
-		return list;
 	}
 	
 	@Override
@@ -98,34 +71,29 @@ public class MainApp extends Application {
 			loader.setLocation(MainApp.class.getResource("view/MainView.fxml"));
 			AnchorPane MainView = (AnchorPane) loader.load();
 			
-			MainView.getStylesheets().add(EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
-			MainViewController mvc = loader.getController();
-			mvc.initialize(loader.getLocation(), loader.getResources());
-			
 			rootLayout.setCenter(MainView);
+			
 		} catch (IOException e){
 			e.printStackTrace();
+			
 		}
 	}
-
+	
 	public void showChatPane() {
 	    try {
 	        // Load the fxml file and create a new stage for the popup dialog.
 	        FXMLLoader loader2 = new FXMLLoader();
 	        loader2.setLocation(MainApp.class.getResource("view/ChatPane.fxml"));
 	        AnchorPane page = (AnchorPane) loader2.load();
-
-	        // Create the dialog Stage.
+	        
 	        Stage dialogStage = new Stage();
 	        dialogStage.setTitle("Chat");
+	        dialogStage.setAlwaysOnTop(true);
 	        dialogStage.initModality(Modality.WINDOW_MODAL);
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
-	        //ChatPaneController controller = loader.getController();
-	        //controller.setDialogStage(dialogStage);
-	        //controller.setPerson(person);
+
 
 	        
 	        dialogStage.show();
@@ -150,10 +118,10 @@ public class MainApp extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
+	     
 	        LoginPaneController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
-	        //controller.setPerson(person);
+
 
 	        // Show the dialog and wait until the user closes it
 	        dialogStage.showAndWait();
@@ -171,6 +139,5 @@ public class MainApp extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
-		
 	}
 }
