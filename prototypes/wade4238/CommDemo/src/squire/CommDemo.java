@@ -20,14 +20,13 @@ public class CommDemo {
 		JSONObject params = new JSONObject();
 		
 		// Set all the parameters you need
-		params.put("testParam", "myTestParamValue");
-		params.put("testParam2", "myTestParamValue2");
+		params.put("fileID", "1");
 		
 		// Set the category
-		String category = "SERVER";
+		String category = "project";
 		
 		// Set the action
-		String action = "QUIT";
+		String action = "getlines";
 		
 		// Send stuff to the server, await response.
 		String returnValue = (String) server.sendSingleRequest(category, action, params);
