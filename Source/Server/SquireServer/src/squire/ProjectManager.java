@@ -121,14 +121,14 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLines (String PFileID) throws SQLException{
-		String query =	"call PFLTraverser("
+		String query =	"call PFLTraverser(("
 						+ "select "
 							+ "`pflhead` "
 						+ "from "
 							+ "`PFiles` "
 						+ "where "
 							+ "`pfid` = ?"
-						+ ");";
+						+ "));";
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(PFileID);
