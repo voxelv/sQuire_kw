@@ -275,6 +275,13 @@ public class Server{
 					output = this.projectManager.getLines(fileID).toJSONString();
         			
         		}
+				else if (action.compareToIgnoreCase("getLineLocks") == 0)
+        		{
+					String fileID = (String) params.get("fileID");
+        						
+					output = this.projectManager.getLineLocks(fileID).toJSONString();
+        			
+        		}
 				else if (action.compareToIgnoreCase("createProject") == 0)
         		{
 					String projectName = (String) params.get("projectName");

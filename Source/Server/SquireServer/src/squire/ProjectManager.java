@@ -144,6 +144,31 @@ public class ProjectManager {
 		return projectList;
 	}
 	
+	public JSONArray getLineLocks (String PFileID) throws SQLException{
+		String query =	"select pflid, userID"
+						+ "from (call PFLTraverser(("
+							+ "select "
+								+ "`pflhead` "
+							+ "from "
+								+ "`PFiles` "
+							+ "where "
+								+ "`pfid` = ? ))) "
+						+ "NATURAL JOIN LineLocks";
+		
+		String[] values = new String[1];
+		values[0] = String.valueOf(PFileID);
+		
+		JSONArray lineList = new JSONArray();
+		try {
+			lineList = this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return lineList;
+	}
+	
 	
 	public JSONArray createProject (String projectName) throws SQLException{
 		String query = "Insert into Projects(pname, location) values (?, ?);";
@@ -365,8 +390,8 @@ public class ProjectManager {
 	
 	public void lockLine (String lineID){
 		
-		String query = "Update PFLines" +
-							"set lockuser = ?" +
+		String query = "Update Linelocks" +
+							"set userID = ?" +
 							"where" +
 								"PFLID = ?";
 		String[] values = new String[2];
@@ -383,13 +408,14 @@ public class ProjectManager {
 	
 	public void unlockLine (String lineID){
 		
-		String query = "Update PFLines" +
-							"set lockuser = ?" +
+		String query = "Delete from LineLocks" +
 							"where" +
-								"PFLID = ?";
+								"pflid = ?" +
+								"AND userID = ?";
 		String[] values = new String[2];
-		values[0] = "NULL";
-		values[1] = lineID;
+		values[0] = lineID;
+		values[1] = String.valueOf(this.userID);
+		
 		
 		try {
 			this.dbc.query(query, values);
