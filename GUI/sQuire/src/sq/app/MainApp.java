@@ -9,8 +9,10 @@ import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.User;
+import sq.app.model.editor.EditorCodeArea;
 //import sq.app.view.ChatPaneController;
 import sq.app.view.LoginPaneController;
+import sq.app.view.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -24,8 +26,6 @@ public class MainApp extends Application {
 	//private User chris;
 	//private User chris2;
 	public static ArrayList<User> list = new ArrayList<User>();
-	
-	
 	
 	public MainApp(){
 		/*user = new User("username");
@@ -98,13 +98,16 @@ public class MainApp extends Application {
 			loader.setLocation(MainApp.class.getResource("view/MainView.fxml"));
 			AnchorPane MainView = (AnchorPane) loader.load();
 			
+			MainView.getStylesheets().add(EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
+			MainViewController mvc = loader.getController();
+			mvc.initialize(loader.getLocation(), loader.getResources());
 			
 			rootLayout.setCenter(MainView);
 		} catch (IOException e){
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void showChatPane() {
 	    try {
 	        // Load the fxml file and create a new stage for the popup dialog.

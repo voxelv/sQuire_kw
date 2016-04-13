@@ -77,9 +77,6 @@ public class EditorCodeArea extends CodeArea{
 		this.replaceText(sampleCode);
 	}
 	
-	public void initialize(Stage stage) {
-	}
-	
 	public void doHighlight() {
 		setStyleSpans(0, computeHighlighting(this.getText()));
 	}
