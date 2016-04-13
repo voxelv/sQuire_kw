@@ -6,7 +6,7 @@ import org.json.simple.JSONObject;
 public class CommDemo {
 	
 	
-	public static void main()
+	public static void main(String[] args)
 	{
 		// Create the connection to the server (There should only be one 
 		// connection for the client, so this should be passed into your 
@@ -28,12 +28,12 @@ public class CommDemo {
 		String action = "CREATEFILE";
 		
 		// Send stuff to the server, await response.
-		JSONArray returnValue = (JSONArray) server.sendSingleRequest(category, action, params);
-		
+		String returnValue = (String) server.sendSingleRequest(category, action, params);
+		System.out.println(returnValue);
 		// Get the First result's object
-		JSONObject firstRow = (JSONObject) returnValue.get(0);
+//		JSONObject firstRow = (JSONObject) returnValue.get(0);
 		
 		// Get the second result
-		JSONObject secondRow = (JSONObject) returnValue.get(1);
+//		JSONObject secondRow = (JSONObject) returnValue.get(1);
 	}
 }
