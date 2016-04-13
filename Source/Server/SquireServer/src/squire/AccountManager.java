@@ -1,6 +1,7 @@
 package squire;
 
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -9,6 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.api.ApiKey;
+import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.ApplicationList;
 import com.stormpath.sdk.application.Applications;
 import com.stormpath.sdk.authc.AuthenticationRequest;
@@ -34,10 +37,13 @@ public class AccountManager {
 		this.dbc = dbc;
 		loggedInAccount = null;
 		this.builder = Clients.builder();
-        this.client = builder.build();
+    	Properties properties = new Properties();
+    	properties.setProperty("apiKey.id", "3OIJT00DLSL8BQ3UCLR5X6C6S");
+    	properties.setProperty("apiKey.secret", "CGMCI0ul9ZR3hDiDIvcocccav3KOKcpHZ2doeqUm1i8");
+    	ApiKey apiKey = ApiKeys.builder().setProperties(properties).build();
+        this.client = Clients.builder().setApiKey(apiKey).build();
         this.tenant = client.getCurrentTenant();
         this.applications = tenant.getApplications(Applications.where(Applications.name().eqIgnoreCase("sQuire")));
-
         this.app = applications.iterator().next();
 	}
 	
