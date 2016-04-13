@@ -16,6 +16,14 @@ create table PFLines (
 	foreign key (nextid) references PFLines(pflid)
 );
 
+CREATE TABLE LineLocks (
+	pflid integer unsigned,
+	userID integer unsigned,
+	primary key (pflid, userID),
+	foreign key (userID) references Users(userID),
+	foreign key (pflid) references PFLines(pflid)
+);
+
 CREATE TABLE PDirs (
   pdid integer unsigned NOT NULL AUTO_INCREMENT,
   pdname varchar(30),
@@ -34,14 +42,13 @@ CREATE TABLE PFiles (
   pflhead int unsigned DEFAULT NULL, 
   timeCreated timestamp,
   creatorID int UNSIGNED DEFAULT NULL,
-  lockuser int UNSIGNED DEFAULT NULL,
   PRIMARY KEY (pfid),
   FOREIGN KEY (pflhead) REFERENCES PFLines (pflid),
   FOREIGN KEY (pdid) REFERENCES PDirs (pdid),
   FOREIGN KEY (pid) REFERENCES Projects (PID),
-  FOREIGN KEY (creatorID) REFERENCES Users (userID),
-  FOREIGN KEY (lockuser) REFERENCES Users (userID)
+  FOREIGN KEY (creatorID) REFERENCES Users (userID)
 );
+
 
 create table ProjectAccess (
 	PID integer unsigned not null,
