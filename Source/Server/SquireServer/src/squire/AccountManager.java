@@ -36,19 +36,34 @@ public class AccountManager {
 	{
 		this.dbc = dbc;
 		loggedInAccount = null;
-		this.builder = Clients.builder();
-    	Properties properties = new Properties();
-    	properties.setProperty("apiKey.id", "3OIJT00DLSL8BQ3UCLR5X6C6S");
-    	properties.setProperty("apiKey.secret", "CGMCI0ul9ZR3hDiDIvcocccav3KOKcpHZ2doeqUm1i8");
-    	ApiKey apiKey = ApiKeys.builder().setProperties(properties).build();
-        this.client = Clients.builder().setApiKey(apiKey).build();
-        this.tenant = client.getCurrentTenant();
-        this.applications = tenant.getApplications(Applications.where(Applications.name().eqIgnoreCase("sQuire")));
-        this.app = applications.iterator().next();
+		builder = null;
+		client = null;
+		tenant = null;
+		applications = null;
+		app = null;
+		
+	}
+	
+	public void connectToStormpath()
+	{
+		if (builder == null)
+		{
+			this.builder = Clients.builder();
+	    	Properties properties = new Properties();
+	    	properties.setProperty("apiKey.id", "3OIJT00DLSL8BQ3UCLR5X6C6S");
+	    	properties.setProperty("apiKey.secret", "CGMCI0ul9ZR3hDiDIvcocccav3KOKcpHZ2doeqUm1i8");
+	    	ApiKey apiKey = ApiKeys.builder().setProperties(properties).build();
+	        this.client = Clients.builder().setApiKey(apiKey).build();
+	        this.tenant = client.getCurrentTenant();
+	        this.applications = tenant.getApplications(Applications.where(Applications.name().eqIgnoreCase("sQuire")));
+	        this.app = applications.iterator().next();
+		}
 	}
 	
 	public String CreateAccount(String fName, String lName, String uName, String email, String pword)
 	{
+		connectToStormpath();
+		
 		Account account = client.instantiate(Account.class);
 
 		String output = "";
@@ -105,6 +120,7 @@ public class AccountManager {
 	
 	public String Login( String uName, String pWord )
 	{
+		connectToStormpath();
 		AuthenticationRequest request = new UsernamePasswordRequest(uName, pWord);
 		String output = "";
 		

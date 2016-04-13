@@ -2,6 +2,8 @@ package squire;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class CommDemo {
 	
@@ -22,15 +24,44 @@ public class CommDemo {
 		params.put("testParam2", "myTestParamValue2");
 		
 		// Set the category
-		String category = "FILE";
+		String category = "SERVER";
 		
 		// Set the action
-		String action = "CREATEFILE";
+		String action = "QUIT";
 		
 		// Send stuff to the server, await response.
 		String returnValue = (String) server.sendSingleRequest(category, action, params);
 		System.out.println(returnValue);
 		// Get the First result's object
+		
+		int i = 1;
+		// If you're expecting a JSONArray or JSONObject, do this...
+		if (i == 0)
+		{
+			Object returnObj;
+			JSONArray outJSONArray;
+			JSONObject outJSONObject;
+			try {
+				// Parse the object
+				returnObj = new JSONParser().parse(returnValue);
+				
+				// if it's a JSONArray, cast output as JSONArray
+				outJSONArray = (JSONArray) returnObj;
+				
+				// if it's JSONObject, cast output as JSONObject
+				outJSONObject = (JSONObject) returnObj;
+				
+				// Use get() to get specific properties from the return ----ARRAY----
+				outJSONArray.get(0);
+				
+				// Use get() to get specific properties from the return ----OBJECT----
+				outJSONObject.get("returnObjectKey");
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 //		JSONObject firstRow = (JSONObject) returnValue.get(0);
 		
 		// Get the second result
