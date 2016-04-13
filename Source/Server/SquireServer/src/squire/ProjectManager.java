@@ -1,3 +1,5 @@
+package squire;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -153,18 +155,19 @@ public class ProjectManager {
 		String[] values2 = null;
 		
 		String accessQuery = "Insert into ProjectAccess(PID, UserID) values (?, ?);";
-		String accessValues = new String[2];
+		String[] accessValues = new String[2];
 		accessValues[1] = String.valueOf(this.userID);
 		
 		
 		JSONArray projectID = new JSONArray();
 		String pid;
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 			projectID = this.dbc.query(query2, values2);
 			//parse JSONArray to add access to self.
-			pid = (String) projectID.get("PID");
-			createProjectAccess(String.valueOf(this.userID), pid)
+			JSONObject firstRow = (JSONObject) ((JSONArray) projectID).get(0);
+			pid = (String) firstRow.get("LAST_INSERT_ID()");
+			createProjectAccess(String.valueOf(this.userID), pid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -179,14 +182,14 @@ public class ProjectManager {
 		values[1] = projectID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void createDirectory (String projectID, String dirName, String parentDirID){
+	public JSONArray createDirectory (String projectID, String dirName, String parentDirID){
 		String query = "Insert into PDirs(pdname, parentid, pid) values (?, ?, ?)";
 		String[] values = new String[3];
 		values[0] = dirName;
@@ -206,7 +209,7 @@ public class ProjectManager {
 		return dirID;
 	}
 	
-	public void createDirectory (String projectID, String dirName){
+	public JSONArray createDirectory (String projectID, String dirName){
 		String query = "Insert into PDirs(pdname, pid) values (?, ?)";
 		String[] values = new String[2];
 		values[0] = dirName;
@@ -242,7 +245,7 @@ public class ProjectManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return FileID;
+		return fileID;
 	}
 	
 	public JSONArray createLine (String text, String nextLineID, String timeEdited){
@@ -274,14 +277,14 @@ public class ProjectManager {
 		values[0] = projectID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void removeProjectAccess (String projectID, string accessUserID){
+	public void removeProjectAccess (String projectID, String accessUserID){
 		String query = "Delete from ProjectAccess" + 
 							"where" +
 								"PID = ?" +
@@ -292,7 +295,7 @@ public class ProjectManager {
 		values[1] = accessUserID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,7 +310,7 @@ public class ProjectManager {
 		values[0] = dirID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -322,7 +325,7 @@ public class ProjectManager {
 		values[0] = fileID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -331,14 +334,14 @@ public class ProjectManager {
 	
 	public void removeLine (String lineID){
 		String firstquery = "Select nextid from PFLines where pflid = ?;";
-		String firstvalues = new String[1];
+		String[] firstvalues = new String[1];
 		firstvalues[0] = lineID;
 		
 		String upquery = "Update pflid" +
 						 "set nextID = ?" +
 						 "where nextID = ?";
-		String upvalues = [2];
-		values[1] = lineID;
+		String[] upvalues = new String[2];
+		upvalues[1] = lineID;
 		
 		String query = "Delete from PFLines" + 
 							"where" +
@@ -351,9 +354,9 @@ public class ProjectManager {
 			//Get what line the to-be-deleted line points to
 			//upvalues[0] = that
 			nextID = this.dbc.query(firstquery, firstvalues);
-			upvalues[0] = (String) nextID.get("nextid");
+			upvalues[0] = (String) ((JSONObject) nextID.get(0)).get("nextid");
 			this.dbc.query(upquery, upvalues);
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -363,15 +366,15 @@ public class ProjectManager {
 	public void lockLine (String lineID){
 		
 		String query = "Update PFLines" +
-							"set lockuser = ?"
+							"set lockuser = ?" +
 							"where" +
 								"PFLID = ?";
 		String[] values = new String[2];
-		values[0] = this.userID;
+		values[0] = String.valueOf(this.userID);
 		values[1] = lineID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -381,7 +384,7 @@ public class ProjectManager {
 	public void unlockLine (String lineID){
 		
 		String query = "Update PFLines" +
-							"set lockuser = ?"
+							"set lockuser = ?" +
 							"where" +
 								"PFLID = ?";
 		String[] values = new String[2];
@@ -389,7 +392,7 @@ public class ProjectManager {
 		values[1] = lineID;
 		
 		try {
-			this.dbc.query(query, values)
+			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -57,6 +57,7 @@ public class AccountManager {
         try {
             app.createAccount(account);
             output = "Success";
+            this.CreateLocalAccount(uName);
 //            createresult.setText("Account '" + uname.getText() + "' Created");
         } catch (Exception e) {
 //            createresult.setText(e.getMessage());

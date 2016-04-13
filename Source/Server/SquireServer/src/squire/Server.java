@@ -40,6 +40,7 @@ public class Server{
         private int clientNumber;
         private ChatManager chatManager;
         private AccountManager accountManager;
+        private ProjectManager projectManager;
         private DBConnector dbc;
         private int userID = 0;
 
@@ -67,8 +68,7 @@ public class Server{
             
             chatManager = new ChatManager(dbc);
             accountManager = new AccountManager(dbc);
-            
-            chatManager.setUserID(this.userID);
+            projectManager = new ProjectManager(dbc);
         }
         
         
@@ -206,8 +206,10 @@ public class Server{
         			
         			if (this.userID > 0)
         			{
-	        			chatManager.setUserID(this.userID);
-	        			chatManager.onLogin();
+	        			this.chatManager.setUserID(this.userID);
+	        			this.chatManager.onLogin();
+	        			
+	        			this.projectManager.setUserID(this.userID);
         			}
         			
         			JSONObject ret = new JSONObject();
@@ -234,50 +236,50 @@ public class Server{
         	{
         		if (action.compareToIgnoreCase("getProjects") == 0)
         		{
-        						
-        			String result = this.projectManager.getProjects();
+        			JSONArray res = this.projectManager.getProjects();
+        			output = res.toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getProjectAccessEntries") == 0)
         		{
 					String projectID = (String) params.get("projectID");
-        						
-        			String result = this.projectManager.getProjectsAccessEntries(projectID);
+					
+        			output = this.projectManager.getProjectAccessEntries(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getDirectories") == 0)
         		{
 					String projectID = (String) params.get("projectID");
-        						
-        			String result = this.projectManager.getDirectories(projectID);
+					
+        			output = this.projectManager.getDirectories(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getFiles") == 0)
         		{
 					String projectID = (String) params.get("projectID");
-        						
-        			String result = this.projectManager.getFiles(projectID);
+					
+        			output = this.projectManager.getFiles(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getDirectories") == 0)
         		{
 					String projectID = (String) params.get("projectID");
-        						
-        			String result = this.projectManager.getDirectories(projectID);
+        					
+					output = this.projectManager.getDirectories(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getLines") == 0)
         		{
 					String fileID = (String) params.get("fileID");
         						
-        			String result = this.projectManager.getLines(fileID);
+					output = this.projectManager.getLines(fileID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("createProject") == 0)
         		{
-					String projectNAme = (String) params.get("projectName");
+					String projectName = (String) params.get("projectName");
         						
-        			String result = this.projectManager.createProject(projectName);
+        			output = this.projectManager.createProject(projectName).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("createProjectAccess") == 0)
@@ -293,7 +295,7 @@ public class Server{
 					String projectID = (String) params.get("projectID");
         			String dirName = (String) params.get("dirName");
 					
-        			this.projectManager.createDirectory(projectName, dirName);
+        			this.projectManager.createDirectory(projectID, dirName);
         			
         		}
 				else if (action.compareToIgnoreCase("createSubdirectory") == 0)
@@ -311,16 +313,16 @@ public class Server{
         			String dirID = (String) params.get("dirID");
 					String fileName = (String) params.get("fileName");
 					
-        			String result = this.projectManager.createDirectory(fileName, projectID, dirID);
+					output = this.projectManager.createDirectory(fileName, projectID, dirID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("createLine") == 0)
         		{
-					String projectID = (String) params.get("projectID");
-        			String dirID = (String) params.get("dirID");
-					String fileName = (String) params.get("fileName");
+					String text = (String) params.get("text");
+        			String nextLineID = (String) params.get("nextLineID");
+					String timeEdited = (String) params.get("timeEdited");
 					
-        			String result = this.projectManager.createLine (text, nextLineID, timeEdited);
+					output = this.projectManager.createLine (text, nextLineID, timeEdited).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("removeProject") == 0)
