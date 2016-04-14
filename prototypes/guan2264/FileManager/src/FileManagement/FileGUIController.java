@@ -20,29 +20,44 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class FileGUIController implements Initializable {
 	public static Connection conn = null;
 	int MyuserID = 2;
     int currPID = 0;
-
 	String currProjectName = "";
-/*
-    public static void Main(String[] args) throws ClassNotFoundException {
-        try {
-        	Class.forName("com.mysql.jdbc.Driver");
-        	conn = DriverManager.getConnection("jdbc:mysql://SquireRaspServer.ddns.net:9897/squire","remote","squire!");
-        	System.out.println("Connected.");
-        } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-        }
-    }
-*/
-/******************************************************************************/
+    TreeItem<StrucTree> selected = null;
 
+	@FXML Text user;
+    @FXML TextField curr_position;
+    @FXML TreeView<StrucTree> structure_tree;
+
+
+/***************************Connection***************************
+ *	public static Connection conn = null;
+ *
+ *	public static void Connect() throws ClassNotFoundException{
+ *		try {
+ *			Class.forName("com.mysql.jdbc.Driver");
+ *			conn = (Connection) DriverManager.getConnection("jdbc:mysql://SquireRaspServer.ddns.net:9897/squire","remote","squire!");
+ *			System.out.println("Connected.");
+ *		} catch (SQLException ex) {
+ *			System.out.println("SQLException: " + ex.getMessage());
+ *			System.out.println("SQLState: " + ex.getSQLState());
+ *			System.out.println("VendorError: " + ex.getErrorCode());
+ *
+ *		}
+ *	}
+ *
+ *	public static Connection GetConnection(){
+ *   	return conn;
+ *  }
+ *
+ ***************************Connection***************************/
+
+/***************************Project Creation***************************/
     @FXML
     public void CreateProject() throws SQLException, ClassNotFoundException{
         TextInputDialog dialog = new TextInputDialog("");
@@ -50,7 +65,6 @@ public class FileGUIController implements Initializable {
     	dialog.setHeaderText("sQuire Project");
     	dialog.setContentText("Please enter the project name:");
     	Optional<String> result = dialog.showAndWait();
-    	conn = Main.GetConnection();
         Statement st = conn.createStatement();
     	boolean isExist = false;
     	String currProjName = "";
@@ -94,7 +108,7 @@ public class FileGUIController implements Initializable {
 
     }
 
-/******************************************************************************/
+/***************************File Input***************************/
 
     @FXML AnchorPane root;
     @FXML public void locateFile(){
@@ -103,7 +117,7 @@ public class FileGUIController implements Initializable {
     	chooser.showOpenDialog(root.getScene().getWindow());
     }
 
-/******************************************************************************/
+/***************************TreeItem Class***************************/
     class StrucTree {
     	  String name;
     	  int id;
@@ -120,9 +134,10 @@ public class FileGUIController implements Initializable {
     	  public boolean isDirectory(){return isDirectory;}
     	  public boolean isProject(){return isProject;}
 
-    	  public boolean isExist(String name){
-    		  return Objects.equals(this.name, name);
-    	  }
+    	  public void setName(String name){ this.name = name;}
+
+    	  public boolean isExist(String name){ return Objects.equals(this.name, name);}
+
     	  public StrucTree(String type,String name, int id) {
     		  if(Objects.equals(type,"p")){
     			  isProject = true;
@@ -156,14 +171,152 @@ public class FileGUIController implements Initializable {
     		  }
     	  }
     	}
-    /******************************************************************************/
+/***************************Display UserName***************************/
+    private void setUser(int id) throws SQLException{
+		String query = "SELECT userName FROM Users WHERE userID like '" + id + "' LIMIT 1";
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(query);
+        if(rs.next()){ user.setText(rs.getString("userName"));}
+    }
 
-    @FXML TreeView<StrucTree> structure_tree;
+/***************************Rename Function***************************/
+    @FXML public void Rename() throws SQLException{
+    	boolean isExist = false;
 
+    	if(selected == null){
+            warning("No project or file selected.");
+    	} else if(selected.getValue().isProject()){
+    		TextInputDialog dialog = new TextInputDialog("");
+        	dialog.setTitle("Rename");
+        	dialog.setHeaderText("Rename Project");
+        	dialog.setContentText("Please enter the project name:");
+        	Optional<String> result = dialog.showAndWait();
+            Statement st = conn.createStatement();
+        	String currProjName = "";
+
+        	if (result.isPresent()){
+        		currProjName = result.get();
+            	String query = "SELECT PID FROM ProjectAccess where userID like '" + MyuserID + "'";
+                ResultSet rs = st.executeQuery(query);
+                while(rs.next()){
+
+                	int myPid = rs.getInt("PID");
+
+                	String query2 = "SELECT pname FROM Projects where PID like '" + myPid + "'";
+                    Statement st1 = conn.createStatement();
+                	ResultSet re1 = st1.executeQuery(query2);
+                	if(re1.next()){
+                		String projName = re1.getString("pname");
+                    	if( Objects.equals(projName,currProjName)){
+                    		isExist = true;
+                    		warning("Project name already exist.");
+                            break;
+                    	}
+                	}
+                }
+
+                if(isExist == false){
+                	String sql = "UPDATE Projects SET pname='" + currProjName + "' WHERE PID='" + selected.getValue().getID() + "'";
+                	st.executeUpdate(sql);
+                	selected.getValue().setName(currProjName);
+                	structure_tree.refresh();
+                }
+        	}
+
+
+
+    	} else if(selected.getValue().isDirectory()){
+    		TextInputDialog dialog = new TextInputDialog("");
+        	dialog.setTitle("Rename");
+        	dialog.setHeaderText("Rename Folder");
+        	dialog.setContentText("Please enter the folder name:");
+        	Optional<String> result = dialog.showAndWait();
+
+         	if (result.isPresent()){
+        		final String inputFolderName  = result.get();
+        		String query = "";
+        		if(selected.getParent().getValue().isProject()){
+        			query = "SELECT pdname FROM PDirs where pid like '" + currPID + "' AND parentid IS NULL";
+        		}else {
+        			query = "SELECT pdname FROM PDirs where pid like '" + currPID + "' AND parentid like '" + selected.getParent().getValue().getID() + "'";
+        		}
+        		Statement st = conn.createStatement();
+        		ResultSet rs = st.executeQuery(query);
+
+                while(rs.next()){
+                	String tempName = rs.getString("pdname");
+                	if(Objects.equals(tempName,inputFolderName)){
+                		isExist = true;
+                		break;
+                	}
+                }
+
+
+                if(isExist == true){
+         			warning("Directory name already exist.");
+         		} else {
+                	query = "UPDATE PDirs SET pdname='" + inputFolderName + "' WHERE pdid='" + selected.getValue().getID() + "'";
+
+         			st = conn.createStatement();
+         			st.executeUpdate(query);
+         			selected.getValue().setName(inputFolderName);
+                	structure_tree.refresh();
+	         	}
+         	}
+
+
+    	} else if(selected.getValue().isFile){
+    		TextInputDialog dialog = new TextInputDialog("");
+        	dialog.setTitle("Rename");
+        	dialog.setHeaderText("Rename File");
+        	dialog.setContentText("Please enter the file name:");
+        	Optional<String> result = dialog.showAndWait();
+
+        	if (result.isPresent()){
+        		final String inputFileName  = result.get();
+        		String query = "";
+        		if(selected.getParent().getValue().isProject()){
+            		query = "SELECT pfname FROM PFiles where pid like '" + currPID + "' AND pdid IS NULL";
+        		}else {
+        			query = "SELECT pfname FROM PFiles where pid like '" + currPID + "' AND pdid LIKE '" + selected.getParent().getValue().getID() + "'";
+        		}
+
+        		Statement st = conn.createStatement();
+        		ResultSet rs = st.executeQuery(query);
+
+                    while(rs.next()){
+                    	String tempName = rs.getString("pfname");
+                    	if(Objects.equals(tempName,inputFileName)){
+                    		isExist = true;
+                    		break;
+                    	}
+                    }
+                    if(isExist == true){
+            			warning("File name already exist.");
+
+            		} else {
+                    	query = "UPDATE PFiles SET pfname='" + inputFileName + "' WHERE pfid='" + selected.getValue().getID() + "'";
+
+            			st = conn.createStatement();
+            			st.executeUpdate(query);
+             			selected.getValue().setName(inputFileName);
+                    	structure_tree.refresh();
+            		}
+        	}
+    	}
+    }
+
+
+/***************************Initialize Tree***************************/
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     	conn = Main.GetConnection();
+    	try {
+			setUser(MyuserID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     	IniTree();
     	curr_position.setText("sQuire Project");
     }
@@ -176,8 +329,7 @@ public class FileGUIController implements Initializable {
 
     	try {
 			String query = "SELECT * FROM ProjectAccess WHERE userID like '" + MyuserID + "'";
-	        Statement st;
-			st = conn.createStatement();
+	        Statement st = conn.createStatement();
 	        ResultSet rs = st.executeQuery(query);
 	        while (rs.next()){
 	        	int PID = rs.getInt("PID");
@@ -202,32 +354,46 @@ public class FileGUIController implements Initializable {
 		}
     	currPID = 0;
     	selected = null;
+    	currProjectName = "";
     }
-/******************************************************************************/
+
+/***************************Display Current Position***************************/
+
     private String getCurrPosition(TreeItem<StrucTree> item){
         StringBuilder pos = new StringBuilder(currProjectName);
-        if(!selected.getValue().isProject()){ printpath(item, pos);}
+        if(!selected.getValue().isProject()){
+        	printpath(item, pos);
+        }
+
         return pos.toString();
     }
 
     private StringBuilder printpath(TreeItem<StrucTree> item, StringBuilder temp){
-        if(item.getParent()!= null && !Objects.equals(item.getParent().getValue().toString(),currProjectName)){
+        if(item.getParent()!= null && !item.getParent().getValue().isProject()){
             printpath(item.getParent(), temp);
         }
-        temp.append("/");
+        if(!Objects.equals(currProjectName, "")){ temp.append("/");}
         temp.append(item.getValue().toString());
         return temp;
     }
-/******************************************************************************/
-    TreeItem<StrucTree> selected = null;
-    @FXML TextField curr_position;
+/***************************Selection Tasks***************************/
+
     @FXML private void file_select(MouseEvent mouse) throws SQLException{
-        if(mouse.getClickCount() == 2){
-            TreeItem<StrucTree> item = structure_tree.getSelectionModel().getSelectedItem();
+        TreeItem<StrucTree> item = structure_tree.getSelectionModel().getSelectedItem();
+
+    	if(mouse.getClickCount() == 1 && item != null){
+    		selected = item;
+    		if(Objects.equals(currProjectName, "")){
+    			curr_position.setText(item.getValue().toString());
+    		}else {
+    			curr_position.setText(getCurrPosition(item));
+    		}
+    	}
+        if(mouse.getClickCount() == 2 && item != null){
             selected = item;
             curr_position.setText(item.getValue().toString());
 
-            if(currPID == 0){
+            if(currPID == 0 && !Objects.equals(item.getValue().toString(),"sQuire Project")){
                 currProjectName = item.getValue().toString();
 
                 currPID = item.getValue().getID();
@@ -237,8 +403,8 @@ public class FileGUIController implements Initializable {
             }
         }
     }
-/**
- * @throws SQLException ****************************************************************************/
+/***************************Set Tree***************************/
+
     private void setTree (CheckBoxTreeItem<StrucTree> treeItem, int id) throws SQLException{
     	CheckBoxTreeItem<StrucTree> treeRoot = new CheckBoxTreeItem<>();
     	if(treeItem == null){
@@ -283,17 +449,16 @@ public class FileGUIController implements Initializable {
     	}
     }
 
-/******************************************************************************/
+/***************************Home Button Function***************************/
 
     @FXML private void HomeButton(){
-    	conn = Main.GetConnection();
     	IniTree();
     	curr_position.setText("sQuire Project");
     }
 
-/******************************************************************************/
+/***************************Delete Function***************************/
+
     @FXML private void DeleteButton() throws SQLException{
-    	conn = Main.GetConnection();
 
 /*
     	else if(selected.getParent()==null || Objects.equals(selected.getParent().getValue().toString(),"sQuire Project")){
@@ -365,8 +530,7 @@ public class FileGUIController implements Initializable {
     	}
     }
 
-/**
- * @throws SQLException ****************************************************************************/
+/***************************Delete Directory Routine***************************/
     private void deleteDirectory(int id) throws SQLException{
 
     	String query = "DELETE FROM PFiles WHERE pdid LIKE '" + id + "'";
@@ -383,7 +547,8 @@ public class FileGUIController implements Initializable {
     	query = "DELETE FROM PDirs WHERE pdid LIKE '" + id + "'";
     	st.executeUpdate(query);
     }
-/******************************************************************************/
+
+/***************************Warning Pop Up Window***************************/
 
     private void warning(String text){
         Alert alert = new Alert(AlertType.WARNING);
@@ -394,8 +559,7 @@ public class FileGUIController implements Initializable {
     }
 
 
-/******************************************************************************/
-
+/***************************Store Tree Value***************************/
 /*
     private int getPID(String pname, int userID) throws SQLException{
 	    Statement st = conn.createStatement();
@@ -423,6 +587,8 @@ public class FileGUIController implements Initializable {
 
 */
 
+/***************************Directory Creation***************************/
+
     @FXML private void CreateFolder() throws SQLException{
     	boolean isExist = false;
 
@@ -434,7 +600,6 @@ public class FileGUIController implements Initializable {
         	dialog.setHeaderText("Folder");
         	dialog.setContentText("Please enter the folder name:");
         	Optional<String> result = dialog.showAndWait();
-        	conn = Main.GetConnection();
 
         	if (result.isPresent()){
         		final String inputFolderName  = result.get();
@@ -474,7 +639,6 @@ public class FileGUIController implements Initializable {
     	dialog.setHeaderText("Folder");
     	dialog.setContentText("Please enter the folder name:");
     	Optional<String> result = dialog.showAndWait();
-    	conn = Main.GetConnection();
 
     	if (result.isPresent()){
     		final String inputFolderName  = result.get();
@@ -524,7 +688,6 @@ public class FileGUIController implements Initializable {
     	dialog.setTitle("Create Folder");
     	dialog.setHeaderText("Folder");
     	dialog.setContentText("Please enter the folder name:");
-    	conn = Main.GetConnection();
     	Optional<String> result = dialog.showAndWait();
 
     	if (result.isPresent()){
@@ -562,8 +725,7 @@ public class FileGUIController implements Initializable {
 
 
     }
-/******************************************************************************/
-
+/***************************File Creation***************************/
     @FXML private void CreateFile() throws SQLException{
     	boolean isExist = false;
 
@@ -575,7 +737,6 @@ public class FileGUIController implements Initializable {
         	dialog.setHeaderText("File");
         	dialog.setContentText("Please enter the file name:");
         	Optional<String> result = dialog.showAndWait();
-        	conn = Main.GetConnection();
 
         	if (result.isPresent()){
         		final String inputFileName  = result.get();
@@ -615,7 +776,6 @@ public class FileGUIController implements Initializable {
     	dialog.setHeaderText("File");
     	dialog.setContentText("Please enter the file name:");
     	Optional<String> result = dialog.showAndWait();
-    	conn = Main.GetConnection();
 
     	if (result.isPresent()){
     		final String inputFileName  = result.get();
@@ -666,7 +826,6 @@ public class FileGUIController implements Initializable {
 	    	dialog.setTitle("Create File");
 	    	dialog.setHeaderText("File");
 	    	dialog.setContentText("Please enter the file name:");
-	    	conn = Main.GetConnection();
 	    	Optional<String> result = dialog.showAndWait();
 
 	    	if (result.isPresent()){
@@ -702,6 +861,9 @@ public class FileGUIController implements Initializable {
 	    	}
 	    }
     }
+/******************************************************************************/
+//	private void setFile(){}
+
 /******************************************************************************/
 
 }
