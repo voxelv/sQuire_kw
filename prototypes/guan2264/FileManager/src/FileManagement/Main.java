@@ -5,26 +5,15 @@
  */
 package FileManagement;
 
-import java.awt.Desktop;
-import static java.awt.SystemColor.desktop;
-import java.io.File;
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.mysql.jdbc.Connection;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
