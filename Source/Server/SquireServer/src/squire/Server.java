@@ -268,6 +268,13 @@ public class Server{
 					output = this.projectManager.getDirectories(projectID).toJSONString();
         			
         		}
+				else if (action.compareToIgnoreCase("getAllLines") == 0)
+        		{
+					String projectID = (String) params.get("projectID");
+        						
+					output = this.projectManager.getAllLines(projectID).toJSONString();
+        			
+        		}
 				else if (action.compareToIgnoreCase("getLines") == 0)
         		{
 					String fileID = (String) params.get("fileID");

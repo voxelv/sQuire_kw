@@ -120,6 +120,26 @@ public class ProjectManager {
 		return fileList;
 	}
 	
+	public JSONArray getAllLines (String ProjectID) throws SQLException{
+		
+		JSONArray fileList = new JSONArray();
+		JSONArray lineList = new JSONArray();
+		String pfn;
+		try {
+			fileList = getFiles(projectID);
+			for(int i = 0; i < fileList.size()){
+				JSONObject row = (JSONObject) ((JSONArray) fileList).get(i);
+				pfid = (String) firstRow.get("pfid");
+				lineList.addAll( getLines(pfid) );
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return projectList;
+	}
+	
 	public JSONArray getLines (String PFileID) throws SQLException{
 		String query =	"call PFLTraverser(("
 						+ "select "
