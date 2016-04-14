@@ -72,15 +72,12 @@ public class FileGUIController implements Initializable {
             		String projName = re1.getString("pname");
                 	if( Objects.equals(projName,currProjName)){
                 		isExist = true;
-                        Alert alert = new Alert(AlertType.WARNING);
-                        alert.setTitle("Warning");
-                        alert.setHeaderText("Warning");
-                        alert.setContentText("Project name already exist.");
-                        alert.showAndWait();
+                		warning("Project name already exist.");
                         break;
                 	}
             	}
             }
+
             if(isExist == false){
             	String sql = "INSERT INTO Projects(pname)VALUE('" + currProjName + "')";
             	st.executeUpdate(sql);
@@ -94,7 +91,7 @@ public class FileGUIController implements Initializable {
             }
     	}
     	IniTree();
-    	selected = null;
+
     }
 
 /******************************************************************************/
@@ -172,7 +169,7 @@ public class FileGUIController implements Initializable {
     }
 
 
-    public CheckBoxTreeItem<StrucTree> IniTree() {
+    public void IniTree() {
     	CheckBoxTreeItem<StrucTree> treeRoot = new CheckBoxTreeItem<>();
     	treeRoot.setValue(new StrucTree("sQuire Project"));
     	treeRoot.setExpanded(true);
@@ -203,7 +200,8 @@ public class FileGUIController implements Initializable {
 	        } catch (SQLException e) {
 			e.printStackTrace();
 		}
-        return treeRoot;
+    	currPID = 0;
+    	selected = null;
     }
 /******************************************************************************/
     private String getCurrPosition(TreeItem<StrucTree> item){
@@ -291,18 +289,15 @@ public class FileGUIController implements Initializable {
     	conn = Main.GetConnection();
     	IniTree();
     	curr_position.setText("sQuire Project");
-    	selected = null;
-    	currPID = 0;
     }
 
 /******************************************************************************/
     @FXML private void DeleteButton() throws SQLException{
     	conn = Main.GetConnection();
-    	int deletePID = 0;
-    	if(selected == null){
-            warning("No project or file selected.");
-    	} else if(selected.getParent()==null || Objects.equals(selected.getParent().getValue().toString(),"sQuire Project")){
-    		String query = "SELECT PID FROM Projects where pname like '" + selected.getValue() + "'";
+
+/*
+    	else if(selected.getParent()==null || Objects.equals(selected.getParent().getValue().toString(),"sQuire Project")){
+    		String query = "SELECT PID FROM Projects where pname like '" + selected.getValue().toString() + "'";
     	    Statement st = conn.createStatement();
     	    ResultSet rs = st.executeQuery(query);
     	    while(rs.next()){
@@ -334,13 +329,60 @@ public class FileGUIController implements Initializable {
         	IniTree();
         	curr_position.setText("sQuire Project");
         	selected = null;
+
+    	}
 */
-    	} else {
+    	if(selected == null){
+            warning("No project or file selected.");
+    	} else if(selected.getValue().isProject()){
+    		int pid = selected.getValue().getID();
+    		Statement st = conn.createStatement();
+    		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
+    		st.executeUpdate(query);
+    		query = "DELETE FROM PFiles WHERE pid LIKE '" + pid + "'";
+    		st.executeUpdate(query);
+
+    		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
+    		ResultSet rs = st.executeQuery(query);
+    		while(rs.next()){
+    			deleteDirectory(rs.getInt("pdid"));
+    		}
+    		query = "DELETE FROM Projects WHERE pid LIKE '" + pid + "'";
+    		st.executeUpdate(query);
+    		IniTree();
+
+    	} else if(selected.getValue().isDirectory()){
+    		System.out.println(selected.getValue().getID());
+    		deleteDirectory(selected.getValue().getID());
+    		System.out.println(currPID);
+       		selected.getParent().getChildren().remove(selected);
+    	} else if(selected.getValue().isFile()){
+    		int pfid = selected.getValue().getID();
+    		String deleteFile = "DELETE FROM PFiles WHERE pfid LIKE '" + pfid + "'";
+    		Statement st = conn.createStatement();
+    		st.executeUpdate(deleteFile);
     		selected.getParent().getChildren().remove(selected);
     	}
-
     }
 
+/**
+ * @throws SQLException ****************************************************************************/
+    private void deleteDirectory(int id) throws SQLException{
+
+    	String query = "DELETE FROM PFiles WHERE pdid LIKE '" + id + "'";
+	    Statement st = conn.createStatement();
+	    st.executeUpdate(query);
+
+    	query = "SELECT pdid FROM PDirs where parentid like '" + id + "'";
+    	ResultSet rs = st.executeQuery(query);
+	    while(rs.next()){
+	    	int pdid = rs.getInt("pdid");
+	    	deleteDirectory(pdid);
+	    }
+
+    	query = "DELETE FROM PDirs WHERE pdid LIKE '" + id + "'";
+    	st.executeUpdate(query);
+    }
 /******************************************************************************/
 
     private void warning(String text){
@@ -387,7 +429,6 @@ public class FileGUIController implements Initializable {
     	if(Objects.equals(currProjectName,"") || selected == null){
             warning("Can't create folder under the main project");
     	} else if(selected.getValue().isProject()){
-    		System.out.println("Project");
     		TextInputDialog dialog = new TextInputDialog("");
         	dialog.setTitle("Create Folder");
         	dialog.setHeaderText("Folder");
@@ -619,54 +660,49 @@ public class FileGUIController implements Initializable {
         				selected.getParent().setExpanded(true);
         			}
         		}
-    	}
-    } else if(selected.getValue().isDirectory()){
-		TextInputDialog dialog = new TextInputDialog("");
-    	dialog.setTitle("Create File");
-    	dialog.setHeaderText("File");
-    	dialog.setContentText("Please enter the file name:");
-    	conn = Main.GetConnection();
-    	Optional<String> result = dialog.showAndWait();
-
-    	if (result.isPresent()){
-    		final String inputFileName  = result.get();
-    		String query = "SELECT pfname FROM PFiles where pid like '" + currPID + "' AND pdid LIKE '" + selected.getValue().getID() + "'";
-
-    		Statement st = conn.createStatement();
-    		ResultSet rs = st.executeQuery(query);
-
-                while(rs.next()){
-                	String tempName = rs.getString("pfname");
-                	if(Objects.equals(tempName,inputFileName)){
-                		isExist = true;
-                		break;
-                	}
-                }
-    		if(isExist == true){
-    			warning("File name already exist.");
-    		} else {
-    			query = "INSERT INTO PFiles(pfname, pid, pdid) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "')";
-    			st = conn.createStatement();
-    			st.executeUpdate(query);
-    			query = "SELECT LAST_INSERT_ID()";
-    			rs = st.executeQuery(query);
-    			if(rs.next()){
-    				int currID = rs.getInt("LAST_INSERT_ID()");
-    				CheckBoxTreeItem<StrucTree> temptreeItem = new CheckBoxTreeItem<>();
-    				temptreeItem.setValue(new StrucTree("f", inputFileName, currID, selected.getValue().getID()));
-    				selected.getChildren().add(temptreeItem);
-    				selected.setExpanded(true);
-    			}
     		}
-    	}
+	    } else if(selected.getValue().isDirectory()){
+			TextInputDialog dialog = new TextInputDialog("");
+	    	dialog.setTitle("Create File");
+	    	dialog.setHeaderText("File");
+	    	dialog.setContentText("Please enter the file name:");
+	    	conn = Main.GetConnection();
+	    	Optional<String> result = dialog.showAndWait();
 
-    }
+	    	if (result.isPresent()){
+	    		final String inputFileName  = result.get();
+	    		String query = "SELECT pfname FROM PFiles where pid like '" + currPID + "' AND pdid LIKE '" + selected.getValue().getID() + "'";
 
+	    		Statement st = conn.createStatement();
+	    		ResultSet rs = st.executeQuery(query);
 
+	                while(rs.next()){
+	                	String tempName = rs.getString("pfname");
+	                	if(Objects.equals(tempName,inputFileName)){
+	                		isExist = true;
+	                		break;
+	                	}
+	                }
+	    		if(isExist == true){
+	    			warning("File name already exist.");
+	    		} else {
+	    			query = "INSERT INTO PFiles(pfname, pid, pdid) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "')";
+	    			st = conn.createStatement();
+	    			st.executeUpdate(query);
+	    			query = "SELECT LAST_INSERT_ID()";
+	    			rs = st.executeQuery(query);
+	    			if(rs.next()){
+	    				int currID = rs.getInt("LAST_INSERT_ID()");
+	    				CheckBoxTreeItem<StrucTree> temptreeItem = new CheckBoxTreeItem<>();
+	    				temptreeItem.setValue(new StrucTree("f", inputFileName, currID, selected.getValue().getID()));
+	    				selected.getChildren().add(temptreeItem);
+	    				selected.setExpanded(true);
+	    			}
+	    		}
+	    	}
+	    }
     }
 /******************************************************************************/
 
-
-
-/*****/
 }
+
