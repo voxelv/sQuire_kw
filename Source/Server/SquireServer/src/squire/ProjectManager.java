@@ -59,6 +59,8 @@ public class ProjectManager {
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
 		
+		System.out.println("\tQuery" + query);
+		System.out.println("\tWith Values" + values[0]);
 		JSONArray projectList = new JSONArray();
 		try {
 			projectList = this.dbc.query(query, values);
