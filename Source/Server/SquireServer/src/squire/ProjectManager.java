@@ -61,6 +61,7 @@ public class ProjectManager {
 		
 		System.out.println("\tQuery" + query + "\n");
 		System.out.println("\tWith Values" + values[0] + "\n");
+		System.out.flush();
 		JSONArray projectList = new JSONArray();
 		try {
 			projectList = this.dbc.query(query, values);
