@@ -17,7 +17,7 @@
                     <items>
                     	<StackPane fx:id="editorStackPane">
                            <children>
-                              <EditorCodeArea />
+                              <EditorCodeArea fx:id="editorCodeArea" />
                            </children>
                         </StackPane>
                         <AnchorPane prefHeight="189.0" prefWidth="1049.0" />

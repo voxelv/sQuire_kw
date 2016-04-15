@@ -22,9 +22,13 @@ public class MainViewController implements Initializable{
     private EditorCodeArea editorCodeArea;
     
     @FXML
-    public void initialize(){
+    public void init(){
     	System.out.println("test");
     	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
+    }
+    
+    public void initialize(){
+    	
     }
     
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
