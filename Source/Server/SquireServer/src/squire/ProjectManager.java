@@ -54,7 +54,7 @@ public class ProjectManager {
 					+ "from "
 						+ "`Projects NATURAL JOIN `ProjectAccess` "
 					+ "where "
-						+ "`ProjectAccess`.`userID` = ?";
+						+ "`ProjectAccess`.`userID` = ?;";
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
