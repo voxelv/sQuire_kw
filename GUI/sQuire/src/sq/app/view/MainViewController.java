@@ -51,12 +51,25 @@ public class MainViewController implements Initializable{
     private EditorCodeArea editorCodeArea;
     
     @FXML
-    public void initialize(){
+    public void init(){
     	System.out.println("test");
-    	init(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
+    	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
     }
     
-    public void init(URL fxmlFileLocation, ResourceBundle resources) {
+    public void initialize(){
+    	
+    }
+    
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    	conn = MainApp.GetConnection();
+    	try {
+			setUser(MyuserID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	IniTree();
+    	curr_position.setText("sQuire Project");
+    	
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
         
         // initialize your logic here: all @FXML variables will have been injected
@@ -76,7 +89,6 @@ public class MainViewController implements Initializable{
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
         	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
         	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
-        	editorCodeArea.getScene().getStylesheets().add(EditorCodeArea.class.getResource("sq/app/model/editor/resources/java-keywords.css").toExternalForm());
         });
         
         editorCodeArea.setOnKeyReleased(event->{
@@ -372,17 +384,7 @@ public class MainViewController implements Initializable{
 
 /***************************Initialize Tree***************************/
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    	conn = MainApp.GetConnection();
-    	try {
-			setUser(MyuserID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	IniTree();
-    	curr_position.setText("sQuire Project");
-    }
+
 
     public void IniTree() {
     	CheckBoxTreeItem<StrucTree> treeRoot = new CheckBoxTreeItem<>();

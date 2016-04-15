@@ -74,7 +74,7 @@ public class EditorCodeArea extends CodeArea{
     
 	public EditorCodeArea() {
 		super();
-        this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+    	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
 		LockParagraph(2);
 	}

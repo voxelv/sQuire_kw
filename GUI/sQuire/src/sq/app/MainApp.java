@@ -39,7 +39,7 @@ public class MainApp extends Application {
 		initRootLayout();
 		
 		showMainView();
-		
+
 		showLoginPane();
 		
 		showChatPane();
@@ -69,7 +69,9 @@ public class MainApp extends Application {
 			AnchorPane MainView = (AnchorPane) loader.load();
 			
 			rootLayout.setCenter(MainView);
-			
+	    	MainView.getScene().getStylesheets().add(sq.app.model.editor.EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
+
+  
 		} catch (IOException e){
 			e.printStackTrace();
 			

@@ -142,7 +142,10 @@ public class AccountManager {
 	
 	public int GetUserAccountID()
 	{
-		return this.loggedInAccount.localUserID;
+		if (this.loggedInAccount != null)
+			return this.loggedInAccount.localUserID;
+		else
+			return -1;
 	}
 	
 	private class UserAccount {
