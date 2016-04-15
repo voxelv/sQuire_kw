@@ -24,10 +24,10 @@ public class MainViewController implements Initializable{
     @FXML
     public void initialize(){
     	System.out.println("test");
-    	init(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
+    	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
     }
     
-    public void init(URL fxmlFileLocation, ResourceBundle resources) {
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
         
         // initialize your logic here: all @FXML variables will have been injected
@@ -47,7 +47,6 @@ public class MainViewController implements Initializable{
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
         	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
         	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
-        	editorCodeArea.getScene().getStylesheets().add(EditorCodeArea.class.getResource("sq/app/model/editor/resources/java-keywords.css").toExternalForm());
         });
         
         editorCodeArea.setOnKeyReleased(event->{
@@ -90,9 +89,4 @@ public class MainViewController implements Initializable{
         });
     }
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
-		
-	}
 }
