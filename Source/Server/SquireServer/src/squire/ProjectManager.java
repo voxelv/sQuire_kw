@@ -120,16 +120,16 @@ public class ProjectManager {
 		return fileList;
 	}
 	
-	public JSONArray getAllLines (String ProjectID) throws SQLException{
+	public JSONArray getAllLines (String projectID) throws SQLException{
 		
 		JSONArray fileList = new JSONArray();
 		JSONArray lineList = new JSONArray();
 		String pfn;
 		try {
 			fileList = getFiles(projectID);
-			for(int i = 0; i < fileList.size()){
+			for(int i = 0; i < fileList.size(); i++){
 				JSONObject row = (JSONObject) ((JSONArray) fileList).get(i);
-				pfid = (String) firstRow.get("pfid");
+				String pfid = (String) row.get("pfid");
 				lineList.addAll( getLines(pfid) );
 			}
 		} catch (SQLException e) {
@@ -137,7 +137,7 @@ public class ProjectManager {
 			e.printStackTrace();
 		}
 		
-		return projectList;
+		return lineList;
 	}
 	
 	public JSONArray getLines (String PFileID) throws SQLException{

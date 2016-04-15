@@ -1,5 +1,6 @@
 package sq.app.model.editor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -75,6 +76,17 @@ public class EditorCodeArea extends CodeArea{
 		super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
+	}
+	
+	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
+	
+	public void LockParagraph(int paragraphNumber){
+		for (int index = 0; index < this.getParagraphs().size(); index++) {
+			if (lockedParagraphs.contains(index))
+			{
+				//this.setParagraphStyle(index, paragraphStyle);
+			}
+		}
 	}
 	
 	public void initialize(Stage stage) {
