@@ -225,9 +225,16 @@ public class Server{
         			String email = (String) params.get("email");
         			String pWord = (String) params.get("pWord");
         			
-        			String result = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
+        			output = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
         			
         		}
+				/*else if (action.compareToIgnoreCase("getUserID") == 0)
+        		{
+        			String uName = (String) params.get("username");
+        			
+        			int result = this.accountManager.GetLocalAccountID(uName);
+        			output = Integer.toString(result);
+        		}*/
         	}
         	
         	
