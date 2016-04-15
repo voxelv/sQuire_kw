@@ -76,15 +76,22 @@ public class EditorCodeArea extends CodeArea{
 		super();
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
+		LockParagraph(2);
 	}
 	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
 	
 	public void LockParagraph(int paragraphNumber){
+		lockedParagraphs.add(paragraphNumber);
 		for (int index = 0; index < this.getParagraphs().size(); index++) {
-			if (lockedParagraphs.contains(index))
+			if (lockedParagraphs.indexOf(index)>-1)
 			{
-				//this.setParagraphStyle(index, paragraphStyle);
+				Collection<String> s = this.getParagraph(index).getParagraphStyle();
+				//this.getParagraph(index).restyle(style)
+				ArrayList<String> ss = new ArrayList(s);
+				ss.add("locked");
+				this.getParagraph(index).setParagraphStyle(ss);
+				//this.getParagraph(index).se(""));
 			}
 		}
 	}
