@@ -147,7 +147,7 @@ public class StyledTextArea<PS, S> extends Region
      * Text color for highlighted text.
      */
     private final StyleableObjectProperty<Paint> highlightTextFill
-            = new CssProperties.HighlightTextFillProperty(this, Color.WHITE);
+    = new CssProperties.HighlightTextFillProperty(this, Color.WHITE);
 
     // editable property
     /**

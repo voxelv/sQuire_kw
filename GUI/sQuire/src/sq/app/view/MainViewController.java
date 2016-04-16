@@ -35,7 +35,7 @@ public class MainViewController implements Initializable{
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
         
         // initialize your logic here: all @FXML variables will have been injected
-        
+
         editorCodeArea.doHighlight();
         
         editorCodeArea.richChanges().subscribe(change -> {
@@ -51,6 +51,7 @@ public class MainViewController implements Initializable{
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
         	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
         	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
+            editorCodeArea.LockParagraph(2);
         });
         
         editorCodeArea.setOnKeyReleased(event->{
