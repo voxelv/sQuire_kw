@@ -4,6 +4,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.TreeView?>
@@ -12,8 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<?import sq.app.model.editor.* ?>
-
+<?import sq.app.model.editor.*?>
 
 <AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sq.app.view.MainViewController"> 
   <children>
@@ -23,13 +23,14 @@
               <items>
                   <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="Create">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                      <MenuItem mnemonicParsing="false" onAction="#CreateProject" text="Project" />
+                      <MenuItem mnemonicParsing="false" onAction="#CreateFolder" text="Folder" />
+                        <MenuItem mnemonicParsing="false" onAction="#CreateFile" text="File" />
                     </items>
                   </MenuButton>
-                <Button mnemonicParsing="false" text="Home" />
-                  <Button mnemonicParsing="false" text="Delete" />
-                  <Button mnemonicParsing="false" text="Rename" />
+                <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
+                  <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
+                  <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
                   <Button mnemonicParsing="false" text="Input" />
               </items>
             </ToolBar>
@@ -65,7 +66,10 @@
                               		<EditorCodeArea fx:id="editorCodeArea" />
                            		</children>
                         		</StackPane>
-                        		<AnchorPane prefHeight="189.0" prefWidth="1049.0" />
+                        		<AnchorPane prefHeight="189.0" prefWidth="1049.0">
+                                 <children>
+                                    <TextArea layoutX="337.0" layoutY="-25.0" prefHeight="175.0" prefWidth="1049.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children></AnchorPane>
                               
                               
                           </items>

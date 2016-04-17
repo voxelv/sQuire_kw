@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
@@ -30,7 +31,7 @@ import sq.app.MainApp;
 import sq.app.model.editor.EditorCodeArea;
 
 public class MainViewController implements Initializable{
-	
+	//FileManagement
 	URL fxmlFileLocation;
 	ResourceBundle resources;
 	Scene scene;
@@ -39,27 +40,23 @@ public class MainViewController implements Initializable{
     int currPID = 0;
 	String currProjectName = "";
     TreeItem<StrucTree> selected = null;
-
 	@FXML Text user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
-
+    //Compiler
+    @FXML TextArea CompilerOutput;
+    //Editor
 	@FXML
-    private StackPane editorStackPane;
-    
+    private StackPane editorStackPane; 
     @FXML
     private EditorCodeArea editorCodeArea;
-    
+    //calls Initialize
     @FXML
     public void init(){
     	System.out.println("test");
     	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
     }
-    
-    public void initialize(){
-    	
-    }
-    
+    //Initiialize
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     	conn = MainApp.GetConnection();
     	try {
@@ -131,7 +128,15 @@ public class MainViewController implements Initializable{
     		}
         });
     }
-	
+    
+    
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////File Management Methods////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
 	@FXML
     private void CreateProject() throws SQLException, ClassNotFoundException{
         TextInputDialog dialog = new TextInputDialog("");
@@ -926,4 +931,13 @@ public class MainViewController implements Initializable{
 	    	}
 	    }
     }
+    
+    
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
 }
