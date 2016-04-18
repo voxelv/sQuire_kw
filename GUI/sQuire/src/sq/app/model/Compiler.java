@@ -1,5 +1,3 @@
-package sq.app.model;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -7,7 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
  
 import javax.tools.Diagnostic;
@@ -17,6 +17,12 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
  
 /**
@@ -68,6 +74,77 @@ public class Compiler
             System.out.println(" ");
         }
     }
+    
+    public void compileAndRunProject(ServerConnection server, String projectID, String mainFile) throws Exception
+    {
+    	JSONObject params1 = new JSONObject();
+    	String category1 = "PROJECT";
+    	String action1 = "GETFILES";
+    	params1.put("projectID", projectID);
+    	
+    	JSONObject params2 = new JSONObject();
+    	String category2 = "PROJECT";
+    	String action2 = "GETLINES";
+    	
+    	String getFilesReturn = (String) server.sendSingleRequest(category1, action1, params1);
+    	System.out.println(getFilesReturn);
+    	
+    	Object returnObj;
+    	returnObj = new JSONParser().parse(getFilesReturn);
+    	JSONArray fileArray = (JSONArray) returnObj;
+    	String code = "";
+    	List<JavaFileObject> javaFileList = new ArrayList<JavaFileObject>();
+    	for(int i = 0; i < fileArray.size(); i++)
+    	{
+    		JSONObject file = (JSONObject) fileArray.get(i);
+    		String fileID = (String) file.get("pfid");
+    		String fileName = (String) file.get("pfname");
+    		System.out.println(fileName);
+        	params2.put("fileID", fileID);
+    		String getLinesReturn = (String) server.sendSingleRequest(category2, action2, params2);
+    		
+    		System.out.println(getLinesReturn);
+    		
+    		returnObj = new JSONParser().parse(getLinesReturn);
+        	JSONArray lineArray = (JSONArray) returnObj;
+        	for(int j = 0; j < lineArray.size(); j++)
+        	{
+        		JSONObject line = (JSONObject) lineArray.get(j);
+        		String codeLine = (String) line.get("text");
+        		code += codeLine + "\n";
+        	}
+        	javaFileList.add(i, this.new InMemoryJavaFileObject(fileName, code));
+        	code = "";
+
+    	}
+    	Iterable<? extends JavaFileObject> files = javaFileList;
+    	compile(files);
+    	runIt(mainFile);  	
+    }
+    
+    public String getCodeFromFile(ServerConnection server, String fileID) throws ParseException
+    {
+		JSONObject params = new JSONObject();
+    	String category = "PROJECT";
+    	String action = "GETLINES";
+    	params.put("fileID",fileID);
+    	
+    	String returnString = (String) server.sendSingleRequest(category, action, params);
+    	System.out.println(returnString);
+    	Object returnObj;
+    	returnObj = new JSONParser().parse(returnString);
+    	JSONArray lineArray = (JSONArray) returnObj;
+    	String code = "";
+    	for(int i = 0; i < lineArray.size(); i++)
+    	{
+    		JSONObject line = (JSONObject) lineArray.get(i);
+    		String codeLine = (String) line.get("text");
+    		code += codeLine + "\n";
+    	}
+    	System.out.println(code);
+    	return code;
+
+    }
  
     /** java File Object represents an in-memory java source file <br>
      * so there is no need to put the source file on hard disk  **/
@@ -77,7 +154,7 @@ public class Compiler
  
         public InMemoryJavaFileObject(String className, String contents) throws Exception
         {
-            super(URI.create("string:///" + className.replace('.', '/')
+            super(URI.create("string:///" + className.replace('.', '/').replace(" ", "")
                              + Kind.SOURCE.extension), Kind.SOURCE);
             this.contents = contents;
         }
