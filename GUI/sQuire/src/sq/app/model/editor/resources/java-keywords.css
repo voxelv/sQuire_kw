@@ -29,6 +29,10 @@
     -fx-background-color: #f2f9fc;
 }
 
-.locked {
-	-fx-fill: black;
+.islocked {
+	-fx-background-color: #000000;
+}
+
+.current-paragraph {
+	-fx-stroke:yellow
 }

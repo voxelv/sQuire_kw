@@ -1,15 +1,14 @@
 package sq.app;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.mysql.jdbc.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import sq.app.model.User;
-//import sq.app.view.ChatPaneController;
 import sq.app.view.LoginPaneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +19,8 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
+	
+	public static Connection conn = null;
 	//private User user;
 	//private User chris;
 	//private User chris2;
@@ -38,16 +39,12 @@ public class MainApp extends Application {
 		initRootLayout();
 		
 		showMainView();
-		
+
 		showLoginPane();
 		
 		showChatPane();
 		
 	}
-	
-	
-	
-
 	
 	public void initRootLayout(){
 		try{
@@ -72,7 +69,9 @@ public class MainApp extends Application {
 			AnchorPane MainView = (AnchorPane) loader.load();
 			
 			rootLayout.setCenter(MainView);
-			
+	    	MainView.getScene().getStylesheets().add(sq.app.model.editor.EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
+
+  
 		} catch (IOException e){
 			e.printStackTrace();
 			
@@ -137,7 +136,25 @@ public class MainApp extends Application {
 		return primaryStage;
 	}
 	
-	public static void main(String[] args) {
+	public static Connection GetConnection(){
+    	return conn;
+    }
+	
+	public static void main(String[] args) throws ClassNotFoundException {
+		Connect();
 		launch(args);
+	}
+	
+	public static void Connect() throws ClassNotFoundException{
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection("jdbc:mysql://SquireRaspServer.ddns.net:9897/squire","remote","squire!");
+			System.out.println("Connected.");
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+
+		}
 	}
 }

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleSpan;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
@@ -74,40 +75,52 @@ public class EditorCodeArea extends CodeArea{
     
 	public EditorCodeArea() {
 		super();
-        this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+    	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
-		LockParagraph(2);
+		this.LockParagraph(2);
 	}
 	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
 	
 	public void LockParagraph(int paragraphNumber){
 		lockedParagraphs.add(paragraphNumber);
-		for (int index = 0; index < this.getParagraphs().size(); index++) {
-			if (lockedParagraphs.indexOf(index)>-1)
-			{
-				Collection<String> s = this.getParagraph(index).getParagraphStyle();
-				//this.getParagraph(index).restyle(style)
-				ArrayList<String> ss = new ArrayList(s);
-				ss.add("locked");
-				this.getParagraph(index).setParagraphStyle(ss);
-				//this.getParagraph(index).se(""));
-			}
-		}
 	}
 	
 	public void initialize(Stage stage) {
 	}
 	
 	public void doHighlight() {
-		setStyleSpans(0, computeHighlighting(this.getText()));
+		setStyleSpans(0, computeHighlighting(this.getText(), lockedParagraphs));
+        
+		ArrayList<String> newStyle = new ArrayList<String>();
+		newStyle.add("islocked");
+		//StyleSpans
+		
+		for (int index = 0; index < this.getParagraphs().size(); index++) {
+    			//end += this.getParagraph(index).length();
+    			if (lockedParagraphs.indexOf(index)>-1)
+    			{
+    				Collection<String> o = this.getStyleAtPosition(index, 0);
+    				StyleSpans<Collection<String>> s = this.getStyleSpans(index);
+    				//this.clearStyle(index);
+    		        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+    		        spansBuilder.add(new StyleSpan(newStyle,this.getParagraph(index).length()-1));
+    		        this.setStyleSpans(index, 1, spansBuilder.create());
+//    				s.getStyleSpan(0).getStyle().
+  //  				this.setStyleSpans(index, 0, newStyle);
+//					this.clearParagraphStyle(index);
+  //  				this.getParagraph(index).restyle(newStyle);
+//    	            spansBuilder.add(Collections.emptyList(), end - begin);
+  //  	            spansBuilder.add(Collections.singleton("is-locked"), end - begin);
+    			}
+    			//begin += this.getParagraph(index).length();
+		}
 	}
 
-    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+    private static StyleSpans<Collection<String>> computeHighlighting(String text, ArrayList<Integer> lockedLines) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while(matcher.find()) {
             String styleClass =
                     matcher.group("KEYWORD") != null ? "keyword" :

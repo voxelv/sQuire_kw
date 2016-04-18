@@ -50,11 +50,11 @@ public class ProjectManager {
 	public JSONArray getProjects () throws SQLException{
 		String query =	"select "
 						+ "`Projects`.`PID`, "
-						+ "`Projects`.`pname`, "
+						+ "`Projects`.`pname` "
 					+ "from "
-						+ "`Projects NATURAL JOIN `ProjectAccess` "
+						+ "`Projects` NATURAL JOIN `ProjectAccess` "
 					+ "where "
-						+ "`ProjectAccess`.`userID` = ?;";
+						+ "`ProjectAccess`.`userID` = ?";
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
