@@ -2,6 +2,11 @@ package sq.app;
 
 import java.io.IOException;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,9 +26,6 @@ public class MainApp extends Application {
 	private BorderPane rootLayout;
 	
 	public static Connection conn = null;
-	//private User user;
-	//private User chris;
-	//private User chris2;
 	
 	
 	
@@ -86,16 +88,17 @@ public class MainApp extends Application {
 	        AnchorPane page = (AnchorPane) loader2.load();
 	        
 	        Stage dialogStage = new Stage();
+	        dialogStage.initOwner(primaryStage);
 	        dialogStage.setTitle("Chat");
 	        dialogStage.setAlwaysOnTop(true);
-	        dialogStage.initModality(Modality.WINDOW_MODAL);
+	        dialogStage.initModality(Modality.NONE);
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
 
-
-	        
 	        dialogStage.show();
+	        
+	        
 
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -117,7 +120,6 @@ public class MainApp extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	     
 	        LoginPaneController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 
@@ -143,8 +145,10 @@ public class MainApp extends Application {
 	public static void main(String[] args) throws ClassNotFoundException {
 		Connect();
 		launch(args);
+		ServerConnection server;
+		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
+		
 	}
-	
 	public static void Connect() throws ClassNotFoundException{
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -154,7 +158,7 @@ public class MainApp extends Application {
 			System.out.println("SQLException: " + ex.getMessage());
 			System.out.println("SQLState: " + ex.getSQLState());
 			System.out.println("VendorError: " + ex.getErrorCode());
-
+			
 		}
 	}
 }

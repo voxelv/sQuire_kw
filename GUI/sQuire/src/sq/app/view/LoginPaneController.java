@@ -111,9 +111,7 @@ public class LoginPaneController {
 		
 		if (errorMessage.length() == 0) {
 			
-			//if(serverResponse(Username, Email, Password1) == false){
-			//	errorMessage = "Username, email, and Password do not match!";
-			//}else{
+			
 				return true;
 			//}
 		} else {
