@@ -127,6 +127,9 @@ public class MainViewController implements Initializable{
             		editorCodeArea.prevLine = editorCodeArea.getText(editorCodeArea.prevLineNum);
     		}
         });
+        
+        /************** Compiler Text Area *************************************************************************/
+        CompilerOutput.setEditable(false);
     }
     
     
