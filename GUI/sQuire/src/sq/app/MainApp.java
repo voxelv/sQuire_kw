@@ -145,8 +145,8 @@ public class MainApp extends Application {
 	public static void main(String[] args) throws ClassNotFoundException {
 		Connect();
 		launch(args);
-		ServerConnection server;
-		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
+		//ServerConnection server;
+		//server = new ServerConnection("squireRaspServer.ddns.net", 9898);
 		
 	}
 	public static void Connect() throws ClassNotFoundException{

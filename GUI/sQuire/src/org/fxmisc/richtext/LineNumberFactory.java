@@ -1,5 +1,6 @@
 package org.fxmisc.richtext;
 
+import java.util.ArrayList;
 import java.util.function.IntFunction;
 
 import javafx.geometry.Insets;
@@ -20,6 +21,8 @@ import org.reactfx.value.Val;
  * To customize appearance, use {@code .lineno} style class in CSS stylesheets.
  */
 public class LineNumberFactory implements IntFunction<Node> {
+	
+	private static final ArrayList<Integer>LockedLines = new ArrayList<Integer>();
 
     private static final Insets DEFAULT_INSETS = new Insets(0.0, 5.0, 0.0, 5.0);
     private static final Paint DEFAULT_TEXT_FILL = Color.web("#666");
