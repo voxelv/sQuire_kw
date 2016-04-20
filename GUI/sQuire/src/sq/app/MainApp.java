@@ -2,10 +2,6 @@ package sq.app;
 
 import java.io.IOException;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
@@ -14,6 +10,8 @@ import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sq.app.model.ServerConnection;
+import sq.app.model.User;
 import sq.app.view.LoginPaneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -26,10 +24,19 @@ public class MainApp extends Application {
 	private BorderPane rootLayout;
 	
 	public static Connection conn = null;
-	
+	public static ServerConnection server;
+	public static User CurrentUser;
 	
 	
 	public MainApp(){
+	}
+	
+	public static void main(String[] args) throws ClassNotFoundException {
+		Connect();
+		launch(args);
+		CurrentUser = new User();
+		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
+		
 	}
 	
 	@Override
@@ -142,13 +149,11 @@ public class MainApp extends Application {
     	return conn;
     }
 	
-	public static void main(String[] args) throws ClassNotFoundException {
-		Connect();
-		launch(args);
-		ServerConnection server;
-		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
-		
-	}
+	public static ServerConnection GetServer(){
+    	return server;
+    }
+	
+	
 	public static void Connect() throws ClassNotFoundException{
 		try {
 			Class.forName("com.mysql.jdbc.Driver");

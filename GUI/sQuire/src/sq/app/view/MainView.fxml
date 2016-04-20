@@ -68,8 +68,9 @@
                         		</StackPane>
                         		<AnchorPane prefHeight="189.0" prefWidth="1049.0">
                                  <children>
-                                    <TextArea layoutX="337.0" layoutY="-25.0" prefHeight="175.0" prefWidth="1049.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children></AnchorPane>
+                                    <TextArea fx:id="CompilerOutput" layoutX="337.0" layoutY="-25.0" prefHeight="175.0" prefWidth="1049.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+								</AnchorPane>
                               
                               
                           </items>
@@ -78,7 +79,7 @@
                   </AnchorPane>
               </items>
             </SplitPane>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="System Info:" />
+            <Text fx:id="info" strokeType="OUTSIDE" strokeWidth="0.0" text="System Info:" />
          </children>
       </VBox>
    </children>

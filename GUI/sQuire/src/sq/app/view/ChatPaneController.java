@@ -47,7 +47,7 @@ public class ChatPaneController {
 	}
 	@FXML
 	public void SendMessage() {
-        History.appendText(Message.getText() + "\n");
+        History.appendText(channelBox.getValue() + ": " + Message.getText() + "\n");
         Message.clear();
     }
 }
