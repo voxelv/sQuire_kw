@@ -228,6 +228,13 @@ public class Server{
         			output = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
         			
         		}
+        		else if (action.compareToIgnoreCase("getUsername") == 0)
+        		{
+        			String uName = (String) params.get("userID");
+        			
+        			JSONArray res = this.accountManager.GetUsername(uName);
+        			output = res.toString();
+           		}
 				/*else if (action.compareToIgnoreCase("getUserID") == 0)
         		{
         			String uName = (String) params.get("username");
