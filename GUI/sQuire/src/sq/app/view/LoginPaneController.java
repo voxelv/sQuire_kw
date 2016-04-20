@@ -127,9 +127,18 @@ public class LoginPaneController {
 		
 		if (errorMessage.length() == 0) {
 			
-			packRegister();
+			if(performRegister()){
 				return true;
-			//}
+			} else {
+				Alert alert = new Alert(AlertType.ERROR);
+	            alert.initOwner(dialogStage);
+	            alert.setTitle("Failure to Register");
+	            alert.setHeaderText("Something went wrong!");
+	            alert.setContentText("Don't look at me. This is your fault.");
+	            alert.showAndWait();
+	            
+	            return false;
+			}
 		} else {
 			Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(dialogStage);
@@ -198,9 +207,7 @@ public class LoginPaneController {
 		
 		// Set the action
 		String action = "Login";
-		System.out.println("we're here");
 		String returnValue = (String) server.sendSingleRequest(category, action, params);
-		System.out.println("we're there");
 		
 		JSONObject loginObj = null;
 		try {
@@ -224,23 +231,45 @@ public class LoginPaneController {
         }
 	}
 	
-	private void packRegister(){
+	private boolean performRegister(){
 		JSONObject params = new JSONObject();
+		String success = "";
 		
 		// Set all the parameters you need
-		params.put("UName", Username);
-		params.put("Email", Email);
-		params.put("FName", FirstName);
-		params.put("LName", LastName);
-		params.put("Pswd", Password1);
+		params.put("uName", Username.getText());
+		params.put("email", Email.getText());
+		params.put("fName", FirstName.getText());
+		params.put("lName", LastName.getText());
+		params.put("pWord", Password1.getText());
 		
 		// Set the category
 		String category = "User";
 		
 		// Set the action
-		String action = "Register";
+		String action = "createAccount";
 		
 		String returnValue = (String) server.sendSingleRequest(category, action, params);
 		System.out.println(returnValue);
+		
+		JSONObject registerObj = null;
+		try {
+//			System.out.println(stringResult);
+			registerObj = (JSONObject) new JSONParser().parse(returnValue);
+			
+			
+			System.out.println(returnValue);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+			
+		}
+        
+        if (returnValue.equals("Success"))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
 	}
 }

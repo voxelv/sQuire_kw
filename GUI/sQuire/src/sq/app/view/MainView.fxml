@@ -31,7 +31,7 @@
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
                   <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
                   <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
-                  <Button mnemonicParsing="false" text="Input" />
+                  <Button mnemonicParsing="false" onAction="#locateFile" text="Input" />
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
@@ -53,7 +53,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <TreeView fx:id="structure_tree" layoutX="-26.0" layoutY="28.0" prefHeight="628.0" prefWidth="221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TreeView fx:id="structure_tree" layoutX="-26.0" layoutY="28.0" onMouseClicked="#file_select" prefHeight="628.0" prefWidth="221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
