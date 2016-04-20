@@ -140,6 +140,9 @@ public class MainViewController implements Initializable{
             		editorCodeArea.prevLine = editorCodeArea.getText(editorCodeArea.prevLineNum);
     		}
         });
+        
+        /************** Compiler Text Area *************************************************************************/
+        CompilerOutput.setEditable(false);
     }
     
     
@@ -1061,7 +1064,7 @@ public class MainViewController implements Initializable{
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
     		tempFileData = getLine(item.getValue().getLine(),pos).toString();
     		tempFileId = item.getValue().getID();
-    		fileData.setText(tempFileData);
+    		//fileData.setText(tempFileData);
     	}
     }
 
