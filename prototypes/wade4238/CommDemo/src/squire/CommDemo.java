@@ -20,13 +20,19 @@ public class CommDemo {
 		JSONObject params = new JSONObject();
 		
 		// Set all the parameters you need
-		params.put("fileID", "1");
+		params.put("username", "handstand2002");
+		params.put("password", "testPassword");
 		
 		// Set the category
-		String category = "project";
+		String category = "User";
 		
 		// Set the action
-		String action = "getlines";
+		String action = "Login";
+		
+//		(action.compareToIgnoreCase("Login") == 0)
+//		{
+//			String uName = (String) params.get("username");
+//			String pWord = (String) params.get("password");
 		
 		// Send stuff to the server, await response.
 		String returnValue = (String) server.sendSingleRequest(category, action, params);
@@ -35,32 +41,32 @@ public class CommDemo {
 		
 		int i = 1;
 		// If you're expecting a JSONArray or JSONObject, do this...
-		if (i == 0)
-		{
-			Object returnObj;
-			JSONArray outJSONArray;
-			JSONObject outJSONObject;
-			try {
-				// Parse the object
-				returnObj = new JSONParser().parse(returnValue);
-				
-				// if it's a JSONArray, cast output as JSONArray
-				outJSONArray = (JSONArray) returnObj;
-				
-				// if it's JSONObject, cast output as JSONObject
-				outJSONObject = (JSONObject) returnObj;
-				
-				// Use get() to get specific properties from the return ----ARRAY----
-				outJSONArray.get(0);
-				
-				// Use get() to get specific properties from the return ----OBJECT----
-				outJSONObject.get("returnObjectKey");
-				
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if (i == 0)
+//		{
+//			Object returnObj;
+//			JSONArray outJSONArray;
+//			JSONObject outJSONObject;
+//			try {
+//				// Parse the object
+//				returnObj = new JSONParser().parse(returnValue);
+//				
+//				// if it's a JSONArray, cast output as JSONArray
+//				outJSONArray = (JSONArray) returnObj;
+//				
+//				// if it's JSONObject, cast output as JSONObject
+//				outJSONObject = (JSONObject) returnObj;
+//				
+//				// Use get() to get specific properties from the return ----ARRAY----
+//				outJSONArray.get(0);
+//				
+//				// Use get() to get specific properties from the return ----OBJECT----
+//				outJSONObject.get("returnObjectKey");
+//				
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 //		JSONObject firstRow = (JSONObject) returnValue.get(0);
 		
 		// Get the second result

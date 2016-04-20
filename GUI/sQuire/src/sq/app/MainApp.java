@@ -32,10 +32,11 @@ public class MainApp extends Application {
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException {
-		Connect();
-		launch(args);
 		CurrentUser = new User();
 		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
+		
+		Connect();
+		launch(args);
 		
 	}
 	

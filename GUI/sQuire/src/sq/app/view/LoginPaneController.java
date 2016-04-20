@@ -190,8 +190,8 @@ public class LoginPaneController {
 		JSONObject params = new JSONObject();
 		
 		// Set all the parameters you need
-		params.put("username", LUsername);
-		params.put("password", LPassword);
+		params.put("username", LUsername.getText());
+		params.put("password", LPassword.getText());
 		
 		// Set the category
 		String category = "User";

@@ -319,7 +319,7 @@ public class ProjectManager {
 	
 	public void renameProject (String projectID, String newname){
 		String query = "Update Projects" +
-						"set pname = ?"
+						"set pname = ?" + 
 						"where PID = ?";
 		String[] values = new String[2];
 		values[0] = newname;
