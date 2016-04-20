@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FileManagement.FileGUIController">
+   <children>
+      <VBox prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <ToolBar prefHeight="19.0" prefWidth="600.0">
+              <items>
+                  <MenuButton fx:id="create_button" ellipsisString="" mnemonicParsing="false" prefHeight="23.0" prefWidth="70.0" text="Create">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#CreateProject" text="Project" />
+                      <MenuItem mnemonicParsing="false" onAction="#CreateFolder" text="Folder" />
+                        <MenuItem mnemonicParsing="false" text="File" />
+                    </items>
+                  </MenuButton>
+                  <Button layoutX="69.0" layoutY="10.0" mnemonicParsing="false" onAction="#HomeButton" prefHeight="23.0" prefWidth="55.0" text="Home" />
+                  <Button mnemonicParsing="false" onAction="#DeleteButton" prefHeight="23.0" prefWidth="55.0" text="Delete" />
+                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#locateFile" prefHeight="23.0" prefWidth="55.0" text="Input" />
+                  <TextField fx:id="curr_position" prefHeight="23.0" prefWidth="279.0" />
+              </items>
+            </ToolBar>
+            <SplitPane dividerPositions="0.29797979797979796" prefHeight="322.0" prefWidth="600.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <TreeView fx:id="structure_tree" onMouseClicked="#file_select" prefHeight="317.0" prefWidth="175.0" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <TextArea prefHeight="317.0" prefWidth="417.0" />
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+            <TextField />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
