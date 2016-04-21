@@ -1,10 +1,9 @@
 package sq.app.view;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -15,6 +14,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextArea;
 
 public class ChatPaneController {
+	
+	private static final Pattern ADD_REGEX = Pattern.compile("/add\\s[0-9a-zA-Z]+", Pattern.CASE_INSENSITIVE);
 	
 	ObservableList<String> channelList = FXCollections.observableArrayList("Gen", "1", "2");
 	
@@ -34,10 +35,14 @@ public class ChatPaneController {
 		History.setEditable(false);
     }
 	
+	
 	public ChatPaneController(){
 	}
 	
-	
+	private boolean matches(String str){
+		Matcher matcher = ADD_REGEX.matcher(str);
+		return matcher.find();
+	}
 	
 	@FXML
 	public void handleEnterPressed(KeyEvent event){
@@ -47,7 +52,23 @@ public class ChatPaneController {
 	}
 	@FXML
 	public void SendMessage() {
-        History.appendText(channelBox.getValue() + ": " + Message.getText() + "\n");
-        Message.clear();
+		if(Message.getText().charAt(0) == '/'){
+			if(matches(Message.getText())){
+				String temp = Message.getText().substring(5);
+				if(temp.length() < 4){
+					if(!channelList.contains(temp)){
+						channelList.add(temp);
+					}
+				} else {
+					History.appendText("ERROR: invalid channel name(Must be less than 4 characters\n");
+				}
+			} else {
+				History.appendText("ERROR: unknown command\n");
+			}
+		} else {
+			History.appendText(channelBox.getValue() + ": " + Message.getText() + "\n");
+	        Message.clear();
+		}
+        
     }
 }
