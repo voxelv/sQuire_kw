@@ -9,7 +9,7 @@ CS383 Project by the Knight Writers group.
 3. Do `git checkout -b <name1234_change>` using your uidaho name1234 and an extremely brief description of what you plan to change. Example: `git checkout -b slip5295_editor`. This creates a new branch for you to work on, based on the latest master.
 4. Work on your branch. Commit your work.
 5. To push your branch, (This is not going to affect the master branch) do `git push -u origin <name1234_change>` where `<name1234_change>` is your branch name. Your branch will be available online for others to checkout if they wish. This branch is not the master branch.
-6. You want to get the latest changes in master into your branch. Do `git fetch` and then `git rebase origin/master`.
+6. If you want to get the latest changes in master into your branch. Do `git fetch` and then `git rebase origin/master`.
 7. If you do the above step and want to push your branch again, you must do `git push -u origin :<name1234_change>` and then `git push -u origin <name1234_change>` immediately afterward. The difference is the colon in front of the branch name. This effectively deletes the branch on github, then reuploads your new changes.
 8. To merge your branch to master, you must do `git fetch`. Then, while on your branch, do `git rebase origin/master`. This effectively puts everyone else's changes in front of yours, as if they had done them before you did. This may cause conflicts that you must resolve in each file that both you and another person changed, but the important thing is you are resolving them on your branch, not master.
 9. Once all conflicts are resolved, do `git checkout master`, `git merge <name1234_change>`, `git push`. This puts your changes on master.
