@@ -165,8 +165,5 @@ public class LoginPaneController {
 	private void packLoginPackage(){
 		
 	}
-	private void packRegisterPackage(){
-		
-	}
 	
 }
