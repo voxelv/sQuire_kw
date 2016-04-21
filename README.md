@@ -2,8 +2,8 @@
 CS383 Project by the Knight Writers group.
 
 ##Proposed Git Workflow
-##  This is a suggested workflow that slip5295 learned during an internship. You can do these using the git shell.
-###  (If you prefer the GUI, do the GUI equivalents.)
+####  This is a suggested workflow that slip5295 learned during an internship. You can do these using the git shell.
+####  (If you prefer the GUI, do the GUI equivalents.)
 1. Ensure you are not currently working on something (i.e. you have already committed and pushed any previous work).
 2. Do `git checkout master` and then `git pull` to ensure you have all the latest changes.
 3. Do `git checkout -b <name1234_change>` using your uidaho name1234 and an extremely brief description of what you plan to change. Example: `git checkout -b slip5295_editor`. This creates a new branch for you to work on, based on the latest master.
