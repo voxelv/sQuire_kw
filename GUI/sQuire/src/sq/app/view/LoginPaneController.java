@@ -48,7 +48,6 @@ public class LoginPaneController {
     private void initialize() {
     }
 
-	
 	public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
@@ -66,7 +65,7 @@ public class LoginPaneController {
 	
 	@FXML
 	private void handleLogin(){
-		if(method()){
+		if(loginCheck()){
 			okClicked = true;
 			System.out.println("login success");
 			dialogStage.close();
@@ -79,33 +78,34 @@ public class LoginPaneController {
 		dialogStage.close();
 	}
 	
-	private boolean goodInput(){
+	public boolean goodInput(){
 		String errorMessage = "";
 		
 		//User temp;
 		
-		if(Username.getText() == null || Username.getText().length() < 4){
+		if(Username == null || Username.getText() == null || Username.getText().length() < 4){
 			errorMessage += "No valid Username (at least 4 characters)!\n";
 		} 
 		
-		if(Email.getText() == null || Email.getText().length() == 0 || matches(Email.getText()) == false){
+		if(Email == null || Email.getText() == null || Email.getText().length() == 0 || matches(Email.getText()) == false){
 			errorMessage += "No valid Email!\n";
 		}
 		
-		if(FirstName.getText() == null || FirstName.getText().length() == 0){
+		if(FirstName == null || FirstName.getText() == null || FirstName.getText().length() == 0){
 			errorMessage += "No valid First Name!\n";
 		}
 		
-		if(LastName.getText() == null || LastName.getText().length() == 0){
+		if(LastName == null || LastName.getText() == null || LastName.getText().length() == 0){
 			errorMessage += "No valid Last Name!\n";
 		}
 		
-		if((Password1.getText() == null || Password1.getText().length() == 0)||(Password2.getText() == null || Password2.getText().length() == 0)){
+		if((Password1 == null || Password1.getText() == null || Password1.getText().length() == 0)||(Password2.getText() == null || Password2.getText().length() == 0)){
 			errorMessage += "No valid Password (Enter both Text Fields)!\n";
-		}else{if(Password1.getText().equals(Password2.getText())){
-				}else{
-					errorMessage += "Passwords do not match!\n";
-					}
+		}else{
+			if(Password1 != null && Password2 != null && Password1.getText().equals(Password2.getText())){
+			}else{
+				errorMessage += "Passwords do not match!\n";
+			}
 		}
 		
 		
@@ -114,7 +114,7 @@ public class LoginPaneController {
 			
 				return true;
 			//}
-		} else {
+		} else if (dialogStage != null) {
 			Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(dialogStage);
             alert.setTitle("Invalid Fields");
@@ -123,8 +123,8 @@ public class LoginPaneController {
 
             alert.showAndWait();
 
-            return false;
 		}
+        return false;
 	}
 	
 	private boolean matches(String str){
@@ -132,7 +132,7 @@ public class LoginPaneController {
 		return matcher.find();
 	}
 	
-	private boolean method(){
+	private boolean loginCheck(){
 		String errorMessage = "";
 		
 		if(LEmail.getText() == null || LEmail.getText().length() == 0 || matches(LEmail.getText()) == false){
