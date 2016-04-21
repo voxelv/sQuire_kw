@@ -57,5 +57,3 @@ local.properties
 
 # Code Recommenders
 .recommenders/
-GUI/sQuire/bin/sq/app/view/LoginPaneController.class
-GUI/sQuire/bin/sq/app/view/MainViewController.class

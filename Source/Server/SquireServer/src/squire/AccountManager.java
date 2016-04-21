@@ -88,22 +88,6 @@ public class AccountManager {
         return output;
 	}
 	
-	public JSONArray GetUsername(String userID)
-	{
-		String query = "SELECT userName from Users where userID=?";
-		String[] values = new String[1];
-		values[0] = userID;
-		JSONArray ret = new JSONArray();
-		try {
-			ret = this.dbc.query(query, values);
-		} catch (SQLException e) {
-//			e.printStackTrace();
-		}
-		
-		return ret;
-	}
-	
-	
 	private int GetLocalAccountID(String username)
 	{
 		String query = "SELECT userID from Users where userName=?";

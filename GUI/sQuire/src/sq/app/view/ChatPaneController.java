@@ -69,6 +69,5 @@ public class ChatPaneController {
 			History.appendText(channelBox.getValue() + ": " + Message.getText() + "\n");
 	        Message.clear();
 		}
-        
     }
 }

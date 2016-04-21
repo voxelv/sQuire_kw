@@ -317,22 +317,6 @@ public class ProjectManager {
 		return pflid;
 	}
 	
-	public void renameProject (String projectID, String newname){
-		String query = "Update Projects" +
-						"set pname = ?" + 
-						"where PID = ?";
-		String[] values = new String[2];
-		values[0] = newname;
-		values[1] = projectID;
-		
-		try {
-			this.dbc.query(query, values);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	public void removeProject (String projectID){
 		String query = "Delete from Projects" + 
 							"where" +

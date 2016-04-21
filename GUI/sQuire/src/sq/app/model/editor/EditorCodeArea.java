@@ -1,20 +1,32 @@
 package sq.app.model.editor;
 
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.event.*;
+import javafx.scene.input.KeyCode;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpan;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
+import org.fxmisc.wellbehaved.event.EventHandlerHelper;
 
 import javafx.stage.Stage;
 
-public class EditorCodeArea extends CodeArea{
+public class EditorCodeArea extends CodeArea implements KeyListener{
 
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
@@ -36,7 +48,8 @@ public class EditorCodeArea extends CodeArea{
     private static final String SEMICOLON_PATTERN = "\\;";
     private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-
+    private static final String ISLOCKED_PATTERN =  "" ;
+    
     private static final Pattern PATTERN = Pattern.compile(
             "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
             + "|(?<PAREN>" + PAREN_PATTERN + ")"
@@ -45,6 +58,7 @@ public class EditorCodeArea extends CodeArea{
             + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
             + "|(?<STRING>" + STRING_PATTERN + ")"
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+//            + "|(?<ISLOCKED>" + ISLOCKED_PATTERN + ")"
     );
 	
     private static final String sampleCode = String.join("\n", new String[] {
@@ -75,49 +89,117 @@ public class EditorCodeArea extends CodeArea{
     
 	public EditorCodeArea() {
 		super();
+
+//        this.setOnKeyPressed(event->{
+//        	KeyCode c = event.getCode();
+//        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
+//        	{
+//        		event.consume();
+//        		Boolean b = event.isConsumed();
+//        		b=b;
+//        	}
+//        });
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 		this.replaceText(sampleCode);
 		this.LockParagraph(2);
+		addEventHandler(javafx.scene.input.KeyEvent.KEY_RELEASED, event -> {
+        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
+        	{
+        		this.selectLine();
+        		this.replaceSelection("import java.util.*;");
+        		
+        		
+//        		event.consume();
+  //      		Boolean b = event.isConsumed();
+    //    		b=b;
+        	}
+		});
+		//EventHandlerHelper.exclude(handler, subHandler)(handler)
+//		EventHandlerHelper.installAfter(this.onKeyPressedProperty(), event->{
+//        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
+//        	{
+//        		event.consume();
+//        		Boolean b = event.isConsumed();
+//        		b=b;
+//        	}
+//		});
+	//	this.onKeyTypedProperty().addListener(event->keyTyped((KeyEvent) event));
+
 	}
 	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
+	//StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
 	
 	public void LockParagraph(int paragraphNumber){
 		lockedParagraphs.add(paragraphNumber);
-	}
-	
-	public void initialize(Stage stage) {
-	}
-	
-	public void doHighlight() {
-		setStyleSpans(0, computeHighlighting(this.getText(), lockedParagraphs));
-        
-		ArrayList<String> newStyle = new ArrayList<String>();
-		newStyle.add("islocked");
+		ArrayList<String> styleStr = new ArrayList<String>();
+		styleStr.add("islocked");
+		//this.clearStyle(2);
+//		this.clearParagraphStyle(2);
+		StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
+		lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(2).length()));
+		//StyleSpan newStyle = new StyleSpan(newStyle,this.getParagraph(2).length());
+		//this.getParagraph(2).restyle(0, this.getParagraph(2).length(), styleStr);
+		//this.getParagraph(2).restyle(styleStr);
+		this.setStyleSpans(2, 0, lockedSpansBuilder.create());
 		//StyleSpans
-		
-		for (int index = 0; index < this.getParagraphs().size(); index++) {
-    			//end += this.getParagraph(index).length();
-    			if (lockedParagraphs.indexOf(index)>-1)
-    			{
-    				Collection<String> o = this.getStyleAtPosition(index, 0);
-    				StyleSpans<Collection<String>> s = this.getStyleSpans(index);
-    				//this.clearStyle(index);
-    		        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-    		        spansBuilder.add(new StyleSpan(newStyle,this.getParagraph(index).length()-1));
-    		        this.setStyleSpans(index, 1, spansBuilder.create());
-//    				s.getStyleSpan(0).getStyle().
-  //  				this.setStyleSpans(index, 0, newStyle);
-//					this.clearParagraphStyle(index);
-  //  				this.getParagraph(index).restyle(newStyle);
-//    	            spansBuilder.add(Collections.emptyList(), end - begin);
-  //  	            spansBuilder.add(Collections.singleton("is-locked"), end - begin);
-    			}
-    			//begin += this.getParagraph(index).length();
-		}
 	}
+	
+	 @Override
+	 public void keyPressed(KeyEvent e) {
+	        if (this.getCurrentParagraph()==2){
+	//        	e.h
+	        }
+    }
+	 
+	 @Override
+	public void keyReleased(KeyEvent e) {
+		 
+	 }
+	
+	 //@Override
+	 public void keyTyped(KeyEvent event){
+			if (this.getCurrentParagraph()==2 && !(event.isActionKey())) {
+				event.consume();
+			}
+	 }
 
-    private static StyleSpans<Collection<String>> computeHighlighting(String text, ArrayList<Integer> lockedLines) {
+	// KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
+//		  @Override
+//		  public boolean dispatchKeyEvent(final KeyEvent e) {
+//		    if (e.getID() == KeyEvent.KEY_TYPED) {
+//		      System.out.println(e);
+//		    }
+//		    // Pass the KeyEvent to the next KeyEventDispatcher in the chain
+//		    return false;
+//		  }
+	//	};
+	 
+//	public boolean dispatchKeyEvent (KeyEvent event) {
+//	
+//		
+//		if (this.getCurrentParagraph()==2 && !(event.isActionKey())) {
+//		//MY_GLOBAL_ACTION.actionPerformed(null);
+//		return true;
+//	}
+//	return false;
+//	}
+	 
+	public void doHighlight() {
+		setStyleSpans(0, computeHighlighting(this.getText()));
+		
+		ArrayList<String> styleStr = new ArrayList<String>();
+		styleStr.add("islocked");
+//		StyleSpans<Collection<String>> ss = lockedSpansBuilder.create();
+		for (int i =0; i < lockedParagraphs.size(); i++){
+			StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<Collection<String>>();
+			lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(lockedParagraphs.get(i)).length()));
+			this.clearParagraphStyle(lockedParagraphs.get(i));
+			this.setStyleSpans(lockedParagraphs.get(i), 0, lockedSpansBuilder.create());
+		}
+  	}
+
+    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();

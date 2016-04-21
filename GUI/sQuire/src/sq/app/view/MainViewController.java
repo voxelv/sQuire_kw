@@ -24,6 +24,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -85,10 +87,25 @@ public class MainViewController implements Initializable{
         // initialize your logic here: all @FXML variables will have been injected
 
         editorCodeArea.doHighlight();
-        
-        editorCodeArea.richChanges().subscribe(change -> {
+  
+        editorCodeArea.plainTextChanges().subscribe(change->{
             editorCodeArea.doHighlight();
         });
+        
+//        this.editorStackPane.setOnKeyPressed(event->{
+//        	KeyCode c = event.getCode();
+//        	if (editorCodeArea.getCurrentParagraph()==2)
+//        	{
+//        		event.consume();
+//        		Boolean b = event.isConsumed();
+//        	}
+//        });
+        
+      //  editorCodeArea.setOnKeyTyped(editorCodeArea.keyTyped);
+        
+        //editorCodeArea.richChanges().subscribe(change -> {
+//            editorCodeArea.doHighlight();
+        //});
         
         editorCodeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
         	System.out.println("Selected text is now: \"" + newvalue + "\"");
@@ -102,9 +119,10 @@ public class MainViewController implements Initializable{
             editorCodeArea.LockParagraph(2);
         });
         
-        editorCodeArea.setOnKeyReleased(event->{
-        	System.out.print(event.getCode());
-        });
+//        editorCodeArea.setOnKeyReleased(event->{
+//            editorCodeArea.doHighlight();
+//        	System.out.print(event.getCode());
+//        });
         
         editorCodeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
         	if (newvalue.getLength()>0)
