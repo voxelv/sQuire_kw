@@ -1,58 +1,23 @@
 package sq.app.model;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class User {
-
-	private final StringProperty Username;
-	private final StringProperty Email;
-	private final StringProperty Password;
+	
+	private int UserID;
 	
 	public User(){
-		this(null);
+		this.UserID = 0;
 	}
 	
-	public User(String Username){
-		this.Username = new SimpleStringProperty(Username);
-		
-		this.Email = new SimpleStringProperty("yeah@yeah.yeah");
-		this.Password = new SimpleStringProperty("YEAH!");
+	public User(int ID){
+		this.UserID = ID;
 	}
 	
-	public String getUsername(){
-		return Username.get();
+	public int getUserID(){
+		return UserID;
 	}
 	
-	public void setUsername(String Username) {
-        this.Username.set(Username);
+	public void setUserID(int ID) {
+        this.UserID = ID;
     }
-	
-	public StringProperty UsernameProperty(){
-		return Username;
-	}
-	
-	public String getEmail(){
-		return Email.get();
-	}
-	
-	public void setEmail(String Email) {
-        this.Email.set(Email);
-    }
-	
-	public StringProperty EmailProperty(User name){
-		return name.Email;
-	}
-	
-	public String getPassword(){
-		return Password.get();
-	}
-	
-	public void setPassword(String Password) {
-        this.Password.set(Password);
-    }
-	
-	public StringProperty PasswordProperty(){
-		return Password;
-	}
+
 }
