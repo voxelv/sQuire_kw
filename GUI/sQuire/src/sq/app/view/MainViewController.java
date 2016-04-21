@@ -1,5 +1,9 @@
 package sq.app.view;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,31 +31,40 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
-import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import sq.app.MainApp;
 import sq.app.model.editor.EditorCodeArea;
 
 public class MainViewController implements Initializable{
 	//FileManagement
-	URL fxmlFileLocation;
-	ResourceBundle resources;
-	Scene scene;
 	public static Connection conn = null;
 	public int MyuserID = 2;
     int currPID = 0;
+    int tempFileId = 0;
 	String currProjectName = "";
-    TreeItem<StrucTree> selected = null;
-	@FXML Text user;
+	String tempFileData = "";
+	
+	TreeItem<StrucTree> selected = null;
+    TreeItem<StrucTree> selectedFile = null;
+    
+    
+    @FXML Text user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
+    @FXML AnchorPane root;
+    @FXML Text info;
+    
     //Compiler
     @FXML TextArea CompilerOutput;
+    
     //Editor
+    ResourceBundle resources;
+    URL fxmlFileLocation;
 	@FXML
     private StackPane editorStackPane; 
     @FXML
     private EditorCodeArea editorCodeArea;
+    
     //calls Initialize
     @FXML
     public void init(){
@@ -158,8 +171,8 @@ public class MainViewController implements Initializable{
     
     
     
-	@FXML
-    private void CreateProject() throws SQLException, ClassNotFoundException{
+    @FXML
+    public void CreateProject() throws SQLException, ClassNotFoundException{
         TextInputDialog dialog = new TextInputDialog("");
     	dialog.setTitle("Create Project");
     	dialog.setHeaderText("sQuire Project");
@@ -205,79 +218,102 @@ public class MainViewController implements Initializable{
             }
     	}
     	IniTree();
-
     }
 
 /***************************File Input***************************/
 
-    @FXML AnchorPane root;
-    @FXML public void locateFile(){
+    @FXML public void locateFile() throws IOException{
     	FileChooser chooser = new FileChooser();
+    	FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+
+    	chooser.getExtensionFilters().add(extFilter);
+    	extFilter = new FileChooser.ExtensionFilter("JAVA files (*.jar,*.java)", "*.jar", "*.java");
+    	chooser.getExtensionFilters().add(extFilter);
+
     	chooser.setTitle("Open File");
-    	chooser.showOpenDialog(root.getScene().getWindow());
+    	File file = chooser.showOpenDialog(root.getScene().getWindow());
+    	if(file != null){
+    	String inputFileData = readFile(file);
+//    		System.out.println(inputFileData);
+    		//fileData.setText(inputFileData);
+    	}
+    }
+    
+    /**************************Read Input File Data**************************/
+    private String readFile(File file) throws IOException{
+    	BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+    	StringBuilder stringBuffer = new StringBuilder();
+
+    	String text;
+    	while ((text = bufferedReader.readLine()) != null) {
+    		stringBuffer.append(text);
+    	}
+    	bufferedReader.close();
+    	return stringBuffer.toString();
     }
 
 /***************************TreeItem Class***************************/
     class StrucTree {
-    	  String name;
-    	  int id;
-    	  int parentid;
-    	  boolean isFile = false;
-    	  boolean isDirectory = false;
-    	  boolean isProject = false;
-    	  @Override
-    	  public String toString() { return name;}
-    	  public int getID(){ return id;}
-    	  public int getPID(){ return parentid;}
-    	  public StrucTree(String name) { this.name = name;}
-    	  public boolean isFile(){return isFile;}
-    	  public boolean isDirectory(){return isDirectory;}
-    	  public boolean isProject(){return isProject;}
+  	  String name = "";
+  	  int id = 0;
+  	  int parentid = 0;
+  	  int pflhead = 0;
 
-    	  public void setName(String name){ this.name = name;}
+  	  boolean isFile = false;
+  	  boolean isDirectory = false;
+  	  boolean isProject = false;
+  	  @Override
+  	  public String toString() { return name;}
+  	  public int getID(){ return id;}
+  	  public int getPID(){ return parentid;}
+  	  public StrucTree(String name) { this.name = name;}
+  	  public boolean isFile(){return isFile;}
+  	  public boolean isDirectory(){return isDirectory;}
+  	  public boolean isProject(){return isProject;}
+  	  public void setLine(int pflhead){this.pflhead = pflhead;}
+  	  public int getLine(){return pflhead;}
+  	  public void setName(String name){ this.name = name;}
 
-    	  public boolean isExist(String name){ return Objects.equals(this.name, name);}
+  	  public boolean isExist(String name){ return Objects.equals(this.name, name);}
 
-    	  public StrucTree(String type,String name, int id) {
-    		  if(Objects.equals(type,"p")){
-    			  isProject = true;
-    			  this.name = name;
-    			  this.id = id;
-    		  }
-    		  if(Objects.equals(type,"f")){
-    			  this.isFile = true;
-    			  this.id = id;
-    			  this.name = name;
-    		  }
-    		  if(Objects.equals(type,"d")){
-    			  this.isDirectory = true;
-    			  this.id = id;
-    			  this.name = name;
-    		  }
-    	  }
+  	  public StrucTree(String type,String name, int id) {
+  		  if(Objects.equals(type,"p")){
+  			  isProject = true;
+  			  this.name = name;
+  			  this.id = id;
+  		  }
+  		  if(Objects.equals(type,"f")){
+  			  this.isFile = true;
+  			  this.id = id;
+  			  this.name = name;
+  		  }
+  		  if(Objects.equals(type,"d")){
+  			  this.isDirectory = true;
+  			  this.id = id;
+  			  this.name = name;
+  		  }
+  	  }
 
-    	  public StrucTree(String type,String name, int id, int pid) {
-    		  if(Objects.equals(type,"f")){
-    			  this.isFile = true;
-    			  this.id = id;
-    			  this.name = name;
-    			  this.parentid = pid;
-    		  }
-    		  if(Objects.equals(type,"d")){
-    			  this.isDirectory = true;
-    			  this.id = id;
-    			  this.name = name;
-    			  this.parentid = pid;
-    		  }
-    	  }
-    	}
+  	  public StrucTree(String type,String name, int id, int pid) {
+  		  if(Objects.equals(type,"f")){
+  			  this.isFile = true;
+  			  this.id = id;
+  			  this.name = name;
+  			  this.parentid = pid;
+  		  }
+  		  if(Objects.equals(type,"d")){
+  			  this.isDirectory = true;
+  			  this.id = id;
+  			  this.name = name;
+  			  this.parentid = pid;
+  		  }
+  	  }
+  	}
 /***************************Display UserName***************************/
-   private void setUser(int id) throws SQLException{
+    private void setUser(int id) throws SQLException{
 		String query = "SELECT userName FROM Users WHERE userID like '" + id + "' LIMIT 1";
-		Statement st;
-        st = conn.createStatement();
-        ResultSet rs;
-        rs = st.executeQuery(query);
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(query);
         if(rs.next()){ user.setText(rs.getString("userName"));}
     }
 
@@ -445,7 +481,11 @@ public class MainViewController implements Initializable{
 		}
     	currPID = 0;
     	selected = null;
+    	selectedFile = null;
     	currProjectName = "";
+    	tempFileId = 0;
+    	tempFileData = "";
+    	//fileData.setText("");
     }
 
 /***************************Display Current Position***************************/
@@ -474,6 +514,30 @@ public class MainViewController implements Initializable{
 
     	if(mouse.getClickCount() == 1 && item != null){
     		selected = item;
+
+
+    		if(item.getValue().isProject()){
+    			info.setText(" [Project: " + item.getValue().toString() + "]  [ID: " + item.getValue().getID() + "]");
+    		} else if(item.getValue().isDirectory()){
+    			info.setText(" [Directory: " + item.getValue().toString() + "]   [ID: " + item.getValue().getID() + "]  [Parent ID: " + item.getValue().getPID() + "]");
+	    	} else if(item.getValue().isFile()){
+	    		String query = "SELECT * FROM PFiles WHERE pfid like '" + item.getValue().getID() + "'";
+	        	Statement st = conn.createStatement();
+	        	ResultSet rs = st.executeQuery(query);
+	        	if(rs.next()){
+	        		if(rs.getInt("creatorID") == 0){
+	        			info.setText(" [File: " + item.getValue().toString() + "]  [ID: " + item.getValue().getID() + "]  [Created Time: "+ rs.getTimestamp("timeCreated")+ "]");
+	        		}else{
+	        			query = "SELECT userName from Users WHERE userID like '" + rs.getInt("creatorID")+ "'";
+	        			Statement st1 = conn.createStatement();
+	    	        	ResultSet rs1 = st1.executeQuery(query);
+	    	        	if(rs1.next()){info.setText(" [File: " + item.getValue().toString() + "]  [ID: " + item.getValue().getID() + "]  [Creator: " + rs1.getString("userName") + "]  [Created Time: "+ rs.getTimestamp("timeCreated")+ "]");}
+	        		}
+	        	}
+			} else {
+				info.setText(" *sQuire Project Menu*");
+			}
+
     		if(Objects.equals(currProjectName, "")){
     			curr_position.setText(item.getValue().toString());
     		}else {
@@ -491,6 +555,11 @@ public class MainViewController implements Initializable{
             	setTree(null, 0);
             }else{
             	curr_position.setText(getCurrPosition(item));
+            }
+
+            if(item.getValue().isFile()){
+            	selectedFile = item;
+            	readFile(selectedFile);
             }
         }
     }
@@ -514,6 +583,7 @@ public class MainViewController implements Initializable{
     	    while(rs.next()){
     	    	CheckBoxTreeItem<StrucTree> temptreeItem = new CheckBoxTreeItem<>();
     	    	temptreeItem.setValue(new StrucTree("f", rs.getString("pfname"), rs.getInt("pfid"),rs.getInt("pdid")));
+    	    	getIniLine(temptreeItem);
     	    	treeRoot.getChildren().add(temptreeItem);
     	    }
     	    structure_tree.setRoot(treeRoot);
@@ -535,6 +605,7 @@ public class MainViewController implements Initializable{
     	    while(rs.next()){
     	    	CheckBoxTreeItem<StrucTree> temptreeItem = new CheckBoxTreeItem<>();
     	    	temptreeItem.setValue(new StrucTree("f", rs.getString("pfname"), rs.getInt("pfid"),rs.getInt("pdid")));
+    	    	getIniLine(temptreeItem);
     	    	treeItem.getChildren().add(temptreeItem);
     	    }
     	}
@@ -595,11 +666,19 @@ public class MainViewController implements Initializable{
     		Statement st = conn.createStatement();
     		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
     		st.executeUpdate(query);
-    		query = "DELETE FROM PFiles WHERE pid LIKE '" + pid + "'";
-    		st.executeUpdate(query);
+
+        	query = "SELECT * FROM PFiles WHERE pid LIKE '" + pid + "' AND pdid IS NULL";
+    	    st = conn.createStatement();
+    	    ResultSet rs = st.executeQuery(query);
+    	    while(rs.next()){
+    	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
+    		    Statement st1 = conn.createStatement();
+    		    st1.executeUpdate(query);
+    	    	deleteFileLine(rs.getInt("pflhead"));
+    	    }
 
     		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
-    		ResultSet rs = st.executeQuery(query);
+    		rs = st.executeQuery(query);
     		while(rs.next()){
     			deleteDirectory(rs.getInt("pdid"));
     		}
@@ -617,19 +696,39 @@ public class MainViewController implements Initializable{
     		String deleteFile = "DELETE FROM PFiles WHERE pfid LIKE '" + pfid + "'";
     		Statement st = conn.createStatement();
     		st.executeUpdate(deleteFile);
+    		deleteFileLine(selected.getValue().getLine());
     		selected.getParent().getChildren().remove(selected);
+    	}
+    }
+    
+/***************************Delete File Line Routine***************************/
+    private void deleteFileLine(int id) throws SQLException{
+    	Statement st = conn.createStatement();
+    	String query = "SELECT * FROM PFLines WHERE pflid LIKE '" + id + "'";
+    	ResultSet rs = st.executeQuery(query);
+    	if(rs.next()){
+    		int nextid = rs.getInt("nextid");
+    		query = "DELETE FROM PFLines WHERE pflid LIKE '" + id + "'";
+    		st.executeUpdate(query);
+    		deleteFileLine(nextid);
     	}
     }
 
 /***************************Delete Directory Routine***************************/
     private void deleteDirectory(int id) throws SQLException{
-
-    	String query = "DELETE FROM PFiles WHERE pdid LIKE '" + id + "'";
+    	String query = "SELECT * FROM PFiles WHERE pdid LIKE '" + id + "'";
 	    Statement st = conn.createStatement();
-	    st.executeUpdate(query);
+	    ResultSet rs = st.executeQuery(query);
+	    while(rs.next()){
+	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
+		    Statement st1 = conn.createStatement();
+		    st1.executeUpdate(query);
+	    	deleteFileLine(rs.getInt("pflhead"));
+	    	System.out.println(rs.getInt("pflhead"));
+	    }
 
     	query = "SELECT pdid FROM PDirs where parentid like '" + id + "'";
-    	ResultSet rs = st.executeQuery(query);
+    	rs = st.executeQuery(query);
 	    while(rs.next()){
 	    	int pdid = rs.getInt("pdid");
 	    	deleteDirectory(pdid);
@@ -846,7 +945,7 @@ public class MainViewController implements Initializable{
         		if(isExist == true){
         			warning("File name already exist.");
         		} else {
-        			query = "INSERT INTO PFiles(pfname, pid) VALUE('" + inputFileName + "','" + currPID + "')";
+        			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + MyuserID +  "')";
         			st = conn.createStatement();
         			st.executeUpdate(query);
         			query = "SELECT LAST_INSERT_ID()";
@@ -857,6 +956,7 @@ public class MainViewController implements Initializable{
         				temptreeItem.setValue(new StrucTree("f", inputFileName, currID));
         				selected.getChildren().add(temptreeItem);
         				selected.setExpanded(true);
+        				iniFile(temptreeItem);
         			}
         		}
         	}
@@ -891,9 +991,9 @@ public class MainViewController implements Initializable{
 
         		} else {
         	   		if(selected.getParent().getValue().isProject()){
-            			query = "INSERT INTO PFiles(pfname, pid) VALUE('" + inputFileName + "','" + currPID + "')";
+            			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','"+ MyuserID + "')";
             		}else {
-            			query = "INSERT INTO PFiles(pfname, pid, pdid) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getParent().getValue().getID() + "')";
+            			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getParent().getValue().getID()+ "','" + MyuserID + "')";
             		}
         			st = conn.createStatement();
         			st.executeUpdate(query);
@@ -909,6 +1009,7 @@ public class MainViewController implements Initializable{
             	   		}
             	   		selected.getParent().getChildren().add(temptreeItem);
         				selected.getParent().setExpanded(true);
+            	   		iniFile(temptreeItem);
         			}
         		}
     		}
@@ -936,7 +1037,7 @@ public class MainViewController implements Initializable{
 	    		if(isExist == true){
 	    			warning("File name already exist.");
 	    		} else {
-	    			query = "INSERT INTO PFiles(pfname, pid, pdid) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "')";
+	    			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "','" + MyuserID + "')";
 	    			st = conn.createStatement();
 	    			st.executeUpdate(query);
 	    			query = "SELECT LAST_INSERT_ID()";
@@ -947,6 +1048,7 @@ public class MainViewController implements Initializable{
 	    				temptreeItem.setValue(new StrucTree("f", inputFileName, currID, selected.getValue().getID()));
 	    				selected.getChildren().add(temptreeItem);
 	    				selected.setExpanded(true);
+	    				iniFile(temptreeItem);
 	    			}
 	    		}
 	    	}
@@ -954,7 +1056,59 @@ public class MainViewController implements Initializable{
     }
     
     
+/***************************Initialize File Line***************************/
+
+    private void iniFile(TreeItem<StrucTree> item) throws SQLException{
+		if(item.getValue().isFile()){
+			Statement st = conn.createStatement();
+			String query = "INSERT INTO PFLines(text) VALUE('')";
+			st.executeUpdate(query);
+			query = "SELECT LAST_INSERT_ID()";
+			ResultSet rs = st.executeQuery(query);
+			if(rs.next()){
+				int currID = rs.getInt("LAST_INSERT_ID()");
+				query = "UPDATE PFiles SET pflhead='" + currID + "' WHERE pfid='" + item.getValue().getID() + "'";
+				st.executeUpdate(query);
+				item.getValue().setLine(currID);
+			}
+		}
+	}
+
+/***************************Read File Data***************************/
+    private void readFile(TreeItem<StrucTree> item) throws SQLException{
+        StringBuilder pos = new StringBuilder("");
+
+    	if(item.getValue().isFile() && (Objects.equals(tempFileData,"") || tempFileId != item.getValue().getID())){
+//    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
+    		tempFileData = getLine(item.getValue().getLine(),pos).toString();
+    		tempFileId = item.getValue().getID();
+    		//fileData.setText(tempFileData);
+    	}
+    }
+
+    private StringBuilder getLine(int id, StringBuilder temp) throws SQLException{
+    	Statement st = conn.createStatement();
+    	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
+    	ResultSet rs = st.executeQuery(query);
+    	if(rs.next()){
+            temp.append(rs.getString("text"));
+            temp.append("\n");
+    		getLine(rs.getInt("nextid"),temp);
+    	}
+    	return temp;
+    }
     
+/***************************Get Initial File Line***************************/
+    private void getIniLine(TreeItem<StrucTree> item) throws SQLException{
+    	if(item.getValue().isFile()){
+    		Statement st = conn.createStatement();
+    		String query = "SELECT pflhead FROM PFiles WHERE pfid LIKE '" + item.getValue().getID() + "'";
+    		ResultSet rs = st.executeQuery(query);
+    		if(rs.next()){
+    			item.getValue().setLine(rs.getInt("pflhead"));
+    		}
+    	}
+    }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
