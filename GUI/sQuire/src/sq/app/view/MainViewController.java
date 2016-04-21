@@ -233,7 +233,7 @@ public class MainViewController implements Initializable{
     	if(file != null){
     	String inputFileData = readFile(file);
 //    		System.out.println(inputFileData);
-    		//fileData.setText(inputFileData);
+    		editorCodeArea.replaceText(inputFileData);
     	}
     }
     
@@ -483,7 +483,7 @@ public class MainViewController implements Initializable{
     	currProjectName = "";
     	tempFileId = 0;
     	tempFileData = "";
-    	//fileData.setText("");
+    	//editorCodeArea.replaceText("");
     }
 
 /***************************Display Current Position***************************/
@@ -1080,7 +1080,7 @@ public class MainViewController implements Initializable{
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
     		tempFileData = getLine(item.getValue().getLine(),pos).toString();
     		tempFileId = item.getValue().getID();
-    		//fileData.setText(tempFileData);
+    		editorCodeArea.replaceText(tempFileData);
     	}
     }
 
