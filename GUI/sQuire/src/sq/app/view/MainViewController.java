@@ -58,7 +58,7 @@ public class MainViewController implements Initializable{
     @FXML Text info;
     
     //Compiler
-    @FXML public static TextArea CompilerOutput;
+    @FXML public TextArea CompilerOutput;
     
     //Editor
     ResourceBundle resources;
