@@ -114,6 +114,11 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
                         	JSONObject jo = new JSONObject();
                     		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
                         	server.sendSingleRequest("project", "lockline", jo);
+                        	jo = new JSONObject();
+                        	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+                        	server.sendSingleRequest("project", "unlockline", jo);
+//                    		jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+  //                      	server.sendSingleRequest("project", "lockline", jo);
                     	} catch (Exception e){
                     		//do nothing
                     	}
