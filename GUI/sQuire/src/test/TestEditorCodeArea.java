@@ -42,4 +42,22 @@ public class TestEditorCodeArea {
 		isSSCS = sscs instanceof StyleSpans;
 		assertEquals(isSSCS, true);
 	}
+	
+	@Test
+	public void test_doHighlight() {
+		System.out.println("Testing EditorCodeArea.doHighlight");
+		EditorCodeArea eca = new EditorCodeArea();
+		
+		Object sscs1 = eca.getStyleSpans(0, eca.getParagraphs().size() - 1);
+		eca.replaceText("");
+		try {
+			eca.doHighlight(); // This is what's being tested
+		}
+		catch (IndexOutOfBoundsException e) {
+			assertFalse("EditorCodeArea.doHighlight() causes IndexOutOfBoundsException", true);
+		}
+		
+		Object sscs2 = eca.getStyleSpans(0, eca.getParagraphs().size() - 1);
+		assertFalse("Ensure that the stylespans changed.", sscs2.equals(sscs1));
+	}
 }
