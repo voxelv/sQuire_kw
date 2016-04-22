@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import sq.app.view.MainViewController;
 
  
 /**
@@ -69,13 +70,17 @@ public class Compiler
     {
         public void report(Diagnostic<? extends JavaFileObject> diagnostic)
         {
- 
-            System.out.println("Line Number->" + diagnostic.getLineNumber());
-            System.out.println("code->" + diagnostic.getCode());
-            System.out.println("Message->"
-                               + diagnostic.getMessage(Locale.ENGLISH));
-            System.out.println("Source->" + diagnostic.getSource());
-            System.out.println(" ");
+        	MainViewController.CompilerOutput.appendText("Line Number->" + diagnostic.getLineNumber());
+        	MainViewController.CompilerOutput.appendText("code->" + diagnostic.getCode());
+        	MainViewController.CompilerOutput.appendText("Message->" + diagnostic.getMessage(Locale.ENGLISH));
+        	MainViewController.CompilerOutput.appendText("Source->" + diagnostic.getSource());
+        	MainViewController.CompilerOutput.appendText("  ");
+//            System.out.println("Line Number->" + diagnostic.getLineNumber());
+//            System.out.println("code->" + diagnostic.getCode());
+//            System.out.println("Message->"
+//                               + diagnostic.getMessage(Locale.ENGLISH));
+//            System.out.println("Source->" + diagnostic.getSource());
+//            System.out.println(" ");
         }
     }
     

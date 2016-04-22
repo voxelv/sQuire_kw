@@ -33,6 +33,9 @@ import javafx.scene.layout.StackPane;
 import sq.app.MainApp;
 import sq.app.model.editor.EditorCodeArea;
 
+import sq.app.model.Compiler;
+import sq.app.model.ServerConnection;
+
 public class MainViewController implements Initializable{
 	//FileManagement
 	public static Connection conn = null;
@@ -53,7 +56,7 @@ public class MainViewController implements Initializable{
     @FXML Text info;
     
     //Compiler
-    @FXML TextArea CompilerOutput;
+    @FXML public static TextArea CompilerOutput;
     
     //Editor
     ResourceBundle resources;
@@ -1111,6 +1114,13 @@ public class MainViewController implements Initializable{
 ///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+////////////////////////////////////////////Compiler Methods/////////////////////////////////////////////////    
+    
+    @FXML private void compileAndRun() throws Exception
+    {
+    	Compiler compiler = new Compiler();
+    	compiler.compileAndRunProject(MainApp.GetServer(), "11", "HelloWorld");
+    }
     
     
 }
