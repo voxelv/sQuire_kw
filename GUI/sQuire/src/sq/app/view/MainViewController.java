@@ -32,6 +32,7 @@ import javafx.stage.FileChooser;
 import javafx.scene.layout.StackPane;
 import sq.app.MainApp;
 import sq.app.model.editor.EditorCodeArea;
+import sq.app.model.Compiler;
 
 public class MainViewController implements Initializable{
 	//FileManagement
@@ -1109,6 +1110,9 @@ public class MainViewController implements Initializable{
 ///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    
+    @FXML private void compileAndRun() throws Exception{
+    	Compiler compiler = new Compiler();
+    	compiler.compileAndRunProject(MainApp.GetServer(), "11", "HelloWorld");
+    }
     
 }
