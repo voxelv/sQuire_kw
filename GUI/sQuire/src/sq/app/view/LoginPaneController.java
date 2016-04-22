@@ -129,6 +129,21 @@ public class LoginPaneController {
 		if (errorMessage.length() == 0) {
 			if(performRegister()){
 			
+				Username.clear();
+	    		Email.clear();
+	    		FirstName.clear();
+	    		LastName.clear();
+	    		Password1.clear();	
+	    		
+	    		Alert alert = new Alert(AlertType.CONFIRMATION);
+	            alert.initOwner(dialogStage);
+	            alert.setTitle("Successful Register");
+	            alert.setHeaderText("You did it!");
+	            alert.setContentText("You are now a member of the SQuire Clan!");
+	            alert.showAndWait();
+	            
+				
+			
 			return true;
 			} else {
 				Alert alert = new Alert(AlertType.ERROR);
@@ -268,11 +283,8 @@ public class LoginPaneController {
         
         if (returnValue.equals("Success"))
         {
-        	Username.getText();
-    		Email.getText();
-    		FirstName.getText();
-    		LastName.getText();
-    		Password1.getText();
+        	
+        	
         	return true;
         }
         else
