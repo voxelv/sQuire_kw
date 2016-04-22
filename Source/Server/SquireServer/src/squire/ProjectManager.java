@@ -413,7 +413,7 @@ public class ProjectManager {
 	
 	public void lockLine (String lineID){
 		
-		String query = "Insert into Linelocks" +
+		String query = "Insert into LineLocks" +
 						"(userID, pflid)" +
 						"values (?,?)";
 		String[] values = new String[2];
