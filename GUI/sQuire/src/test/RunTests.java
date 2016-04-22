@@ -12,6 +12,9 @@ import org.junit.runner.notification.Failure;
 
 public class RunTests {
   public static void main(String[] args) {
-    System.out.println("HEY");
+    Result result = JUnitCore.runClasses(TestEditorCodeArea.class);
+    for (Failure failure : result.getFailures()) {
+      System.out.println(failure.toString());
+    }
   }
-}
+} 

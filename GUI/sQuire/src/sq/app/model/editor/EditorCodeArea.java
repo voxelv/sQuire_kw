@@ -199,7 +199,7 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 		}
   	}
 
-    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+    public static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
