@@ -63,18 +63,19 @@ public class ServerConnection {
 		requestBuffer.clear();
 		
         String response;
+        Object output = null;
         try {
             response = in.readLine();
             if (response == null || response.equals("")) {
-                  System.exit(0);
+                  System.out.println("No Response from server, but I'm not dead yet?");
+              }else{
+                  output = JSONValue.parse(response);
               }
         } catch (IOException ex) {
                response = "Error: " + ex;
         }
 //        System.out.println("Response from Server: " + response);
         
-        Object output;
-        output = JSONValue.parse(response);
         
         return output;
 	}
@@ -96,9 +97,12 @@ public class ServerConnection {
 		JSONArray fullResponse = (JSONArray) this.sendRequestBuffer();
 		busy = false;
 		
-		JSONObject singleResponse = (JSONObject) fullResponse.get(0);
+		Object out = null;
+		if (fullResponse!=null){
+			JSONObject singleResponse = (JSONObject) fullResponse.get(0);
+			out = (Object) singleResponse.get("result");
+		}
 		
-		Object out = (Object) singleResponse.get("result");
 		return out;
 	}
 }
