@@ -70,17 +70,17 @@ public class Compiler
     {
         public void report(Diagnostic<? extends JavaFileObject> diagnostic)
         {
-        	MainViewController.CompilerOutput.appendText("Line Number->" + diagnostic.getLineNumber());
-        	MainViewController.CompilerOutput.appendText("code->" + diagnostic.getCode());
-        	MainViewController.CompilerOutput.appendText("Message->" + diagnostic.getMessage(Locale.ENGLISH));
-        	MainViewController.CompilerOutput.appendText("Source->" + diagnostic.getSource());
-        	MainViewController.CompilerOutput.appendText("  ");
-//            System.out.println("Line Number->" + diagnostic.getLineNumber());
-//            System.out.println("code->" + diagnostic.getCode());
-//            System.out.println("Message->"
-//                               + diagnostic.getMessage(Locale.ENGLISH));
-//            System.out.println("Source->" + diagnostic.getSource());
-//            System.out.println(" ");
+//        	MainViewController.CompilerOutput.appendText("Line Number->" + diagnostic.getLineNumber());
+//        	MainViewController.CompilerOutput.appendText("code->" + diagnostic.getCode());
+//        	MainViewController.CompilerOutput.appendText("Message->" + diagnostic.getMessage(Locale.ENGLISH));
+//        	MainViewController.CompilerOutput.appendText("Source->" + diagnostic.getSource());
+//        	MainViewController.CompilerOutput.appendText("  ");
+            System.out.println("Line Number->" + diagnostic.getLineNumber());
+            System.out.println("Code->" + diagnostic.getCode());
+            System.out.println("Message->"
+                               + diagnostic.getMessage(Locale.ENGLISH));
+            System.out.println("Source->" + diagnostic.getSource());
+            System.out.println(" ");
         }
     }
     
@@ -122,6 +122,7 @@ public class Compiler
         		String codeLine = (String) line.get("text");
         		code += codeLine + "\n";
         	}
+        	
         	javaFileList.add(i, this.new InMemoryJavaFileObject(fileName, code));
         	code = "";
 
@@ -184,10 +185,7 @@ public class Compiler
  
         // for compilation diagnostic message processing on compilation WARNING/ERROR
         MyDiagnosticListener c = new MyDiagnosticListener();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(c,
-                                                                              Locale.ENGLISH,
-                                                                              null);
-        //specify classes output folder
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(c, Locale.ENGLISH,null);
         Iterable options = Arrays.asList("-d", classOutputFolder);
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
                                                              c, options, null,

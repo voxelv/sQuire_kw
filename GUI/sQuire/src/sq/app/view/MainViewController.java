@@ -1117,7 +1117,7 @@ public class MainViewController implements Initializable{
     
     @FXML private void compileAndRun() throws Exception{
     	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), "11", "HelloWorld");
+    	compiler.compileAndRunProject(MainApp.GetServer(), "21", "Hello World");
     }
     
 }
