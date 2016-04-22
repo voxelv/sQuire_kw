@@ -38,6 +38,17 @@ public class DBConnector {
     private int portNumber;
     private Properties prop;
 
+    
+	/**
+	* Constructs this DBConnector, setting its properties and its Java SQL Connection
+	*/
+    public DBConnector() throws ClassNotFoundException,
+    		SQLException {
+//        super();
+        this.setProperties();
+        this.connection = this.getConnection(); 
+    }
+    
 	/**
 	* Creates and returns the Java SQL Connection, after properties have been set.
 	* @return the Java SQL Connection
@@ -98,15 +109,7 @@ public class DBConnector {
             printSQLException(sqle);
         }
     }
-	/**
-	* Constructs this DBConnector, setting its properties and its Java SQL Connection
-	*/
-    public DBConnector() throws ClassNotFoundException,
-    		SQLException {
-//        super();
-        this.setProperties();
-        this.connection = this.getConnection(); 
-    }
+
 
 	/**
 	* Sets the properties for this DBConnector.
