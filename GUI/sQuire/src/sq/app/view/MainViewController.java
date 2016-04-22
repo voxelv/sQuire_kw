@@ -120,7 +120,8 @@ public class MainViewController implements Initializable{
         	System.out.println("Scene: " + editorCodeArea.getScene() != null);
 	    	ServerConnection server = sq.app.MainApp.GetServer();
 	    	JSONObject jo = new JSONObject();
-	    	jo.put("lineID", editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
+	    	String id = Integer.toString(editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
+	    	jo.put("lineID", id);
 	    	server.sendSingleRequest("project", "lockline", jo);
         });
         
