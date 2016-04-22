@@ -36,7 +36,7 @@ import sq.app.model.editor.EditorCodeArea;
 public class MainViewController implements Initializable{
 	//FileManagement
 	public static Connection conn = null;
-	public int MyuserID = 2;
+	public int MyuserID = 0;
     int currPID = 0;
     int tempFileId = 0;
 	String currProjectName = "";
@@ -46,7 +46,8 @@ public class MainViewController implements Initializable{
     TreeItem<StrucTree> selectedFile = null;
     
     
-    @FXML Text user;
+    @FXML
+	static Text user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
@@ -72,11 +73,6 @@ public class MainViewController implements Initializable{
     //Initiialize
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     	conn = MainApp.GetConnection();
-    	try {
-			setUser(MyuserID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
     	IniTree();
     	curr_position.setText("sQuire Project");
     	
@@ -308,7 +304,7 @@ public class MainViewController implements Initializable{
   	  }
   	}
 /***************************Display UserName***************************/
-    private void setUser(int id) throws SQLException{
+    public static void setUser(int id) throws SQLException{
 		String query = "SELECT userName FROM Users WHERE userID like '" + id + "' LIMIT 1";
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(query);

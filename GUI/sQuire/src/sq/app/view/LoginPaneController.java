@@ -177,7 +177,7 @@ public class LoginPaneController {
 				Alert alert = new Alert(AlertType.ERROR);
 	            alert.initOwner(dialogStage);
 	            alert.setTitle("Failure to Login");
-	            alert.setHeaderText("Welcome to loging in school...");
+	            alert.setHeaderText("Welcome to logging in school...");
 	            alert.setContentText("Aaaaaand you fail!");
 	            alert.showAndWait();
 	            
@@ -217,6 +217,7 @@ public class LoginPaneController {
 			loginObj = (JSONObject) new JSONParser().parse(returnValue);
 			
 			MainApp.CurrentUser.setUserID(Integer.parseInt((String) loginObj.get("userID"))) ;
+			//MainViewController.setUser(MainApp.CurrentUser.getUserID());
 			System.out.println(Integer.toString(MainApp.CurrentUser.getUserID()));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
