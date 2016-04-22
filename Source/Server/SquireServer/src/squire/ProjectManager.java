@@ -414,11 +414,16 @@ public class ProjectManager {
 	public void lockLine (String lineID){
 		
 		String query = "Insert into Linelocks" +
-						"(userID, PFLID)" +
+						"(userID, pflid)" +
 						"values (?,?)";
 		String[] values = new String[2];
 		values[0] = String.valueOf(this.userID);
 		values[1] = lineID;
+
+		System.out.println("Query you wanted to run:");
+		System.out.println(query);
+		System.out.println(values[0]);
+		System.out.println(values[1]);
 		
 		try {
 			this.dbc.query(query, values);
