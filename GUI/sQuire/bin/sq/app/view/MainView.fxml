@@ -32,7 +32,7 @@
                   <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
                   <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
                   <Button mnemonicParsing="false" onAction="#locateFile" text="Input" />
-                  <Button layoutX="255.0" layoutY="10.0" mnemonicParsing="false" text="Run" />
+                  <Button layoutX="255.0" layoutY="10.0" onAction="#compileAndRun" mnemonicParsing="false" text="Run" />
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">

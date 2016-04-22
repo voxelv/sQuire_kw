@@ -36,7 +36,7 @@ import sq.app.model.editor.EditorCodeArea;
 public class MainViewController implements Initializable{
 	//FileManagement
 	public static Connection conn = null;
-	public int MyuserID = 0;
+	public int MyuserID = 2;
     int currPID = 0;
     int tempFileId = 0;
 	String currProjectName = "";
@@ -534,8 +534,10 @@ public class MainViewController implements Initializable{
 
     		if(Objects.equals(currProjectName, "")){
     			curr_position.setText(item.getValue().toString());
+    			System.out.println("if " + item.getValue().toString());
     		}else {
     			curr_position.setText(getCurrPosition(item));
+    			System.out.println("else " + item.getValue().toString());
     		}
     	}
         if(mouse.getClickCount() == 2 && item != null){
