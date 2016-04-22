@@ -268,6 +268,11 @@ public class LoginPaneController {
         
         if (returnValue.equals("Success"))
         {
+        	Username.getText();
+    		Email.getText();
+    		FirstName.getText();
+    		LastName.getText();
+    		Password1.getText();
         	return true;
         }
         else
