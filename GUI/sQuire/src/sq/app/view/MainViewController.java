@@ -1,4 +1,5 @@
 package sq.app.view;
+import sq.app.model.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,10 +8,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.simple.JSONObject;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -58,7 +62,7 @@ public class MainViewController implements Initializable{
     @FXML Text info;
     
     //Compiler
-    @FXML public static TextArea CompilerOutput;
+    @FXML public TextArea CompilerOutput;
     
     //Editor
     ResourceBundle resources;
@@ -105,16 +109,19 @@ public class MainViewController implements Initializable{
 //            editorCodeArea.doHighlight();
         //});
         
-        editorCodeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
-        	System.out.println("Selected text is now: \"" + newvalue + "\"");
-        	System.out.println("Interval: " + editorCodeArea.getSelection().getStart() + " to " + editorCodeArea.getSelection().getEnd());
-        	
-        });
+//        editorCodeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
+//        	System.out.println("Selected text is now: \"" + newvalue + "\"");
+//        	System.out.println("Interval: " + editorCodeArea.getSelection().getStart() + " to " + editorCodeArea.getSelection().getEnd());
+//        	
+//        });
         
         editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	//System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
-        	//System.out.println("Scene: " + editorCodeArea.getScene() != null);
-            editorCodeArea.LockParagraph(2);
+        	System.out.println("Caret Line: " + editorCodeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
+        	System.out.println("Scene: " + editorCodeArea.getScene() != null);
+	    	ServerConnection server = sq.app.MainApp.GetServer();
+	    	JSONObject jo = new JSONObject();
+	    	jo.put("lineID", editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
+	    	server.sendSingleRequest("project", "lockline", jo);
         });
         
 //        editorCodeArea.setOnKeyReleased(event->{
@@ -137,25 +144,6 @@ public class MainViewController implements Initializable{
 //        	System.out.println(Integer.toString(parCounter) + item.getText());
 //        }
         
-        editorCodeArea.currentParagraphProperty().addListener(change ->{
-        	
-        	if (editorCodeArea.getCurrentParagraph() != editorCodeArea.prevLineNum)
-        		{
-            		if (editorCodeArea.getText(editorCodeArea.prevLineNum) != editorCodeArea.prevLine)
-            		{
-            			if (editorCodeArea.getText(editorCodeArea.prevLineNum) == "")
-            			{
-            				System.out.printf("%d : '%s' -> '%s'\n", editorCodeArea.prevLineNum, editorCodeArea.prevLine, "DELETED");
-            			}
-            			else
-            			{
-            				System.out.printf("%d : '%s' -> '%s'\n", editorCodeArea.prevLineNum, editorCodeArea.prevLine, editorCodeArea.getText(editorCodeArea.prevLineNum));
-            			}
-            		}
-            		editorCodeArea.prevLineNum = editorCodeArea.getCurrentParagraph();
-            		editorCodeArea.prevLine = editorCodeArea.getText(editorCodeArea.prevLineNum);
-    		}
-        });
         
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
@@ -1077,20 +1065,26 @@ public class MainViewController implements Initializable{
 /***************************Read File Data***************************/
     private void readFile(TreeItem<StrucTree> item) throws SQLException{
         StringBuilder pos = new StringBuilder("");
-
+        
+        //TODO push any changes?
+        lineArray.clear();
+        
     	if(item.getValue().isFile() && (Objects.equals(tempFileData,"") || tempFileId != item.getValue().getID())){
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
     		tempFileData = getLine(item.getValue().getLine(),pos).toString();
     		tempFileId = item.getValue().getID();
-    		editorCodeArea.replaceText(tempFileData);
+    		editorCodeArea.ReplaceText(tempFileData, lineArray);
     	}
     }
+    
+    ArrayList<Line> lineArray = new ArrayList<Line>();
 
     private StringBuilder getLine(int id, StringBuilder temp) throws SQLException{
     	Statement st = conn.createStatement();
     	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
     	ResultSet rs = st.executeQuery(query);
     	if(rs.next()){
+    		lineArray.add(new Line(id, rs.getInt("nextid"),rs.getString("text")));
             temp.append(rs.getString("text"));
             temp.append("\n");
     		getLine(rs.getInt("nextid"),temp);
