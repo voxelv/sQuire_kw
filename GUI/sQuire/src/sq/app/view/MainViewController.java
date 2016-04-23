@@ -5,9 +5,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.sql.Connection;
@@ -148,6 +150,7 @@ public class MainViewController implements Initializable{
         
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
+        new ClientPollingThread(this.editorCodeArea).start();
     }
     
     
@@ -1074,7 +1077,7 @@ public class MainViewController implements Initializable{
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
     		tempFileData = getLine(item.getValue().getLine(),pos).toString();
     		tempFileId = item.getValue().getID();
-    		editorCodeArea.ReplaceText(tempFileData, lineArray);
+    		editorCodeArea.ReplaceText(tempFileData, lineArray, item.getValue().getID());
     	}
     }
     
@@ -1115,4 +1118,55 @@ public class MainViewController implements Initializable{
     	compiler.compileAndRunProject(MainApp.GetServer(), "21", "Hello World");
     }
     
+///////////////////////////////////////////////////////////////////////////////////
+////////////////// Client Polling ////////////////////////////////////////////
+    
+	private static class ClientPollingThread extends Thread {
+        private ServerConnection Server = null;
+        private EditorCodeArea Editor = null;
+
+        public ClientPollingThread(EditorCodeArea editor){
+        	this.Editor = editor;
+        	this.Server = sq.app.MainApp.GetServer();
+        }
+        public void run() {
+            try {
+            	while(true){
+            		if (Editor.GetFileID() >= 0){
+	            		JSONObject jo = new JSONObject();
+	                	jo.put("fileID", Editor.GetFileID());
+	                	Object o = Server.sendSingleRequest("project", "getLineLocks", jo);
+	            		Object out = null;
+	            		if (o!=null){
+	            			JSONArray a = (JSONArray)o;
+	            			JSONObject singleResponse = (JSONObject) a.get(0);
+	            			out = (Object) singleResponse.get("result");
+	            		}
+	                	
+	            		// Maybe store an integer in file info.
+	                	// Increment change counter for each change.
+	                	// For each change we update line text and 
+	                	// the value of the change counter.
+	                	// Then we can just ask for changes greater than 
+	                	// those from our last pull.
+
+//	            		JSONObject jo = new JSONObject();
+//	                	jo.put("fileID", Editor.GetFileID());
+//	                	jo.put("changeCount", Editor.GetFileID());
+//	                	Object o = Server.sendSingleRequest("project", "getLineChanges", jo);
+//	            		Object out = null;
+//	            		if (o!=null){
+//	            			JSONArray a = (JSONArray)o;
+//	            			JSONObject singleResponse = (JSONObject) a.get(0);
+//	            			out = (Object) singleResponse.get("result");
+//	            		}
+            		}
+            		java.lang.Thread.sleep(1000);
+            	}
+            } 
+            catch (Exception e){
+            	System.out.println("Client Polling thread exiting?");
+            }
+        }
+	}
 }
