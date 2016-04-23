@@ -2,6 +2,7 @@ package squire;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -420,9 +421,11 @@ public class ProjectManager {
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
-		values[2] = "NULL";
+		//values[2] = "NULL";
 		values[3] = lineID;
 		
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[2] = stamp.toString();
 		try {
 			this.dbc.query(query, values);
 		} catch (SQLException e) {
