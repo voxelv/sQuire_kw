@@ -1,6 +1,9 @@
-package squire;
+package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -11,12 +14,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
-public class Test_ChatManager {
+import squire.*;
+
+public class ChatManagerTest {
 	ChatManager testManager;
 	DBConnector dbc;
 	
-	
-	public Test_ChatManager()
+	public ChatManagerTest()
 	{
 		// Create the dbconnector
         try {
@@ -90,7 +94,7 @@ public class Test_ChatManager {
 				fail("joinTime is 0 characters long");
 		}
 	}
-	
+
 	@Test
 	public void test_joinChannel()
 	{
@@ -183,7 +187,80 @@ public class Test_ChatManager {
 		// leave all current channels
 		this.leaveAllChannels();
 		
+		// Add capitalized letter at front, since the first char will be capitalized anyway
+		String channelName = "A" + this.nextRandomName();
 		
+		// Join specific channel (name generated)
+		JSONArray channelList = testManager.joinChannel(channelName);
+		
+		// Get the channelID of the one we just joined
+		String channelID = (String)( (JSONObject)channelList.get(0) ).get("channelID");
+		
+		// Generate random message
+		String message = this.nextRandomName();
+		
+		// Add message
+		testManager.addMessage(message, channelID);
+		
+		JSONArray msgArray = null;
+		try {
+			msgArray = testManager.getMessages("0");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		boolean foundSentMsg = false;
+		
+		// make sure each message received is valid
+		for (int i = 0; i < msgArray.size(); i++)
+		{
+			JSONObject receivedMsg = (JSONObject) msgArray.get(i);
+			
+			String text = (String) receivedMsg.get("messageText");
+			String timeSent = (String) receivedMsg.get("timeSent");
+			String MID = (String) receivedMsg.get("MID");
+			String receivedMsgChannelName = (String) receivedMsg.get("channelName");
+			String fromUsername = (String) receivedMsg.get("userName");
+			String fromID = (String) receivedMsg.get("fromID");
+			String receivedMsgChannelID = (String) receivedMsg.get("channelID");
+			
+			if (text.compareTo(message) == 0 && channelName.compareTo(receivedMsgChannelName) == 0)
+				foundSentMsg = true;
+			
+			assertNotNull(text);
+			assertNotNull(timeSent);
+			assertNotNull(MID);
+			assertNotNull(receivedMsgChannelName);
+			assertNotNull(fromUsername);
+			assertNotNull(fromID);
+			assertNotNull(receivedMsgChannelID);
+			
+			if (text.length() == 0)
+				fail("length of message: 0");
+			
+			if (timeSent.length() == 0)
+				fail("length of timeSent String: 0");
+			
+			if (MID.length() == 0)
+				fail("length of MID: 0");
+			
+			if (receivedMsgChannelName.length() == 0)
+				fail("length of channel name: 0");
+			
+			if (fromUsername.length() == 0)
+				fail("length of username: 0");
+			
+			if (fromID.length() == 0)
+				fail("length of (from)userID: 0");
+			
+			if (receivedMsgChannelID.length() == 0)
+				fail("length of channelID: 0");
+		}
+		
+		// make sure we found the message that we sent
+		if (foundSentMsg == false)
+			fail("Couldn't find the sent message");
 	}
 	
 	@Test
@@ -218,17 +295,16 @@ public class Test_ChatManager {
 			e.printStackTrace();
 		}
 		
-		System.out.println(msgArray);
 		JSONObject receivedMsg = (JSONObject) msgArray.get(0);
 		String msgText = (String) receivedMsg.get("messageText");
-//		String msgText = (String) ( (JSONObject)msgArray.get(0) ).get("messageText");
-		System.out.println("original: '" + message + "'");
-		System.out.println("Received: '" + msgText + "'");
 		
 		if (msgText.compareTo(message) != 0)
 			fail("message sent and message received don't match");
 	}
-	/******************* Supporting Functions *********************/
+	
+/**************************************************************/	
+/**************************************************************/
+/******************* Supporting Functions *********************/
 	
 	public void setTestUserID()
 	{
@@ -252,5 +328,4 @@ public class Test_ChatManager {
 		SecureRandom random = new SecureRandom();
 		return new BigInteger(130, random).toString(32);
 	}
-	
 }

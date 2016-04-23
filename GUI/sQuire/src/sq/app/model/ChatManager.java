@@ -618,6 +618,7 @@ public class ChatManager {
             	String thisMID = (String) msg.get("MID");
             	this.manager.lastMID = thisMID;
             }
+            
             this.manager.helperBusy = false;
         }// End of last Function
     }// End of the ChatHelper Class
