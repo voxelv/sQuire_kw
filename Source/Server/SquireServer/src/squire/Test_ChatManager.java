@@ -175,6 +175,18 @@ public class Test_ChatManager {
 	}
 	
 	@Test
+	public void test_getMessages()
+	{
+		// Set userID for testing
+		this.setTestUserID();
+		
+		// leave all current channels
+		this.leaveAllChannels();
+		
+		
+	}
+	
+	@Test
 	public void test_addMessage()
 	{
 		// Set userID for testing
