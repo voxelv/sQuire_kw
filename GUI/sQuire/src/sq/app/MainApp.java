@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sq.app.model.ChatManager;
 import sq.app.model.ServerConnection;
 import sq.app.model.User;
 import sq.app.view.LoginPaneController;
@@ -26,6 +27,7 @@ public class MainApp extends Application {
 	public static Connection conn = null;
 	public static ServerConnection server;
 	public static User CurrentUser;
+	public static ChatManager chatManager = null;
 	
 	
 	public MainApp(){
@@ -34,6 +36,7 @@ public class MainApp extends Application {
 	public static void main(String[] args) throws ClassNotFoundException {
 		CurrentUser = new User();
 		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
+		chatManager = new ChatManager(server);
 		
 		Connect();
 		launch(args);
@@ -90,6 +93,8 @@ public class MainApp extends Application {
 	
 	public void showChatPane() {
 	    try {
+	    	
+	    	
 	        // Load the fxml file and create a new stage for the popup dialog.
 	        FXMLLoader loader2 = new FXMLLoader();
 	        loader2.setLocation(MainApp.class.getResource("view/ChatPane.fxml"));
@@ -103,14 +108,12 @@ public class MainApp extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-
 	        dialogStage.show();
-	        
-	        
 
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+	    MainApp.chatManager.onLogin(MainApp.CurrentUser.getUserID());
 	}
 	
 	public boolean showLoginPane() {
