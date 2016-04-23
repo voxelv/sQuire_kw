@@ -470,7 +470,7 @@ public class ProjectManager {
 	public void unlockMyLines (){
 		
 		String query = "Delete from LineLocks" +
-							"where userID = ?";
+							"where userID = ?;";
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
 		

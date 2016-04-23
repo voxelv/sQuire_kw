@@ -402,7 +402,7 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("unlockLine") == 0)
         		{
-					String lineID = (String) params.get("lineID");
+					String lineID = String.valueOf(params.get("lineID"));
 					
         			this.projectManager.unlockLine(lineID);
         			
