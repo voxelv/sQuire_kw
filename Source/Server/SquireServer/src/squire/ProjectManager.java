@@ -412,10 +412,10 @@ public class ProjectManager {
 	}
 	
 	public void changeLine (String lineID, String text){
-		String query = "Update LineLocks" +
+		String query = "Update PFLines" +
 						"set text = ?," +
-						"set lastEditor = ?," + 
-						"set timeEdited = ? " + 
+						"lastEditor = ?," + 
+						"timeEdited = ? " + 
 						"where pflid = ?";
 		String[] values = new String[4];
 		values[0] = text;
