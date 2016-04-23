@@ -11,6 +11,7 @@ import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,8 +24,11 @@ import org.fxmisc.richtext.StyleSpan;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 import org.fxmisc.wellbehaved.event.EventHandlerHelper;
+import org.json.simple.JSONObject;
 
 import javafx.stage.Stage;
+import sq.app.model.Line;
+import sq.app.model.ServerConnection;
 
 public class EditorCodeArea extends CodeArea implements KeyListener{
 
@@ -61,28 +65,28 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //            + "|(?<ISLOCKED>" + ISLOCKED_PATTERN + ")"
     );
 	
-    private static final String sampleCode = String.join("\n", new String[] {
-            "package com.example;",
-            "",
-            "import java.util.*;",
-            "",
-            "public class Foo extends Bar implements Baz {",
-            "",
-            "    /*",
-            "     * multi-line comment",
-            "     */",
-            "    public static void main(String[] args) {",
-            "        // single-line comment",
-            "        for(String arg: args) {",
-            "            if(arg.length() != 0)",
-            "                System.out.println(arg);",
-            "            else",
-            "                System.err.println(\"Warning: empty string as argument\");",
-            "        }",
-            "    }",
-            "",
-            "}"
-        });
+//    private static final String sampleCode = String.join("\n", new String[] {
+//            "package com.example;",
+//            "",
+//            "import java.util.*;",
+//            "",
+//            "public class Foo extends Bar implements Baz {",
+//            "",
+//            "    /*",
+//            "     * multi-line comment",
+//            "     */",
+//            "    public static void main(String[] args) {",
+//            "        // single-line comment",
+//            "        for(String arg: args) {",
+//            "            if(arg.length() != 0)",
+//            "                System.out.println(arg);",
+//            "            else",
+//            "                System.err.println(\"Warning: empty string as argument\");",
+//            "        }",
+//            "    }",
+//            "",
+//            "}"
+//        });
 	
     public String prevLine="";
     public int prevLineNum=0;
@@ -99,9 +103,53 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //        		b=b;
 //        	}
 //        });
+        this.currentParagraphProperty().addListener(change ->{
+        	
+        	if (this.getCurrentParagraph() != this.prevLineNum)
+        		{
+            		if (this.getText(this.prevLineNum) != this.prevLine)
+            		{
+                    	try{
+                        	ServerConnection server = sq.app.MainApp.GetServer();
+                        	JSONObject jo = new JSONObject();
+                    		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
+                        	server.sendSingleRequest("project", "lockline", jo);
+                        	jo = new JSONObject();
+                        	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+                        	server.sendSingleRequest("project", "unlockline", jo);
+//                        	jo = new JSONObject();
+//                    		jo.put("lineID", this.getText(this.getCurrentParagraph()));
+//                        	server.sendSingleRequest("project", "updateline", jo);
+                    	} catch (Exception e){
+                    		//do nothing
+                    	}
+
+            			if (this.getText(this.prevLineNum) == "")
+            			{
+            				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, "DELETED");
+            			}
+            			else
+            			{
+            				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, this.getText(this.prevLineNum));
+            			}
+            		}
+            		this.prevLineNum = this.getCurrentParagraph();
+            		this.prevLine = this.getText(this.prevLineNum);
+    		}
+        });
+        
+        this.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
+	    	System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
+	    	ServerConnection server = sq.app.MainApp.GetServer();
+	    	JSONObject jo = new JSONObject();
+	    	jo.put("lineId", lineArray.get(this.getCurrentParagraph()).getID());
+	    	server.sendSingleRequest("project", "lockline", jo);
+	    });
+
+
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
-		this.replaceText(sampleCode);
-		this.LockParagraph(2);
+		//this.replaceText(sampleCode);
+		//this.LockParagraph(2);
 		addEventHandler(javafx.scene.input.KeyEvent.KEY_RELEASED, event -> {
         	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
         	{
@@ -127,6 +175,18 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 
 	}
 	
+	public int GetLineIDFromIndex(int index){
+		return lineArray.get(this.getCurrentParagraph()).getID();
+	}
+	
+	
+    ArrayList<Line> lineArray = new ArrayList<Line>();
+
+	public void ReplaceText(String text, List<Line> listOfLines){
+		lineArray = (ArrayList<Line>)listOfLines;
+		this.replaceText(text);
+	}
+	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
 	//StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
 	
@@ -143,6 +203,10 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 		//this.getParagraph(2).restyle(styleStr);
 		this.setStyleSpans(2, 0, lockedSpansBuilder.create());
 		//StyleSpans
+	}
+	public void UnlockParagraph(int paragraphNumber){
+		lockedParagraphs.remove(paragraphNumber);
+		doHighlight();
 	}
 	
 	 @Override
