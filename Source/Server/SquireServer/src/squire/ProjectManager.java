@@ -420,11 +420,6 @@ public class ProjectManager {
 		values[0] = String.valueOf(this.userID);
 		values[1] = lineID;
 
-		System.out.println("Query you wanted to run:");
-		System.out.println(query);
-		System.out.println(values[0]);
-		System.out.println(values[1]);
-		
 		try {
 			this.dbc.query(query, values);
 		} catch (SQLException e) {
@@ -442,6 +437,22 @@ public class ProjectManager {
 		String[] values = new String[2];
 		values[0] = lineID;
 		values[1] = String.valueOf(this.userID);
+		
+		
+		try {
+			this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void unlockMyLines (){
+		
+		String query = "Delete from LineLocks" +
+							"where userID = ?";
+		String[] values = new String[1];
+		values[0] = String.valueOf(this.userID);
 		
 		
 		try {

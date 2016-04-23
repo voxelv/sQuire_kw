@@ -385,8 +385,10 @@ public class Server{
 				else if (action.compareToIgnoreCase("lockLine") == 0)
         		{
 					String lineID = (String) params.get("lineID");
-					
-        			this.projectManager.lockLine(lineID);
+					if(lineID != null && lineID != ""){
+						this.projectManager.unlockMyLines();
+						this.projectManager.lockLine(lineID);	
+					}
         			
         		}
 				else if (action.compareToIgnoreCase("unlockLine") == 0)
