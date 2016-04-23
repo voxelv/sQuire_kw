@@ -473,7 +473,8 @@ public class ProjectManager {
 							"where userID = ?;";
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
-		
+		System.out.println(query);
+		System.out.println(values[0]);
 		
 		try {
 			this.dbc.query(query, values);
