@@ -382,6 +382,15 @@ public class Server{
         			this.projectManager.removeLine(lineID);
         			
         		}
+				else if (action.compareToIgnoreCase("changeLine") == 0)
+        		{
+					String lineID = (String) params.get("lineID");
+					String text = (String) params.get("text");
+					if(lineID != null && lineID != ""){
+						this.projectManager.changeLine(lineID, text);	
+					}
+        			
+        		}
 				else if (action.compareToIgnoreCase("lockLine") == 0)
         		{
 					String lineID = (String) params.get("lineID");
