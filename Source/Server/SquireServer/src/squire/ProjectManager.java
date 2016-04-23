@@ -75,7 +75,7 @@ public class ProjectManager {
 	
 	public JSONArray getDirectories (String projectID) throws SQLException{
 		String query =	"select "
-						+ "`pdid`,"
+						+ "`pdid`, "
 						+ "`pdname`, "
 						+ "`parentid`, "
 					+ "from "
@@ -144,7 +144,7 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLines (String PFileID) throws SQLException{
-		String query =	"call PFLTraverser(("
+		String query =	"call PFLTraverser(( "
 						+ "select "
 							+ "`pflhead` "
 						+ "from "
@@ -168,8 +168,8 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLineLocks (String PFileID) throws SQLException{
-		String query =	"select pflid, userID"
-						+ "from (call PFLTraverser(("
+		String query =	"select pflid, userID "
+						+ "from (call PFLTraverser(( "
 							+ "select "
 								+ "`pflhead` "
 							+ "from "
@@ -318,9 +318,9 @@ public class ProjectManager {
 	}
 	
 	public void removeProject (String projectID){
-		String query = "Delete from Projects" + 
-							"where" +
-								"PID = ?";
+		String query = "Delete from Projects " + 
+							"where " +
+								"PID = ? ";
 		String[] values = new String[1];
 		values[0] = projectID;
 		
@@ -333,10 +333,10 @@ public class ProjectManager {
 	}
 
 	public void removeProjectAccess (String projectID, String accessUserID){
-		String query = "Delete from ProjectAccess" + 
-							"where" +
-								"PID = ?" +
-								"AND" +
+		String query = "Delete from ProjectAccess " + 
+							"where " +
+								"PID = ? " +
+								"AND " +
 								"userID = ?";
 		String[] values = new String[2];
 		values[0] = projectID;
@@ -351,8 +351,8 @@ public class ProjectManager {
 	}
 	
 	public void removeDirectory (String dirID){
-		String query = "Delete from PDirs" + 
-							"where" +
+		String query = "Delete from PDirs " + 
+							"where " +
 								"PID = ?";
 		String[] values = new String[1];
 		values[0] = dirID;
@@ -366,8 +366,8 @@ public class ProjectManager {
 	}
 
 	public void removeFile (String fileID){
-		String query = "Delete from PFiles" + 
-							"where" +
+		String query = "Delete from PFiles " + 
+							"where " +
 								"PFID = ?";
 		String[] values = new String[1];
 		values[0] = fileID;
@@ -385,15 +385,15 @@ public class ProjectManager {
 		String[] firstvalues = new String[1];
 		firstvalues[0] = lineID;
 		
-		String upquery = "Update pflid" +
-						 "set nextID = ?" +
-						 "where nextID = ?";
+		String upquery = "Update pflid " +
+						 "set nextID = ? " +
+						 "where nextID = ? ";
 		String[] upvalues = new String[2];
 		upvalues[1] = lineID;
 		
-		String query = "Delete from PFLines" + 
-							"where" +
-								"PFLID = ?";
+		String query = "Delete from PFLines " + 
+							"where " +
+								"PFLID = ? ";
 		String[] values = new String[1];
 		values[0] = lineID;
 
@@ -412,9 +412,9 @@ public class ProjectManager {
 	}
 	
 	public void changeLine (String lineID, String text){
-		String query = "Update PFLines" +
-						"set text = ?," +
-						"lastEditor = ?," + 
+		String query = "Update PFLines " +
+						"set text = ?, " +
+						"lastEditor = ?, " + 
 						"timeEdited = ? " + 
 						"where pflid = ?";
 		String[] values = new String[4];
@@ -434,7 +434,7 @@ public class ProjectManager {
 	public void lockLine (String lineID){
 		
 		String query = "Insert into LineLocks" +
-						"(userID, pflid)" +
+						"(userID, pflid) " +
 						"values (?,?)";
 		String[] values = new String[2];
 		values[0] = String.valueOf(this.userID);
@@ -450,9 +450,9 @@ public class ProjectManager {
 	
 	public void unlockLine (String lineID){
 		
-		String query = "Delete from LineLocks" +
-							"where" +
-								"pflid = ?" +
+		String query = "Delete from LineLocks " +
+							"where " +
+								"pflid = ? " +
 								"AND userID = ?";
 		String[] values = new String[2];
 		values[0] = lineID;
@@ -469,7 +469,7 @@ public class ProjectManager {
 	
 	public void unlockMyLines (){
 		
-		String query = "Delete from LineLocks" +
+		String query = "Delete from LineLocks " +
 							"where userID = ?;";
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
