@@ -203,17 +203,12 @@ public class ProjectManager {
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
 		
-		String accessQuery = "Insert into ProjectAccess(PID, UserID) values (?, ?);";
-		String[] accessValues = new String[2];
-		accessValues[1] = String.valueOf(this.userID);
-		
-		
 		JSONArray projectID = new JSONArray();
 		String pid;
 		try {
 			this.dbc.query(query, values);
 			projectID = this.dbc.query(query2, values2);
-			//parse JSONArray to add access to self.
+			//Add access for creator.
 			JSONObject firstRow = (JSONObject) ((JSONArray) projectID).get(0);
 			pid = (String) firstRow.get("LAST_INSERT_ID()");
 			createProjectAccess(String.valueOf(this.userID), pid);
@@ -297,13 +292,14 @@ public class ProjectManager {
 		return fileID;
 	}
 	
-	public JSONArray createLine (String text, String nextLineID, String timeEdited){
+	public JSONArray createLine (String text, String nextLineID){
 		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = nextLineID;
 		values[2] = String.valueOf(this.userID);
-		values[3] = timeEdited;
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[3] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;

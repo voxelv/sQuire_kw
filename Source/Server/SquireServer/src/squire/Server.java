@@ -342,9 +342,8 @@ public class Server{
         		{
 					String text = (String) params.get("text");
         			String nextLineID = (String) params.get("nextLineID");
-					String timeEdited = (String) params.get("timeEdited");
 					
-					output = this.projectManager.createLine (text, nextLineID, timeEdited).toJSONString();
+					output = this.projectManager.createLine (text, nextLineID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("removeProject") == 0)
