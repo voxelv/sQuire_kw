@@ -90,9 +90,9 @@ public class MainViewController implements Initializable{
 
         editorCodeArea.doHighlight();
   
-        editorCodeArea.plainTextChanges().subscribe(change->{
-            editorCodeArea.doHighlight();
-        });
+//        editorCodeArea.plainTextChanges().subscribe(change->{
+//            editorCodeArea.doHighlight();
+//        });
         
 //        this.editorStackPane.setOnKeyPressed(event->{
 //        	KeyCode c = event.getCode();
@@ -115,27 +115,27 @@ public class MainViewController implements Initializable{
 //        	
 //        });
         
-        editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	System.out.println("Caret Line: " + editorCodeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
-        	System.out.println("Scene: " + editorCodeArea.getScene() != null);
-	    	ServerConnection server = sq.app.MainApp.GetServer();
-	    	JSONObject jo = new JSONObject();
-	    	String id = Integer.toString(editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
-	    	jo.put("lineID", id);
-	    	server.sendSingleRequest("project", "lockline", jo);
-        });
+//        editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
+//        	System.out.println("Caret Line: " + editorCodeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
+//        	System.out.println("Scene: " + editorCodeArea.getScene() != null);
+//	    	ServerConnection server = sq.app.MainApp.GetServer();
+//	    	JSONObject jo = new JSONObject();
+//	    	String id = Integer.toString(editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
+//	    	jo.put("lineID", id);
+//	    	server.sendSingleRequest("project", "lockline", jo);
+//        });
         
 //        editorCodeArea.setOnKeyReleased(event->{
 //            editorCodeArea.doHighlight();
 //        	System.out.print(event.getCode());
 //        });
         
-        editorCodeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
-        	if (newvalue.getLength()>0)
-        	{
-        		System.out.println("Selection: " + newvalue);
-        	}
-        });
+//        editorCodeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
+//        	if (newvalue.getLength()>0)
+//        	{
+//        		System.out.println("Selection: " + newvalue);
+//        	}
+//        });
                
 //        int parCounter = 0;
 //        for(Iterator<Paragraph<Collection<String>, Collection<String>>> par = this.getParagraphs().iterator(); par.hasNext();)
