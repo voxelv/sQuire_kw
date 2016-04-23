@@ -26,6 +26,11 @@ public class ChatManager {
 		this.userID = userID;
 	}
 	
+	public int getUserID()
+	{
+		return this.userID;
+	}
+	
 	/**
 	 * Unsubscribe user from a channel
 	 * @param String channelName
@@ -219,7 +224,7 @@ public class ChatManager {
 	}
 	
 	/**
-	 * Get all messages for a user since a given time
+	 * Get all messages for a user since the last MID received (use 0 for no previous messages received)
 	 * @param lastMID - last Message ID
 	 * @return	JSONArray array [
 	 * 				object {
