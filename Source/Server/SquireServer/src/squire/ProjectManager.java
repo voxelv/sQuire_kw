@@ -420,7 +420,7 @@ public class ProjectManager {
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
-		values[2] = "CURRENT_TIMESTAMP";
+		values[2] = "(SELECT NOW())";
 		values[3] = lineID;
 		
 		try {
