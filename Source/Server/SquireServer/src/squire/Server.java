@@ -187,6 +187,7 @@ public class Server{
         		}
         		else if (action.compareToIgnoreCase("QUIT") == 0 || action.compareToIgnoreCase("EXIT") == 0)
         		{
+        			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
         	}
@@ -414,6 +415,7 @@ public class Server{
         	{
         		if (action.compareToIgnoreCase("quit") == 0)
         		{
+        			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
         	}
