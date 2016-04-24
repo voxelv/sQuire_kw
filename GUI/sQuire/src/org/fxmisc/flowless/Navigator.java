@@ -3,17 +3,17 @@ package org.fxmisc.flowless;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.layout.Region;
-
 import org.fxmisc.flowless.VirtualFlow.Gravity;
 import org.reactfx.Subscription;
 import org.reactfx.collection.LiveList;
 import org.reactfx.collection.MemoizationList;
 import org.reactfx.collection.QuasiListChange;
 import org.reactfx.collection.QuasiListModification;
+
+import javafx.beans.binding.Bindings;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.Region;
 
 final class Navigator<T, C extends Cell<T, ?>>
 extends Region implements TargetPositionVisitor {

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.reactfx.util.Lists;
+
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
-
-import org.reactfx.util.Lists;
 
 public interface QuasiListChange<E> extends ListModificationSequence<E> {
 

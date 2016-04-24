@@ -10,15 +10,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import javafx.animation.Interpolatable;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Window;
-
 import org.reactfx.Change;
 import org.reactfx.EventStream;
 import org.reactfx.EventStreamBase;
@@ -32,6 +23,15 @@ import org.reactfx.util.PentaFunction;
 import org.reactfx.util.TetraFunction;
 import org.reactfx.util.TriFunction;
 import org.reactfx.util.WrapperBase;
+
+import javafx.animation.Interpolatable;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.stage.Window;
 
 /**
  * Adds more operations to {@link ObservableValue}.

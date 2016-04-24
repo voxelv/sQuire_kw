@@ -1,6 +1,6 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.*;
+import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.ADOPT;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.fxmisc.wellbehaved.event.experimental.InputMap.HandlerConsumer;
+
 import javafx.collections.MapChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
-
-import org.fxmisc.wellbehaved.event.experimental.InputMap.HandlerConsumer;
 
 public class Nodes {
 

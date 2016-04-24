@@ -1,6 +1,6 @@
 package org.reactfx.util;
 
-import static org.reactfx.util.Tuples.*;
+import static org.reactfx.util.Tuples.t;
 
 import java.util.HashMap;
 import java.util.Iterator;

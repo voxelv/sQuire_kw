@@ -1,10 +1,10 @@
 package org.fxmisc.richtext;
 
+import org.reactfx.EventStream;
+
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.IndexRange;
-
-import org.reactfx.EventStream;
 
 /**
  * Interface for a text editing control.

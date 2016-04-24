@@ -1,17 +1,9 @@
 package sq.app.view;
-import sq.app.model.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
-import java.util.ResourceBundle;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +11,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ResourceBundle;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,16 +28,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-
-import javafx.scene.layout.StackPane;
 import sq.app.MainApp;
-import sq.app.model.editor.EditorCodeArea;
 import sq.app.model.Compiler;
-
-import sq.app.model.Compiler;
+import sq.app.model.Line;
 import sq.app.model.ServerConnection;
+import sq.app.model.editor.EditorCodeArea;
 
 public class MainViewController implements Initializable{
 	//FileManagement

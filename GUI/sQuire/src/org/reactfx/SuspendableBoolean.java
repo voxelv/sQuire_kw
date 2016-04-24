@@ -1,8 +1,8 @@
 package org.reactfx;
 
-import javafx.beans.value.ObservableBooleanValue;
-
 import org.reactfx.value.ValBase;
+
+import javafx.beans.value.ObservableBooleanValue;
 
 abstract class SuspendableBoolean extends ValBase<Boolean>
 implements ObservableBooleanValue, Toggle {

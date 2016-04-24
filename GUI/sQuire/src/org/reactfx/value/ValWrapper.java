@@ -1,9 +1,9 @@
 package org.reactfx.value;
 
+import org.reactfx.Subscription;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ObservableValue;
-
-import org.reactfx.Subscription;
 
 class ValWrapper<T, D extends ObservableValue<T>> extends ValBase<T> {
     private final D delegate;

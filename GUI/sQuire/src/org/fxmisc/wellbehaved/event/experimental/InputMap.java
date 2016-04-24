@@ -7,10 +7,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.fxmisc.wellbehaved.event.experimental.InputHandler.Result;
+
 import javafx.event.Event;
 import javafx.event.EventType;
-
-import org.fxmisc.wellbehaved.event.experimental.InputHandler.Result;
 
 /**
  *

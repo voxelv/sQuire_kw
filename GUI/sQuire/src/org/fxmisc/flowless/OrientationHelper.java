@@ -1,12 +1,12 @@
 package org.fxmisc.flowless;
 
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 interface OrientationHelper {
     Orientation getContentBias();

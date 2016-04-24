@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import javafx.event.Event;
-import javafx.event.EventType;
-
 import org.fxmisc.wellbehaved.event.experimental.InputHandler.Result;
 import org.fxmisc.wellbehaved.event.experimental.internal.PrefixTree;
 import org.fxmisc.wellbehaved.event.experimental.internal.PrefixTree.Ops;
 import org.fxmisc.wellbehaved.event.experimental.template.InputMapTemplate.HandlerTemplateConsumer;
+
+import javafx.event.Event;
+import javafx.event.EventType;
 
 class InputHandlerTemplateMap<S, E extends Event> {
 

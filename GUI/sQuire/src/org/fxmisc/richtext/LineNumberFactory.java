@@ -3,6 +3,9 @@ package org.fxmisc.richtext;
 import java.util.ArrayList;
 import java.util.function.IntFunction;
 
+import org.reactfx.collection.LiveList;
+import org.reactfx.value.Val;
+
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -12,9 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-
-import org.reactfx.collection.LiveList;
-import org.reactfx.value.Val;
 
 /**
  * Graphic factory that produces labels containing line numbers.

@@ -3,12 +3,12 @@ package org.reactfx.collection;
 import java.util.List;
 import java.util.function.Function;
 
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-
 import org.reactfx.Subscription;
 import org.reactfx.util.Lists;
 import org.reactfx.value.Val;
+
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 
 class MappedList<E, F> extends LiveListBase<F>
 implements ReadOnlyLiveListImpl<F> {

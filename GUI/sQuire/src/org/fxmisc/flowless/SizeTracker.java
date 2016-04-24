@@ -3,15 +3,15 @@ package org.fxmisc.flowless;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javafx.beans.value.ObservableObjectValue;
-import javafx.geometry.Bounds;
-import javafx.scene.control.IndexRange;
-
 import org.reactfx.Subscription;
 import org.reactfx.collection.LiveList;
 import org.reactfx.collection.MemoizationList;
 import org.reactfx.value.Val;
 import org.reactfx.value.ValBase;
+
+import javafx.beans.value.ObservableObjectValue;
+import javafx.geometry.Bounds;
+import javafx.scene.control.IndexRange;
 
 final class SizeTracker {
     private final OrientationHelper orientation;

@@ -7,10 +7,10 @@ import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.util.AccumulatorSize;
 import org.reactfx.util.NotificationAccumulator;
+
+import javafx.beans.value.ObservableValue;
 
 /**
  * An event stream whose emission of events can be suspended temporarily. What

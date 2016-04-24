@@ -1,13 +1,13 @@
 package org.reactfx.inhibeans.binding;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.Guard;
 import org.reactfx.value.Val;
 
 import com.sun.javafx.binding.ExpressionHelper;
+
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Inhibitory version of {@link javafx.beans.binding.FloatBinding}.

@@ -1,7 +1,11 @@
 package org.fxmisc.wellbehaved.event.experimental;
 
-import static javafx.scene.input.KeyEvent.*;
-import static javafx.scene.input.MouseEvent.*;
+import static javafx.scene.input.KeyEvent.KEY_RELEASED;
+import static javafx.scene.input.KeyEvent.KEY_TYPED;
+import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
+import static javafx.scene.input.MouseEvent.MOUSE_MOVED;
+import static javafx.scene.input.MouseEvent.MOUSE_PRESSED;
+import static javafx.scene.input.MouseEvent.MOUSE_RELEASED;
 
 import java.util.Collections;
 import java.util.HashSet;

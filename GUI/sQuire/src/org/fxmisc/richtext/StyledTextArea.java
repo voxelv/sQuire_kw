@@ -1,8 +1,9 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.PopupAlignment.*;
-import static org.reactfx.EventStreams.*;
-import static org.reactfx.util.Tuples.*;
+import static org.fxmisc.richtext.PopupAlignment.CARET_TOP;
+import static org.reactfx.EventStreams.invalidationsOf;
+import static org.reactfx.EventStreams.merge;
+import static org.reactfx.util.Tuples.t;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -14,6 +15,23 @@ import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
+import org.fxmisc.flowless.Cell;
+import org.fxmisc.flowless.VirtualFlow;
+import org.fxmisc.flowless.VirtualFlowHit;
+import org.fxmisc.flowless.Virtualized;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CssProperties.EditableProperty;
+import org.fxmisc.undo.UndoManager;
+import org.fxmisc.undo.UndoManagerFactory;
+import org.reactfx.EventStream;
+import org.reactfx.EventStreams;
+import org.reactfx.StateMachine;
+import org.reactfx.Subscription;
+import org.reactfx.collection.LiveList;
+import org.reactfx.util.Tuple2;
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
 
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
@@ -46,23 +64,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.PopupWindow;
-
-import org.fxmisc.flowless.Cell;
-import org.fxmisc.flowless.VirtualFlow;
-import org.fxmisc.flowless.VirtualFlowHit;
-import org.fxmisc.flowless.Virtualized;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CssProperties.EditableProperty;
-import org.fxmisc.undo.UndoManager;
-import org.fxmisc.undo.UndoManagerFactory;
-import org.reactfx.EventStream;
-import org.reactfx.EventStreams;
-import org.reactfx.StateMachine;
-import org.reactfx.Subscription;
-import org.reactfx.collection.LiveList;
-import org.reactfx.util.Tuple2;
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 /**
  * Text editing control. Accepts user input (keyboard, mouse) and

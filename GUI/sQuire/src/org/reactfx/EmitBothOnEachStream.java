@@ -1,6 +1,6 @@
 package org.reactfx;
 
-import static org.reactfx.util.Tuples.*;
+import static org.reactfx.util.Tuples.t;
 
 import org.reactfx.util.Tuple2;
 

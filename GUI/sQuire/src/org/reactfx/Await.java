@@ -1,18 +1,20 @@
 package org.reactfx;
 
-import static javafx.concurrent.WorkerStateEvent.*;
+import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_CANCELLED;
+import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_FAILED;
+import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_SUCCEEDED;
 
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.reactfx.util.TriConsumer;
+import org.reactfx.util.Try;
+
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.concurrent.Task;
-
-import org.reactfx.util.TriConsumer;
-import org.reactfx.util.Try;
 
 class Await<T, F> extends EventStreamBase<Try<T>> implements AwaitingEventStream<Try<T>> {
 

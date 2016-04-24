@@ -1,8 +1,8 @@
 package org.reactfx;
 
-import javafx.concurrent.Task;
-
 import org.reactfx.util.Try;
+
+import javafx.concurrent.Task;
 
 public interface TaskStream<T> extends EventStream<Task<T>> {
 

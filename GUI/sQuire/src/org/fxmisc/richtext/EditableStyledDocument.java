@@ -1,18 +1,13 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.*;
-import static org.fxmisc.richtext.TwoDimensional.Bias.*;
+import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.COPY;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Backward;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Forward;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy;
 import org.reactfx.EventSource;
@@ -24,6 +19,12 @@ import org.reactfx.util.Lists;
 import org.reactfx.value.SuspendableVar;
 import org.reactfx.value.Val;
 import org.reactfx.value.Var;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Content model for {@link StyledTextArea}. Implements edit operations

@@ -2,10 +2,10 @@ package org.reactfx.value;
 
 import java.util.Objects;
 
+import org.reactfx.Subscription;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ObservableValue;
-
-import org.reactfx.Subscription;
 
 class SimpleVar<T> extends ValBase<T> implements Var<T> {
     private final InvalidationListener boundToListener = obs -> invalidate();

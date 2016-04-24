@@ -5,14 +5,14 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.value.ObservableBooleanValue;
-
 import org.fxmisc.undo.UndoManager;
 import org.fxmisc.undo.impl.ChangeQueue.QueuePosition;
 import org.reactfx.EventStream;
 import org.reactfx.Subscription;
 import org.reactfx.SuspendableNo;
+
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ObservableBooleanValue;
 
 public class UndoManagerImpl<C> implements UndoManager {
 

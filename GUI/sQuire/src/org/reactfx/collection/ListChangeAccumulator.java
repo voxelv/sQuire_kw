@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.collections.ListChangeListener;
-
 import org.reactfx.util.Lists;
+
+import javafx.collections.ListChangeListener;
 
 public final class ListChangeAccumulator<E> implements ListModificationSequence<E> {
     private QuasiListChangeImpl<E> modifications = new QuasiListChangeImpl<>();

@@ -1,6 +1,10 @@
 package org.reactfx.util;
 
-import static javafx.animation.Interpolator.*;
+import static javafx.animation.Interpolator.EASE_BOTH;
+import static javafx.animation.Interpolator.EASE_IN;
+import static javafx.animation.Interpolator.EASE_OUT;
+import static javafx.animation.Interpolator.LINEAR;
+
 import javafx.animation.Interpolatable;
 
 /**

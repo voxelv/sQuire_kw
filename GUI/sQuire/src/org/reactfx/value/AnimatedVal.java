@@ -3,11 +3,11 @@ package org.reactfx.value;
 import java.time.Duration;
 import java.util.function.BiFunction;
 
-import javafx.animation.Transition;
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.Subscription;
 import org.reactfx.util.Interpolator;
+
+import javafx.animation.Transition;
+import javafx.beans.value.ObservableValue;
 
 class AnimatedVal<T> extends ValBase<T> {
     private final class FractionTransition extends Transition {

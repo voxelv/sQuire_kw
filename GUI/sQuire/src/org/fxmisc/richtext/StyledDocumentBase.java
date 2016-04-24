@@ -1,7 +1,8 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.*;
-import static org.fxmisc.richtext.TwoDimensional.Bias.*;
+import static org.fxmisc.richtext.ReadOnlyStyledDocument.ParagraphsPolicy.ADOPT;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Backward;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Forward;
 
 import java.util.ArrayList;
 import java.util.Arrays;

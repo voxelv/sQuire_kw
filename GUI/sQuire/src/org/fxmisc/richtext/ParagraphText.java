@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.transformation.FilteredList;
@@ -17,9 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
-
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 class ParagraphText<PS, S> extends TextFlowExt {
 

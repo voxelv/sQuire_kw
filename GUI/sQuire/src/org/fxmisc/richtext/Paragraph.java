@@ -1,15 +1,16 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.TwoDimensional.Bias.*;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Backward;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Forward;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import javafx.scene.control.IndexRange;
-
 import org.fxmisc.richtext.TwoDimensional.Position;
+
+import javafx.scene.control.IndexRange;
 
 public final class Paragraph<PS, S> {
 

@@ -1,8 +1,13 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.PopupAlignment.HorizontalAlignment.*;
-import static org.fxmisc.richtext.PopupAlignment.AnchorObject.*;
-import static org.fxmisc.richtext.PopupAlignment.VerticalAlignment.*;
+import static org.fxmisc.richtext.PopupAlignment.AnchorObject.CARET;
+import static org.fxmisc.richtext.PopupAlignment.AnchorObject.SELECTION;
+import static org.fxmisc.richtext.PopupAlignment.HorizontalAlignment.H_CENTER;
+import static org.fxmisc.richtext.PopupAlignment.HorizontalAlignment.LEFT;
+import static org.fxmisc.richtext.PopupAlignment.HorizontalAlignment.RIGHT;
+import static org.fxmisc.richtext.PopupAlignment.VerticalAlignment.BOTTOM;
+import static org.fxmisc.richtext.PopupAlignment.VerticalAlignment.TOP;
+import static org.fxmisc.richtext.PopupAlignment.VerticalAlignment.V_CENTER;
 
 public enum PopupAlignment {
     CARET_TOP(CARET, TOP, H_CENTER),

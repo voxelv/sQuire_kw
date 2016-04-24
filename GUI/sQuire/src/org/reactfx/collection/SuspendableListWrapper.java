@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import javafx.collections.ObservableList;
-
 import org.reactfx.SuspendableBase;
 import org.reactfx.util.AccumulatorSize;
 import org.reactfx.util.NotificationAccumulator;
+
+import javafx.collections.ObservableList;
 
 final class SuspendableListWrapper<E>
 extends SuspendableBase<LiveList.Observer<? super E, ?>, QuasiListChange<? extends E>, ListModificationSequence<E>>

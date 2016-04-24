@@ -2,16 +2,16 @@ package org.reactfx.collection;
 
 import java.util.function.BinaryOperator;
 
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-import javafx.scene.control.IndexRange;
-
 import org.reactfx.Subscription;
 import org.reactfx.util.Experimental;
 import org.reactfx.util.FingerTree;
 import org.reactfx.util.MapToMonoid;
 import org.reactfx.value.Val;
 import org.reactfx.value.ValBase;
+
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.scene.control.IndexRange;
 
 class ListReduction<T> extends ValBase<T> {
     private final ObservableList<T> input;

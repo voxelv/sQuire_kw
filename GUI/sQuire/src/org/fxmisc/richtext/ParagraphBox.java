@@ -1,12 +1,19 @@
 package org.fxmisc.richtext;
 
-import static org.reactfx.util.Tuples.*;
+import static org.reactfx.util.Tuples.t;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.BiConsumer;
 import java.util.function.IntFunction;
+
+import org.fxmisc.richtext.util.MouseStationaryHelper;
+import org.reactfx.EventStream;
+import org.reactfx.util.Either;
+import org.reactfx.util.Tuple2;
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -22,14 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
-
 import javafx.scene.text.TextFlow;
-import org.fxmisc.richtext.util.MouseStationaryHelper;
-import org.reactfx.EventStream;
-import org.reactfx.util.Either;
-import org.reactfx.util.Tuple2;
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 class ParagraphBox<PS, S> extends Region {
 

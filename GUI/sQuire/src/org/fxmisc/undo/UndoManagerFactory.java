@@ -1,5 +1,9 @@
 package org.fxmisc.undo;
 
+import static org.fxmisc.undo.UndoManagerFactory.fixedSizeHistoryUndoManager;
+import static org.fxmisc.undo.UndoManagerFactory.unlimitedHistoryUndoManager;
+import static org.fxmisc.undo.UndoManagerFactory.zeroHistoryUndoManager;
+
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;

@@ -2,9 +2,9 @@ package org.reactfx.value;
 
 import java.util.function.Function;
 
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.Subscription;
+
+import javafx.beans.value.ObservableValue;
 
 class MappedVal<T, U> extends ValBase<U> {
     private final ObservableValue<T> src;

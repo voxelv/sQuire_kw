@@ -1,6 +1,7 @@
 package org.fxmisc.wellbehaved.event;
 
-import static javafx.scene.input.KeyEvent.*;
+import static javafx.scene.input.KeyEvent.KEY_RELEASED;
+import static javafx.scene.input.KeyEvent.KEY_TYPED;
 
 import java.util.Optional;
 import java.util.function.Predicate;

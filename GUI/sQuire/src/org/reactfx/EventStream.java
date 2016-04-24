@@ -1,7 +1,8 @@
 package org.reactfx;
 
-import static org.reactfx.EventStreams.*;
-import static org.reactfx.util.Tuples.*;
+import static org.reactfx.EventStreams.never;
+import static org.reactfx.EventStreams.valuesOf;
+import static org.reactfx.util.Tuples.t;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -18,15 +19,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import javafx.application.Platform;
-import javafx.beans.binding.Binding;
-import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WritableValue;
-import javafx.concurrent.Task;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Window;
-
 import org.reactfx.util.AccumulatorSize;
 import org.reactfx.util.Either;
 import org.reactfx.util.Experimental;
@@ -35,6 +27,15 @@ import org.reactfx.util.NotificationAccumulator;
 import org.reactfx.util.Timer;
 import org.reactfx.util.Tuple2;
 import org.reactfx.value.Val;
+
+import javafx.application.Platform;
+import javafx.beans.binding.Binding;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableValue;
+import javafx.concurrent.Task;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.stage.Window;
 
 /**
  * Stream of values (events).

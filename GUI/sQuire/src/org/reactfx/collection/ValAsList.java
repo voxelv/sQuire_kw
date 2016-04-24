@@ -1,10 +1,10 @@
 package org.reactfx.collection;
 
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.Subscription;
 import org.reactfx.util.Lists;
 import org.reactfx.value.Val;
+
+import javafx.beans.value.ObservableValue;
 
 class ValAsList<T> extends LiveListBase<T> implements ReadOnlyLiveListImpl<T> {
     private final ObservableValue<T> underlying;

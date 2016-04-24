@@ -2,11 +2,11 @@ package org.reactfx;
 
 import java.util.function.Supplier;
 
+import org.reactfx.util.ListHelper;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
-
-import org.reactfx.util.ListHelper;
 
 /**
  * @deprecated Indicator is unsafe on recursion: it may report misleading

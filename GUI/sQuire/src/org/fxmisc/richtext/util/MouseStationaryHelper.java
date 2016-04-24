@@ -1,18 +1,18 @@
 package org.fxmisc.richtext.util;
 
-import static javafx.scene.input.MouseEvent.*;
-import static org.reactfx.EventStreams.*;
+import static javafx.scene.input.MouseEvent.MOUSE_MOVED;
+import static org.reactfx.EventStreams.eventsOf;
 
 import java.time.Duration;
+
+import org.reactfx.EventStream;
+import org.reactfx.Subscription;
+import org.reactfx.util.Either;
 
 import javafx.event.Event;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-
-import org.reactfx.EventStream;
-import org.reactfx.Subscription;
-import org.reactfx.util.Either;
 
 public class MouseStationaryHelper {
     private final Node node;

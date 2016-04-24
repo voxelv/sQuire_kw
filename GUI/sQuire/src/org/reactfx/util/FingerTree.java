@@ -1,8 +1,9 @@
 package org.reactfx.util;
 
-import static org.reactfx.util.Either.*;
-import static org.reactfx.util.LL.*;
-import static org.reactfx.util.Tuples.*;
+import static org.reactfx.util.Either.left;
+import static org.reactfx.util.Either.right;
+import static org.reactfx.util.LL.cons;
+import static org.reactfx.util.Tuples.t;
 
 import java.util.ArrayList;
 import java.util.List;

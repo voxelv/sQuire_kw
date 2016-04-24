@@ -2,9 +2,9 @@ package org.reactfx.value;
 
 import java.util.function.Consumer;
 
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.Subscription;
+
+import javafx.beans.value.ObservableValue;
 
 class VarFromVal<T> extends ProxyVal<T, T> implements Var<T> {
     private final Consumer<T> setter;

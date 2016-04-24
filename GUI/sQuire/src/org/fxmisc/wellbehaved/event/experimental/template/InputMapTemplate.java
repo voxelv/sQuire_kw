@@ -7,15 +7,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javafx.event.Event;
-import javafx.event.EventType;
-import javafx.scene.Node;
-
 import org.fxmisc.wellbehaved.event.experimental.EventPattern;
 import org.fxmisc.wellbehaved.event.experimental.InputHandler;
 import org.fxmisc.wellbehaved.event.experimental.InputHandler.Result;
 import org.fxmisc.wellbehaved.event.experimental.InputMap;
 import org.fxmisc.wellbehaved.event.experimental.Nodes;
+
+import javafx.event.Event;
+import javafx.event.EventType;
+import javafx.scene.Node;
 
 public abstract class InputMapTemplate<S, E extends Event> {
 

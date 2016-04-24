@@ -3,11 +3,11 @@ package org.reactfx.value;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.reactfx.Subscription;
+
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-
-import org.reactfx.Subscription;
 
 abstract class FlatMapped<T, U, O extends ObservableValue<U>>
 extends ValBase<U> {

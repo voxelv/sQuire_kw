@@ -1,6 +1,6 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.ClipboardHelper.*;
+import static org.fxmisc.richtext.ClipboardHelper.dataFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,12 +9,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.reactfx.util.Tuple2;
+
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
-
-import org.reactfx.util.Tuple2;
 
 /**
  * Clipboard actions for {@link TextEditingArea}.

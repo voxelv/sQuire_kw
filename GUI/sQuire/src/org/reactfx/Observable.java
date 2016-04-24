@@ -1,9 +1,9 @@
 package org.reactfx;
 
+import org.reactfx.value.Val;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
-
-import org.reactfx.value.Val;
 
 /**
  * Anything that can be <em>observed</em>, that is have an <em>observer</em>

@@ -3,6 +3,11 @@ package org.fxmisc.flowless;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.reactfx.collection.MemoizationList;
+import org.reactfx.util.Lists;
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
+
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.ObservableList;
@@ -12,11 +17,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
-
-import org.reactfx.collection.MemoizationList;
-import org.reactfx.util.Lists;
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 public class VirtualFlow<T, C extends Cell<T, ?>> extends Region implements Virtualized {
 

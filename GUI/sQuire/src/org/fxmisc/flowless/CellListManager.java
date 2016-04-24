@@ -3,14 +3,14 @@ package org.fxmisc.flowless;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-
 import org.reactfx.EventStreams;
 import org.reactfx.Subscription;
 import org.reactfx.collection.LiveList;
 import org.reactfx.collection.MemoizationList;
 import org.reactfx.collection.QuasiListModification;
+
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
 final class CellListManager<T, C extends Cell<T, ?>> {
 

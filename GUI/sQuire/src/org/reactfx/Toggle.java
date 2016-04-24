@@ -2,10 +2,10 @@ package org.reactfx;
 
 import java.util.function.Consumer;
 
-import javafx.beans.value.ObservableValue;
-
 import org.reactfx.value.ProxyVal;
 import org.reactfx.value.Val;
+
+import javafx.beans.value.ObservableValue;
 
 /**
  * Observable boolean that changes value when suspended.

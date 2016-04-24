@@ -1,18 +1,18 @@
 package org.fxmisc.richtext;
 
-import static org.fxmisc.richtext.TwoDimensional.Bias.*;
+import static org.fxmisc.richtext.TwoDimensional.Bias.Forward;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import javafx.scene.shape.PathElement;
-import javafx.scene.text.TextFlow;
 
 import com.sun.javafx.geom.RectBounds;
 import com.sun.javafx.scene.text.HitInfo;
 import com.sun.javafx.scene.text.TextLayout;
 import com.sun.javafx.text.PrismTextLayout;
 import com.sun.javafx.text.TextLine;
+
+import javafx.scene.shape.PathElement;
+import javafx.scene.text.TextFlow;
 
 /**
  * Adds additional API to {@link TextFlow}.

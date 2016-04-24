@@ -3,9 +3,9 @@ package org.reactfx;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 
-import javafx.application.Platform;
-
 import org.reactfx.util.Try;
+
+import javafx.application.Platform;
 
 public interface CompletionStageStream<T> extends EventStream<CompletionStage<T>> {
 

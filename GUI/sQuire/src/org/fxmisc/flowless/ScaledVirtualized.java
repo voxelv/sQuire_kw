@@ -1,10 +1,11 @@
 package org.fxmisc.flowless;
 
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
+
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 /**
  * Acts as an intermediate class between {@link VirtualizedScrollPane} and

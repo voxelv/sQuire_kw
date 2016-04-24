@@ -1,36 +1,25 @@
 package sq.app.model.editor;
 
-import java.awt.AWTEvent;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.EventHandler;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.event.*;
-import javafx.scene.input.KeyCode;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpan;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
-import org.fxmisc.wellbehaved.event.EventHandlerHelper;
 import org.json.simple.JSONObject;
 
-import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
-
-import java.sql.Timestamp;
 
 public class EditorCodeArea extends CodeArea implements KeyListener{
 

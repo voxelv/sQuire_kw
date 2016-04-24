@@ -1,5 +1,8 @@
 package org.fxmisc.flowless;
 
+import org.reactfx.value.Val;
+import org.reactfx.value.Var;
+
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -9,9 +12,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Region;
-
-import org.reactfx.value.Val;
-import org.reactfx.value.Var;
 
 public class VirtualizedScrollPane<V extends Node & Virtualized> extends Region implements Virtualized {
 

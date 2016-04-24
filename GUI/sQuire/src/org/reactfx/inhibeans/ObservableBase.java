@@ -1,9 +1,9 @@
 package org.reactfx.inhibeans;
 
+import org.reactfx.util.ListHelper;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-
-import org.reactfx.util.ListHelper;
 
 @Deprecated
 public abstract class ObservableBase implements Observable {

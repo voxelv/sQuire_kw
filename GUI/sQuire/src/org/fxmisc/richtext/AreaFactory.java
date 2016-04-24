@@ -1,9 +1,10 @@
 package org.fxmisc.richtext;
 
-import javafx.scene.text.TextFlow;
+import java.util.function.BiConsumer;
+
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
-import java.util.function.BiConsumer;
+import javafx.scene.text.TextFlow;
 
 /**
  * AreaFactory is a convenience class used to create StyledTextArea

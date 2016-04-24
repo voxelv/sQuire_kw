@@ -3,12 +3,12 @@ package org.reactfx.collection;
 import java.util.List;
 import java.util.Optional;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.IndexRange;
-
 import org.reactfx.Subscription;
 import org.reactfx.util.Lists;
 import org.reactfx.util.SparseList;
+
+import javafx.collections.ObservableList;
+import javafx.scene.control.IndexRange;
 
 public interface MemoizationList<E> extends LiveList<E> {
     LiveList<E> memoizedItems();

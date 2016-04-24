@@ -1,6 +1,7 @@
 package org.reactfx;
 
-import static org.reactfx.util.LL.*;
+import static org.reactfx.util.LL.cons;
+import static org.reactfx.util.LL.nil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javafx.beans.binding.Binding;
-
 import org.reactfx.StateMachine.InitialState;
 import org.reactfx.StateMachine.ObservableStateBuilder;
 import org.reactfx.StateMachine.ObservableStateBuilderOn;
@@ -18,6 +17,8 @@ import org.reactfx.StateMachine.StatefulStreamBuilder;
 import org.reactfx.StateMachine.StatefulStreamBuilderOn;
 import org.reactfx.util.LL;
 import org.reactfx.util.Tuple2;
+
+import javafx.beans.binding.Binding;
 
 public class StateMachine {
     public interface InitialState<S> {
