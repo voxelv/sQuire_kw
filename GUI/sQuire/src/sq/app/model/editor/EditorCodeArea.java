@@ -89,10 +89,14 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //        });
 	
     public String prevLine="";
-    public int prevLineNum=0;
+    public int prevLineNum=-1;
     
 	public EditorCodeArea() {
 		super();
+
+      this.plainTextChanges().subscribe(change->{
+	      this.doHighlight();
+	  });
 
 //        this.setOnKeyPressed(event->{
 //        	KeyCode c = event.getCode();
@@ -103,26 +107,21 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //        		b=b;
 //        	}
 //        });
-        this.currentParagraphProperty().addListener(change ->{
-        	
+        this.currentParagraphProperty().addListener(change ->{       	
         	if (this.getCurrentParagraph() != this.prevLineNum)
         		{
-            		if (this.getText(this.prevLineNum) != this.prevLine)
+        			String currentLine = "";
+        			if (this.prevLineNum != -1){
+        				this.getText(this.prevLineNum); 
+        			}
+            		if (currentLine != this.prevLine &&
+                			this.prevLineNum != -1)
             		{
-                    	try{
-                        	ServerConnection server = sq.app.MainApp.GetServer();
-                        	JSONObject jo = new JSONObject();
-                    		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
-                        	server.sendSingleRequest("project", "lockline", jo);
-                        	jo = new JSONObject();
-                        	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
-                        	server.sendSingleRequest("project", "unlockline", jo);
-//                        	jo = new JSONObject();
-//                    		jo.put("lineID", this.getText(this.getCurrentParagraph()));
-//                        	server.sendSingleRequest("project", "updateline", jo);
-                    	} catch (Exception e){
-                    		//do nothing
-                    	}
+                    	ServerConnection server = sq.app.MainApp.GetServer();
+            			JSONObject jo = new JSONObject();
+                		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
+                		jo.put("text", this.getText(this.getCurrentParagraph()));
+                    	server.sendSingleRequest("Project", "changeLine", jo);
 
             			if (this.getText(this.prevLineNum) == "")
             			{
@@ -133,18 +132,29 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
             				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, this.getText(this.prevLineNum));
             			}
             		}
+                	try{
+                    	ServerConnection server = sq.app.MainApp.GetServer();
+                		if (this.getCurrentParagraph() < lineArray.size()){
+	                    	JSONObject jo = new JSONObject();
+	                		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
+	                    	server.sendSingleRequest("project", "lockline", jo);
+                		}
+                		if (this.prevLineNum > -1 && this.prevLineNum < lineArray.size()){
+	                		JSONObject jo = new JSONObject();
+	                    	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+	                    	server.sendSingleRequest("project", "unlockline", jo);
+                    	}
+                	} catch (Exception e){
+                		System.out.println("an exception happened trying to send line lock/unclock data");
+                		//do nothing
+                	}
             		this.prevLineNum = this.getCurrentParagraph();
             		this.prevLine = this.getText(this.prevLineNum);
     		}
         });
         
-        this.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-	    	System.out.println("Caret Line: " + this.getCurrentParagraph() + " Caret Index: "+ newvalue);
-	    	ServerConnection server = sq.app.MainApp.GetServer();
-	    	JSONObject jo = new JSONObject();
-	    	jo.put("lineId", lineArray.get(this.getCurrentParagraph()).getID());
-	    	server.sendSingleRequest("project", "lockline", jo);
-	    });
+//        this.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
+//	    });
 
 
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
@@ -181,10 +191,16 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 	
 	
     ArrayList<Line> lineArray = new ArrayList<Line>();
+    private int currentFileID = -1;
+    public int GetFileID(){
+    	return currentFileID;
+	}
 
-	public void ReplaceText(String text, List<Line> listOfLines){
+	public void ReplaceText(String text, List<Line> listOfLines, int fileID){
 		lineArray = (ArrayList<Line>)listOfLines;
 		this.replaceText(text);
+		this.prevLineNum = -1;
+		this.currentFileID = fileID;
 	}
 	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();

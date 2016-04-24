@@ -187,6 +187,7 @@ public class Server{
         		}
         		else if (action.compareToIgnoreCase("QUIT") == 0 || action.compareToIgnoreCase("EXIT") == 0)
         		{
+        			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
         	}
@@ -277,16 +278,24 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("getAllLines") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = String.valueOf(params.get("projectID"));
         						
 					output = this.projectManager.getAllLines(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getLines") == 0)
         		{
-					String fileID = (String) params.get("fileID");
+					String fileID = String.valueOf(params.get("fileID"));
         						
 					output = this.projectManager.getLines(fileID).toJSONString();
+        			
+        		}
+				else if (action.compareToIgnoreCase("getLineChanges") == 0)
+        		{
+					String fileID = String.valueOf(params.get("fileID"));
+					String time = String.valueOf(params.get("time"));
+					
+					output = this.projectManager.getLineChanges(fileID, time).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getLineLocks") == 0)
@@ -341,9 +350,8 @@ public class Server{
         		{
 					String text = (String) params.get("text");
         			String nextLineID = (String) params.get("nextLineID");
-					String timeEdited = (String) params.get("timeEdited");
 					
-					output = this.projectManager.createLine (text, nextLineID, timeEdited).toJSONString();
+					output = this.projectManager.createLine (text, nextLineID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("removeProject") == 0)
@@ -384,7 +392,7 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("changeLine") == 0)
         		{
-					String lineID = (String) params.get("lineID");
+					String lineID = String.valueOf(params.get("lineID"));
 					String text = (String) params.get("text");
 					if(lineID != null && lineID != ""){
 						this.projectManager.changeLine(lineID, text);	
@@ -393,7 +401,7 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("lockLine") == 0)
         		{
-					String lineID = (String) params.get("lineID");
+					String lineID = String.valueOf(params.get("lineID"));
 					if(lineID != null && lineID != ""){
 						this.projectManager.unlockMyLines();
 						this.projectManager.lockLine(lineID);	
@@ -402,7 +410,7 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("unlockLine") == 0)
         		{
-					String lineID = (String) params.get("lineID");
+					String lineID = String.valueOf(params.get("lineID"));
 					
         			this.projectManager.unlockLine(lineID);
         			
@@ -414,6 +422,7 @@ public class Server{
         	{
         		if (action.compareToIgnoreCase("quit") == 0)
         		{
+        			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
         	}

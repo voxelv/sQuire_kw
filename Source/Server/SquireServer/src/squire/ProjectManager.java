@@ -1,7 +1,10 @@
 package squire;
 
+import java.util.Iterator;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -75,7 +78,7 @@ public class ProjectManager {
 	
 	public JSONArray getDirectories (String projectID) throws SQLException{
 		String query =	"select "
-						+ "`pdid`,"
+						+ "`pdid`, "
 						+ "`pdname`, "
 						+ "`parentid`, "
 					+ "from "
@@ -144,7 +147,7 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLines (String PFileID) throws SQLException{
-		String query =	"call PFLTraverser(("
+		String query =	"call PFLTraverser(( "
 						+ "select "
 							+ "`pflhead` "
 						+ "from "
@@ -155,7 +158,7 @@ public class ProjectManager {
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(PFileID);
-		
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
 		JSONArray projectList = new JSONArray();
 		try {
 			projectList = this.dbc.query(query, values);
@@ -164,12 +167,47 @@ public class ProjectManager {
 			e.printStackTrace();
 		}
 		
-		return projectList;
+		JSONArray returnList = new JSONArray();
+		for(int i = 0; i < projectList.size(); i++){
+			JSONObject jobj = (JSONObject)projectList.get(i);
+			jobj.put("requestTime", stamp);
+			returnList.add(jobj);
+		}
+		
+		return returnList;
+	}
+	
+	public JSONArray getLineChanges (String PFileID, String lastTime) throws SQLException{
+		String query =	"select * "+
+						"from "+
+							"call PFLTimeTraverser"+
+							"(( select `pflhead` from `PFiles` where `pfid` = ?), ?)";
+		
+		String[] values = new String[1];
+		values[0] = String.valueOf(PFileID);
+		values[1] = lastTime;
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		JSONArray projectList = new JSONArray();
+		try {
+			projectList = this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		JSONArray returnList = new JSONArray();
+		for(int i = 0; i < projectList.size(); i++){
+			JSONObject jobj = (JSONObject)projectList.get(i);
+			jobj.put("requestTime", stamp);
+			returnList.add(jobj);
+		}
+		
+		return returnList;
 	}
 	
 	public JSONArray getLineLocks (String PFileID) throws SQLException{
-		String query =	"select pflid, userID"
-						+ "from (call PFLTraverser(("
+		String query =	"select pflid, userID "
+						+ "from (call PFLTraverser(( "
 							+ "select "
 								+ "`pflhead` "
 							+ "from "
@@ -202,17 +240,12 @@ public class ProjectManager {
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
 		
-		String accessQuery = "Insert into ProjectAccess(PID, UserID) values (?, ?);";
-		String[] accessValues = new String[2];
-		accessValues[1] = String.valueOf(this.userID);
-		
-		
 		JSONArray projectID = new JSONArray();
 		String pid;
 		try {
 			this.dbc.query(query, values);
 			projectID = this.dbc.query(query2, values2);
-			//parse JSONArray to add access to self.
+			//Add access for creator.
 			JSONObject firstRow = (JSONObject) ((JSONArray) projectID).get(0);
 			pid = (String) firstRow.get("LAST_INSERT_ID()");
 			createProjectAccess(String.valueOf(this.userID), pid);
@@ -296,13 +329,14 @@ public class ProjectManager {
 		return fileID;
 	}
 	
-	public JSONArray createLine (String text, String nextLineID, String timeEdited){
+	public JSONArray createLine (String text, String nextLineID){
 		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = nextLineID;
 		values[2] = String.valueOf(this.userID);
-		values[3] = timeEdited;
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[3] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
@@ -318,9 +352,9 @@ public class ProjectManager {
 	}
 	
 	public void removeProject (String projectID){
-		String query = "Delete from Projects" + 
-							"where" +
-								"PID = ?";
+		String query = "Delete from Projects " + 
+							"where " +
+								"PID = ? ";
 		String[] values = new String[1];
 		values[0] = projectID;
 		
@@ -333,10 +367,10 @@ public class ProjectManager {
 	}
 
 	public void removeProjectAccess (String projectID, String accessUserID){
-		String query = "Delete from ProjectAccess" + 
-							"where" +
-								"PID = ?" +
-								"AND" +
+		String query = "Delete from ProjectAccess " + 
+							"where " +
+								"PID = ? " +
+								"AND " +
 								"userID = ?";
 		String[] values = new String[2];
 		values[0] = projectID;
@@ -351,8 +385,8 @@ public class ProjectManager {
 	}
 	
 	public void removeDirectory (String dirID){
-		String query = "Delete from PDirs" + 
-							"where" +
+		String query = "Delete from PDirs " + 
+							"where " +
 								"PID = ?";
 		String[] values = new String[1];
 		values[0] = dirID;
@@ -366,8 +400,8 @@ public class ProjectManager {
 	}
 
 	public void removeFile (String fileID){
-		String query = "Delete from PFiles" + 
-							"where" +
+		String query = "Delete from PFiles " + 
+							"where " +
 								"PFID = ?";
 		String[] values = new String[1];
 		values[0] = fileID;
@@ -385,15 +419,15 @@ public class ProjectManager {
 		String[] firstvalues = new String[1];
 		firstvalues[0] = lineID;
 		
-		String upquery = "Update pflid" +
-						 "set nextID = ?" +
-						 "where nextID = ?";
+		String upquery = "Update pflid " +
+						 "set nextID = ? " +
+						 "where nextID = ? ";
 		String[] upvalues = new String[2];
 		upvalues[1] = lineID;
 		
-		String query = "Delete from PFLines" + 
-							"where" +
-								"PFLID = ?";
+		String query = "Delete from PFLines " + 
+							"where " +
+								"PFLID = ? ";
 		String[] values = new String[1];
 		values[0] = lineID;
 
@@ -412,17 +446,19 @@ public class ProjectManager {
 	}
 	
 	public void changeLine (String lineID, String text){
-		String query = "Update LineLocks" +
-						"set text = ?," +
-						"set lastEditor = ?," + 
-						"set timeEdited = ? " + 
+		String query = "Update PFLines " +
+						"set text = ?, " +
+						"lastEditor = ?, " + 
+						"timeEdited = ? " + 
 						"where pflid = ?";
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
-		values[2] = "NOW()";
+		//values[2] = "NULL";
 		values[3] = lineID;
 		
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[2] = stamp.toString();
 		try {
 			this.dbc.query(query, values);
 		} catch (SQLException e) {
@@ -434,7 +470,7 @@ public class ProjectManager {
 	public void lockLine (String lineID){
 		
 		String query = "Insert into LineLocks" +
-						"(userID, pflid)" +
+						"(userID, pflid) " +
 						"values (?,?)";
 		String[] values = new String[2];
 		values[0] = String.valueOf(this.userID);
@@ -450,9 +486,9 @@ public class ProjectManager {
 	
 	public void unlockLine (String lineID){
 		
-		String query = "Delete from LineLocks" +
-							"where" +
-								"pflid = ?" +
+		String query = "Delete from LineLocks " +
+							"where " +
+								"pflid = ? " +
 								"AND userID = ?";
 		String[] values = new String[2];
 		values[0] = lineID;
@@ -469,11 +505,12 @@ public class ProjectManager {
 	
 	public void unlockMyLines (){
 		
-		String query = "Delete from LineLocks" +
-							"where userID = ?";
+		String query = "Delete from LineLocks " +
+							"where userID = ?;";
 		String[] values = new String[1];
 		values[0] = String.valueOf(this.userID);
-		
+		System.out.println(query);
+		System.out.println(values[0]);
 		
 		try {
 			this.dbc.query(query, values);

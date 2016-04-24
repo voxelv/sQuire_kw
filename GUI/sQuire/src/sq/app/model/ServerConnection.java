@@ -67,7 +67,7 @@ public class ServerConnection {
         try {
             response = in.readLine();
             if (response == null || response.equals("")) {
-                  System.out.println("No Response from server, but I'm not dead yet?");
+                  //System.out.println("No Response from server, but I'm not dead yet?");
               }else{
                   output = JSONValue.parse(response);
               }

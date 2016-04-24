@@ -582,7 +582,7 @@ public class ChatManager {
         	while (this.manager.helperBusy)
         	{
 				try {
-					Thread.sleep(1);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -596,10 +596,12 @@ public class ChatManager {
             String stringResult = (String) server.sendSingleRequest("Chat", "getMessages", params);
             /**************************** END OF REQUEST ****************************/
             
-            JSONArray msgArray = null;
+            JSONArray msgArray = new JSONArray();
     		try {
 //    			System.out.println(stringResult);
-    			msgArray = (JSONArray) new JSONParser().parse(stringResult);
+    			if (stringResult!=null){
+    				msgArray = (JSONArray) new JSONParser().parse(stringResult);
+    			}
     		} catch (ParseException e1) {
     			// TODO Auto-generated catch block
     			e1.printStackTrace();
