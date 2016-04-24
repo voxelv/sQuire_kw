@@ -278,16 +278,24 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("getAllLines") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = String.valueOf(params.get("projectID"));
         						
 					output = this.projectManager.getAllLines(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getLines") == 0)
         		{
-					String fileID = (String) params.get("fileID");
+					String fileID = String.valueOf(params.get("fileID"));
         						
 					output = this.projectManager.getLines(fileID).toJSONString();
+        			
+        		}
+				else if (action.compareToIgnoreCase("getLineChanges") == 0)
+        		{
+					String fileID = String.valueOf(params.get("fileID"));
+					String time = String.valueOf(params.get("time"));
+					
+					output = this.projectManager.getLineChanges(fileID, time).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getLineLocks") == 0)

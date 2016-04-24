@@ -1,5 +1,7 @@
 package squire;
 
+import java.util.Iterator;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -156,7 +158,7 @@ public class ProjectManager {
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(PFileID);
-		
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
 		JSONArray projectList = new JSONArray();
 		try {
 			projectList = this.dbc.query(query, values);
@@ -165,7 +167,42 @@ public class ProjectManager {
 			e.printStackTrace();
 		}
 		
-		return projectList;
+		JSONArray returnList = new JSONArray();
+		for(int i = 0; i < projectList.size(); i++){
+			JSONObject jobj = (JSONObject)projectList.get(i);
+			jobj.put("requestTime", stamp);
+			returnList.add(jobj);
+		}
+		
+		return returnList;
+	}
+	
+	public JSONArray getLineChanges (String PFileID, String lastTime) throws SQLException{
+		String query =	"select * "+
+						"from "+
+							"call PFLTimeTraverser"+
+							"(( select `pflhead` from `PFiles` where `pfid` = ?), ?)";
+		
+		String[] values = new String[1];
+		values[0] = String.valueOf(PFileID);
+		values[1] = lastTime;
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		JSONArray projectList = new JSONArray();
+		try {
+			projectList = this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		JSONArray returnList = new JSONArray();
+		for(int i = 0; i < projectList.size(); i++){
+			JSONObject jobj = (JSONObject)projectList.get(i);
+			jobj.put("requestTime", stamp);
+			returnList.add(jobj);
+		}
+		
+		return returnList;
 	}
 	
 	public JSONArray getLineLocks (String PFileID) throws SQLException{
