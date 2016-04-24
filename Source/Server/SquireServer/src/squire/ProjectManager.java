@@ -170,7 +170,7 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", String.valueOf(stamp));
+			jobj.put("requestTime", stamp.toString());
 			returnList.add(jobj);
 		}
 		
@@ -198,7 +198,7 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", String.valueOf(stamp));
+			jobj.put("requestTime", stamp.toString());
 			returnList.add(jobj);
 		}
 		
