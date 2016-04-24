@@ -175,27 +175,29 @@ public class ProjectManagerTest {
 			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
 			returnValue = testManager.createFile(fileName, pid, "null");
 			pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
-			returnValue = testManager.createLine(lineText, null);
+			returnValue = testManager.createLine(lineText, "null");
+			lineList = testManager.getLines(pfid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		boolean inList = false;
-		for(int i = 0; i < fileList.size(); i++){
-			JSONObject jobj = (JSONObject) fileList.get(i);
-			String listName = (String) jobj.get("pfname");
-			if (fileName.equals(listName))
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
 				inList = true;
 		}
 		assertNotNull(returnValue);
 		assertEquals(returnValue.size(), 1);
 		assertTrue(inList);
 		
-		String pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
-		testManager.removeFile(pfid);
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("pflid");
+		testManager.removeLine(pflid);
 		try {
 			if(pid != null){
-				fileList = testManager.getFiles(pid);
+				lineList = testManager.getLines(pfid);
+				testManager.removeFile(pfid);
 				testManager.removeProject(pid);
 			}
 		} catch (SQLException e) {
@@ -203,13 +205,13 @@ public class ProjectManagerTest {
 			e.printStackTrace();
 		}
 		inList = false;
-		for(int i = 0; i < fileList.size(); i++){
-			JSONObject jobj = (JSONObject) fileList.get(i);
-			String listName = (String) jobj.get("pfname");
-			if (fileName.equals(listName))
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
 				inList = true;
 		}
-		assertEquals(fileList.size(), 0);
+		assertEquals(lineList.size(), 0);
 		assertFalse(inList);
 	}
 	
