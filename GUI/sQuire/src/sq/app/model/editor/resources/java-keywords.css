@@ -26,7 +26,7 @@
 }
 
 .paragraph-box:has-caret {
-    -fx-background-color: magenta;
+    -fx-background-color: moccasin;
 }
 
 .islocked {

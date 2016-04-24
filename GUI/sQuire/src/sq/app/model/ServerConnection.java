@@ -94,12 +94,15 @@ public class ServerConnection {
 		
 		busy = true;
 		this.addRequest(category, action, parameters);
+		if (!(new String(category).equals("Chat") || new String(action).equals("getLineChanges"))){
+			System.out.println(category.toString() + action.toString() + parameters.toString());
+		}
 		
 		JSONArray fullResponse = (JSONArray) this.sendRequestBuffer();
 		busy = false;
 		
 		Object out = null;
-		if (fullResponse!=null){
+		if (fullResponse!=null && fullResponse.size()>0){
 			JSONObject singleResponse = (JSONObject) fullResponse.get(0);
 			out = (Object) singleResponse.get("result");
 		}

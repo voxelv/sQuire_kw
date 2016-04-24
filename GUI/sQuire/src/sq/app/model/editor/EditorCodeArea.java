@@ -111,7 +111,7 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //        });
         this.currentParagraphProperty().addListener(change ->{       	
         	if (this.getCurrentParagraph() != this.prevLineNum){
-        		int par = this.getCurrentParagraph();
+        		int currentLineNum = this.getCurrentParagraph();
     			String currentLine = "";
     			if (this.prevLineNum != -1){
     				currentLine = this.getText(this.prevLineNum); 
@@ -144,7 +144,7 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
                 	ServerConnection server = sq.app.MainApp.GetServer();
             		if (this.getCurrentParagraph() < lineArray.size()){
                     	JSONObject jo = new JSONObject();
-                		jo.put("lineID", lineArray.get(par).getID());
+                		jo.put("lineID", lineArray.get(currentLineNum).getID());
                     	server.sendSingleRequest("project", "lockline", jo);
             		}
             		if (this.prevLineNum > -1 && this.prevLineNum < lineArray.size()){
@@ -156,7 +156,7 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
             		System.out.println("an exception happened trying to send line lock/unclock data");
             		//do nothing
             	}
-        		this.prevLineNum = par;
+        		this.prevLineNum = currentLineNum;
         		this.prevLine = this.getText(this.prevLineNum);
     		}
         });
