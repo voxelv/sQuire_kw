@@ -352,7 +352,8 @@ public class ProjectManager {
 	}
 	
 	public JSONArray createLine (String text, String nextLineID){
-		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
+		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) "
+				+ "values (?, ?, ?, ?)";
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = nextLineID;
@@ -363,16 +364,16 @@ public class ProjectManager {
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
 		
-		String query3 = "Update PFLines set nextid = ? where nextid = ?";
-		String[] values3 = new String[2];
-		values3[1] = nextLineID;
+		String query3 = "Update PFLines set nextid = LAST_INSERT_ID() "
+				+ "where nextid = ? and pflid != LAST_INSERT_ID()";
+		String[] values3 = new String[1];
+		values3[0] = nextLineID;
 				
 		JSONArray pflid = new JSONArray();
 		try {
 			this.dbc.query(query, values);
 			pflid = this.dbc.query(query2, values2);
 			String tempid = (String)((JSONObject)pflid.get(0)).get("LAST_INSERT_ID()");
-			values3[0] = tempid;
 			this.dbc.query(query3, values3);
 		} catch (SQLException e) {
 			e.printStackTrace();
