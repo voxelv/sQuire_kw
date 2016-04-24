@@ -30,6 +30,8 @@ import javafx.stage.Stage;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
 
+import java.sql.Timestamp;
+
 public class EditorCodeArea extends CodeArea implements KeyListener{
 
     private static final String[] KEYWORDS = new String[] {
@@ -108,81 +110,85 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 //        	}
 //        });
         this.currentParagraphProperty().addListener(change ->{       	
-        	if (this.getCurrentParagraph() != this.prevLineNum)
+        	if (this.getCurrentParagraph() != this.prevLineNum){
+        		int par = this.getCurrentParagraph();
+    			String currentLine = "";
+    			if (this.prevLineNum != -1){
+    				currentLine = this.getText(this.prevLineNum); 
+    			}
+        		if (!new String(currentLine ).equals(this.prevLine) &&
+            			this.prevLineNum != -1)
         		{
-        			String currentLine = "";
-        			if (this.prevLineNum != -1){
-        				this.getText(this.prevLineNum); 
-        			}
-            		if (currentLine != this.prevLine &&
-                			this.prevLineNum != -1)
-            		{
-                    	ServerConnection server = sq.app.MainApp.GetServer();
-            			JSONObject jo = new JSONObject();
-                		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
-                		jo.put("text", this.getText(this.getCurrentParagraph()));
-                    	server.sendSingleRequest("Project", "changeLine", jo);
-
-            			if (this.getText(this.prevLineNum) == "")
-            			{
-            				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, "DELETED");
-            			}
-            			else
-            			{
-            				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, this.getText(this.prevLineNum));
-            			}
-            		}
                 	try{
                     	ServerConnection server = sq.app.MainApp.GetServer();
-                		if (this.getCurrentParagraph() < lineArray.size()){
-	                    	JSONObject jo = new JSONObject();
-	                		jo.put("lineID", lineArray.get(this.getCurrentParagraph()).getID());
-	                    	server.sendSingleRequest("project", "lockline", jo);
-                		}
-                		if (this.prevLineNum > -1 && this.prevLineNum < lineArray.size()){
-	                		JSONObject jo = new JSONObject();
-	                    	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
-	                    	server.sendSingleRequest("project", "unlockline", jo);
-                    	}
+            			JSONObject jo = new JSONObject();
+                		jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+                		jo.put("text", this.getText(this.prevLineNum));
+                    	server.sendSingleRequest("project", "changeLine", jo);
+                    	this.lineArray.get(this.prevLineNum).setText(this.getText(this.prevLineNum));
                 	} catch (Exception e){
-                		System.out.println("an exception happened trying to send line lock/unclock data");
+                		System.out.println("an exception happened while trying to send line change data");
                 		//do nothing
                 	}
-            		this.prevLineNum = this.getCurrentParagraph();
-            		this.prevLine = this.getText(this.prevLineNum);
+
+        			if (new String(this.getText(this.prevLineNum)).equals(""))
+        			{
+        				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, "DELETED");
+        			}
+        			else
+        			{
+        				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, this.getText(this.prevLineNum));
+        			}
+        		}
+            	try{
+                	ServerConnection server = sq.app.MainApp.GetServer();
+            		if (this.getCurrentParagraph() < lineArray.size()){
+                    	JSONObject jo = new JSONObject();
+                		jo.put("lineID", lineArray.get(par).getID());
+                    	server.sendSingleRequest("project", "lockline", jo);
+            		}
+            		if (this.prevLineNum > -1 && this.prevLineNum < lineArray.size()){
+                		JSONObject jo = new JSONObject();
+                    	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
+                    	server.sendSingleRequest("project", "unlockline", jo);
+                	}
+            	} catch (Exception e){
+            		System.out.println("an exception happened trying to send line lock/unclock data");
+            		//do nothing
+            	}
+        		this.prevLineNum = par;
+        		this.prevLine = this.getText(this.prevLineNum);
     		}
         });
         
-//        this.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-//	    });
-
 
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
-		//this.replaceText(sampleCode);
-		//this.LockParagraph(2);
-		addEventHandler(javafx.scene.input.KeyEvent.KEY_RELEASED, event -> {
-        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
+
+		addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+			int p = this.getCurrentParagraph();
+        	if (this.lockedParagraphs.contains(p) && !event.getCode().isArrowKey())
         	{
         		this.selectLine();
-        		this.replaceSelection("import java.util.*;");
-        		
-        		
-//        		event.consume();
-  //      		Boolean b = event.isConsumed();
-    //    		b=b;
+        		this.lineArray.get(p).getText();	        		
+        	}
+        	if (event.getCode() == KeyCode.ENTER){
+            	try{
+                	ServerConnection server = sq.app.MainApp.GetServer();
+                	JSONObject jo = new JSONObject();
+            		jo.put("text", this.getText(p));
+            		jo.put("nextLineID", lineArray.get(p).getID());
+                	server.sendSingleRequest("project", "createLine", jo);
+            	}
+        		catch(Exception e){
+        			System.out.println("failed to create new line in server");
+        		}
         	}
 		});
-		//EventHandlerHelper.exclude(handler, subHandler)(handler)
-//		EventHandlerHelper.installAfter(this.onKeyPressedProperty(), event->{
-//        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
-//        	{
-//        		event.consume();
-//        		Boolean b = event.isConsumed();
-//        		b=b;
-//        	}
-//		});
-	//	this.onKeyTypedProperty().addListener(event->keyTyped((KeyEvent) event));
 
+	}
+	
+	public Timestamp GetLatestEditTime(){
+		return Line.GetLatestGreatestEditTime();
 	}
 	
 	public int GetLineIDFromIndex(int index){
@@ -198,9 +204,9 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 
 	public void ReplaceText(String text, List<Line> listOfLines, int fileID){
 		lineArray = (ArrayList<Line>)listOfLines;
-		this.replaceText(text);
 		this.prevLineNum = -1;
 		this.currentFileID = fileID;
+		this.replaceText(text);
 	}
 	
 	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
@@ -208,16 +214,16 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 	
 	public void LockParagraph(int paragraphNumber){
 		lockedParagraphs.add(paragraphNumber);
-		ArrayList<String> styleStr = new ArrayList<String>();
-		styleStr.add("islocked");
-		//this.clearStyle(2);
-//		this.clearParagraphStyle(2);
-		StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
-		lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(2).length()));
-		//StyleSpan newStyle = new StyleSpan(newStyle,this.getParagraph(2).length());
-		//this.getParagraph(2).restyle(0, this.getParagraph(2).length(), styleStr);
-		//this.getParagraph(2).restyle(styleStr);
-		this.setStyleSpans(2, 0, lockedSpansBuilder.create());
+//		ArrayList<String> styleStr = new ArrayList<String>();
+//		styleStr.add("islocked");
+//		//this.clearStyle(2);
+////		this.clearParagraphStyle(2);
+//		StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
+//		lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(2).length()));
+//		//StyleSpan newStyle = new StyleSpan(newStyle,this.getParagraph(2).length());
+//		//this.getParagraph(2).restyle(0, this.getParagraph(2).length(), styleStr);
+//		//this.getParagraph(2).restyle(styleStr);
+//		this.setStyleSpans(2, 0, lockedSpansBuilder.create());
 		//StyleSpans
 	}
 	public void UnlockParagraph(int paragraphNumber){

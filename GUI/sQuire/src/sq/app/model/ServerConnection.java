@@ -66,16 +66,17 @@ public class ServerConnection {
         Object output = null;
         try {
             response = in.readLine();
-            if (response == null || response.equals("")) {
-                  //System.out.println("No Response from server, but I'm not dead yet?");
+            if (response == null) {
+                  System.out.println("No Response from server, but I'm still running");
               }else{
                   output = JSONValue.parse(response);
+            	  if (!(response.contains("Chat") || new String(response).equals("[]"))){
+            		  System.out.println("Response from Server: " + response.toString());
+            	  }
               }
         } catch (IOException ex) {
                response = "Error: " + ex;
         }
-//        System.out.println("Response from Server: " + response);
-        
         
         return output;
 	}
