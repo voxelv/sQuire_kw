@@ -1,7 +1,5 @@
 package squire;
 
-import java.util.Iterator;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -373,7 +371,7 @@ public class ProjectManager {
 		try {
 			this.dbc.query(query, values);
 			pflid = this.dbc.query(query2, values2);
-			String tempid = (String)((JSONObject)pflid.get(0)).get("LAST_INSERT_ID()");
+			//String tempid = (String)((JSONObject)pflid.get(0)).get("LAST_INSERT_ID()");
 			this.dbc.query(query3, values3);
 		} catch (SQLException e) {
 			e.printStackTrace();
