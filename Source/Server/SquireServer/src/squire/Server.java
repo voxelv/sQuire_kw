@@ -93,21 +93,24 @@ public class Server{
                     if (input == null || input.equals(".")) {
                         break;
                     }
-                    
+                    String category="", firstAction="", outString="";
+					JSONObject firstParams = new JSONObject();
                     JSONArray outArr = new JSONArray();
                     try {
 						Object inObj = new JSONParser().parse(input);
 						JSONArray inArr = (JSONArray)inObj;
+						
+						
 						
 						for (int i = 0; i< inArr.size(); i++)
 						{
 							JSONObject outObj = new JSONObject();
 							
 							JSONObject thisObj = (JSONObject)inArr.get(i);
-							String category = (String) thisObj.get("category");
-							String firstAction = (String) thisObj.get("action");
-							JSONObject firstParams = (JSONObject) thisObj.get("parameters");
-							String outString = this.runAction(category, firstAction, firstParams);
+							category = (String) thisObj.get("category");
+							firstAction = (String) thisObj.get("action");
+							firstParams = (JSONObject) thisObj.get("parameters");
+							outString = this.runAction(category, firstAction, firstParams);
 							
 							outObj.put("category", category);
 							outObj.put("result", outString);
@@ -119,6 +122,8 @@ public class Server{
 						
 					} catch (ParseException e) {
 						log("Was not able to parse the input");
+						log("\t"+input);
+						log("\t\t"+category+" "+firstAction+" "+(String.valueOf(firstParams)));
 					} catch (SQLException e) {
 						log("SQL Exception");
 						e.printStackTrace();
