@@ -206,15 +206,13 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLineLocks (String PFileID) throws SQLException{
-		String query =	"select pflid, userID "
-						+ "from (call PFLTraverser(( "
+		String query =	"call PFLLockTraverser(( "
 							+ "select "
 								+ "`pflhead` "
 							+ "from "
 								+ "`PFiles` "
 							+ "where "
-								+ "`pfid` = ? ))) "
-						+ "NATURAL JOIN LineLocks";
+								+ "`pfid` = ? ))";
 		
 		String[] values = new String[1];
 		values[0] = String.valueOf(PFileID);
@@ -310,8 +308,8 @@ public class ProjectManager {
 	}
 	
 	public JSONArray createFile (String fileName, String projectID, String dirID){
-		JSONArray returnValue = createLine("", "null");
-		String pflhead = (String)((JSONObject)returnValue.get(0)).get("pflid");
+		JSONArray returnValue = createLine("//"+fileName);
+		String pflhead = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		String query = "Insert into PFiles(pfname, pid, pdid, pflhead) values (?, ?, ?, ?)";
 		String[] values = new String[4];
 		values[0] = fileName;
@@ -332,6 +330,27 @@ public class ProjectManager {
 		return fileID;
 	}
 	
+	public JSONArray createLine (String text){
+		String query = "Insert into PFLines(text, lastEditor, timeEdited) values (?, ?, ?)";
+		String[] values = new String[4];
+		values[0] = text;
+		values[1] = String.valueOf(this.userID);
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[2] = stamp.toString();
+		
+		String query2 = "Select LAST_INSERT_ID();";
+		String[] values2 = null;
+		
+		JSONArray pflid = new JSONArray();
+		try {
+			this.dbc.query(query, values);
+			pflid = this.dbc.query(query2, values2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pflid;
+	}
+	
 	public JSONArray createLine (String text, String nextLineID){
 		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
 		String[] values = new String[4];
@@ -344,10 +363,84 @@ public class ProjectManager {
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
 		
+		String query3 = "Update PFLines set nextid = ? where nextid = ?";
+		String[] values3 = new String[2];
+		values3[1] = nextLineID;
+				
 		JSONArray pflid = new JSONArray();
 		try {
 			this.dbc.query(query, values);
 			pflid = this.dbc.query(query2, values2);
+			String tempid = (String)((JSONObject)pflid.get(0)).get("LAST_INSERT_ID()");
+			values3[0] = tempid;
+			this.dbc.query(query3, values3);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pflid;
+	}
+	
+	public JSONArray createLineAtHead (String text, String fileID){
+		String query = "Insert into PFLines(text, nextid, lastEditor, timeEdited) values (?, ?, ?, ?)";
+		String[] values = new String[4];
+		values[0] = text;
+
+		values[2] = String.valueOf(this.userID);
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[3] = stamp.toString();
+		
+		String query2 = "Select LAST_INSERT_ID();";
+		String[] values2 = null;
+		
+		String getHeadQuery = "Select pflhead from PFiles where pfid = ?";
+		String[] getHeadValues = new String[1];
+		getHeadValues[0] = fileID;
+				
+		String setHeadQuery = "Update PFiles set pflhead = ? where pfid = ?";
+		String[] setHeadValues = new String[2];
+		setHeadValues[1] = fileID;
+		
+		JSONArray pflid = new JSONArray();
+		JSONArray headArray = new JSONArray();
+		try {
+			headArray = this.dbc.query(getHeadQuery, getHeadValues);
+			values[1] = (String)((JSONObject) headArray.get(0)).get("pflhead");
+			this.dbc.query(query, values);
+			pflid = this.dbc.query(query2, values2);
+			setHeadValues[0] = (String)((JSONObject) pflid.get(0)).get("LAST_INSERT_ID()");
+			this.dbc.query(setHeadQuery, setHeadValues);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pflid;
+	}
+	
+	public JSONArray createLineAtEnd (String text, String fileID){
+		String query = "Insert into PFLines(text,  lastEditor, timeEdited) values (?,  ?, ?)";
+		String[] values = new String[3];
+		values[0] = text;
+		values[1] = String.valueOf(this.userID);
+		Timestamp stamp = new Timestamp(System.currentTimeMillis());
+		values[2] = stamp.toString();
+		
+		String query2 = "Select LAST_INSERT_ID();";
+		String[] values2 = null;
+		
+		String updateQuery = "Update PFLines set nextid = ? where pflid = ?";
+		String[] updateValues = new String[2];
+		
+		JSONArray pflid = new JSONArray();
+		try {
+			this.dbc.query(query, values);
+			pflid = this.dbc.query(query2, values2);
+			
+			String tempid = (String)((JSONObject)pflid.get(0)).get("LAST_INSERT_ID()");
+			updateValues[0] = tempid;
+
+			JSONArray lineList = getLines(fileID);
+			updateValues[1] = (String)( (JSONObject) (lineList.get(lineList.size()-1))).get("pflid");
+			
+			this.dbc.query(updateQuery, updateValues);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

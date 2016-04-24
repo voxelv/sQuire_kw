@@ -354,6 +354,22 @@ public class Server{
 					output = this.projectManager.createLine (text, nextLineID).toJSONString();
         			
         		}
+				else if (action.compareToIgnoreCase("createLineAtHead") == 0)
+        		{
+					String text = (String) params.get("text");
+        			String fileID = (String) params.get("fileID");
+					
+					output = this.projectManager.createLineAtHead (text, fileID).toJSONString();
+        			
+        		}
+				else if (action.compareToIgnoreCase("createLineAtEnd") == 0)
+        		{
+					String text = (String) params.get("text");
+        			String fileID = (String) params.get("fileID");
+					
+					output = this.projectManager.createLineAtEnd (text, fileID).toJSONString();
+        			
+        		}
 				else if (action.compareToIgnoreCase("removeProject") == 0)
         		{
 					String projectID = (String) params.get("projectID");

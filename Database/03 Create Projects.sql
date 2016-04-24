@@ -120,3 +120,59 @@ BEGIN
     DROP table my_temp_table;
 END//
 delimiter ;
+
+
+delimiter //
+CREATE PROCEDURE PFLUpdateTraverser 
+(
+    in inputNo int,
+	in newLineID int,
+	in nextLineID int
+) 
+BEGIN 
+    declare final_id int default NULL;
+	declare temp_id int default NULL;
+    CREATE TEMPORARY TABLE IF NOT EXISTS my_temp_table select * from PFLines where 1 = 0;
+	SELECT nextID INTO final_id FROM PFLines WHERE pflid = inputNo;
+	UPDATE PFLines set nextid = newLineID where pflid = inputNo and nextid = nextLineID;
+	
+    WHILE ( final_id is not null) DO
+	
+    SELECT nextID 
+        INTO temp_id 
+        FROM PFLines
+        WHERE pflid = final_id;
+    UPDATE PFLines set nextid = newLineID where pflid = final_id and nextid = nextLineID;
+	SELECT temp_id INTO final_id;
+    end while;
+    SELECT * FROM my_temp_table;
+    DROP table my_temp_table;
+END//
+delimiter ;
+
+
+delimiter //
+CREATE PROCEDURE PFLLockTraverser
+(
+    in inputNo int
+) 
+BEGIN 
+    declare final_id int default NULL;
+    CREATE TEMPORARY TABLE IF NOT EXISTS my_temp_lock_table select * from PFLines NATURAL JOIN LineLocks where 1 = 0;
+    INSERT INTO my_temp_lock_table(SELECT * FROM PFLines NATURAL JOIN LineLocks WHERE pflid = inputNo);
+	SELECT nextID 
+    INTO final_id 
+    FROM PFLines
+    WHERE pflid = inputNo;
+    WHILE ( final_id is not null) DO
+    INSERT INTO my_temp_lock_table(SELECT * FROM PFLines NATURAL JOIN LineLocks WHERE pflid = final_id);
+    SELECT nextID 
+        INTO final_id 
+        FROM PFLines
+        WHERE pflid = final_id;
+        
+    end while;
+    SELECT * FROM my_temp_lock_table;
+    DROP table my_temp_lock_table;
+END//
+delimiter ;
