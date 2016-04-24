@@ -170,7 +170,7 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", stamp);
+			jobj.put("requestTime", String.valueOf(stamp));
 			returnList.add(jobj);
 		}
 		
@@ -198,7 +198,7 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", stamp);
+			jobj.put("requestTime", String.valueOf(stamp));
 			returnList.add(jobj);
 		}
 		
@@ -310,11 +310,14 @@ public class ProjectManager {
 	}
 	
 	public JSONArray createFile (String fileName, String projectID, String dirID){
-		String query = "Insert into PFiles(pfname, pid, pdid) values (?, ?, ?)";
-		String[] values = new String[3];
+		JSONArray returnValue = createLine("", "null");
+		String pflhead = (String)((JSONObject)returnValue.get(0)).get("pflid");
+		String query = "Insert into PFiles(pfname, pid, pdid, pflhead) values (?, ?, ?, ?)";
+		String[] values = new String[4];
 		values[0] = fileName;
 		values[1] = projectID;
 		values[2] = dirID;
+		values[3] = pflhead;
 		
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = null;
