@@ -350,7 +350,7 @@ public class Server{
         		{
 					String text = (String) params.get("text");
         			String nextLineID = (String) params.get("nextLineID");
-					
+					System.out.println("Creating line before "+nextLineID+": "+text);
 					output = this.projectManager.createLine (text, nextLineID).toJSONString();
         			
         		}
