@@ -15,7 +15,13 @@ import squire.ProjectManager;
 public class ProjectManagerTest {
 	ProjectManager testManager;
 	DBConnector dbc;
-	int userID = 9;
+	int userID = 3;
+	
+	public ProjectManagerTest(){
+		this.dbc.setProperties("mysql", "", "com.mysql.jdbc.Driver", 
+				"squire", "root", "squire!", "localhost", 3306);
+		testManager = new ProjectManager(this.dbc);
+	}
 	
 	
 	@Test
@@ -38,9 +44,9 @@ public class ProjectManagerTest {
 			if (projName.equals(listName))
 				inList = true;
 		}
-		assertNotNull(returnValue);
-		assertEquals(returnValue.size(), 1);
-		assertTrue(inList);
+		assertNotNull("Create Project return value null", returnValue);
+		assertEquals("Create Project return value size != 1", returnValue.size(), 1);
+		assertTrue("Created Project not found", inList);
 		
 		String pid = (String)((JSONObject)returnValue.get(0)).get("pid");
 		testManager.removeProject(pid);
@@ -57,7 +63,7 @@ public class ProjectManagerTest {
 			if (projName.equals(listName))
 				inList = true;
 		}
-		assertFalse(inList);
+		assertFalse("Created project not deleted", inList);
 	}
 	
 	@Test
@@ -84,9 +90,9 @@ public class ProjectManagerTest {
 			if (fileName.equals(listName))
 				inList = true;
 		}
-		assertNotNull(returnValue);
-		assertEquals(returnValue.size(), 1);
-		assertTrue(inList);
+		assertNotNull("Create file returned null", returnValue);
+		assertEquals("Create file returned <> 1 item",returnValue.size(), 1);
+		assertTrue("Created item not in list", inList);
 		
 		String pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
 		testManager.removeFile(pfid);
@@ -106,8 +112,8 @@ public class ProjectManagerTest {
 			if (fileName.equals(listName))
 				inList = true;
 		}
-		assertEquals(fileList.size(), 0);
-		assertFalse(inList);
+		assertEquals("File list not empty", fileList.size(), 0);
+		assertFalse("Created file not deleted", inList);
 	}
 	
 	@Test
@@ -134,9 +140,9 @@ public class ProjectManagerTest {
 			if (dirName.equals(listName))
 				inList = true;
 		}
-		assertNotNull(returnValue);
-		assertEquals(returnValue.size(), 1);
-		assertTrue(inList);
+		assertNotNull("createDirectory returned null", returnValue);
+		assertEquals("createDirectory returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created Directory not found", inList);
 		
 		String pdid = (String)((JSONObject)returnValue.get(0)).get("pdid");
 		testManager.removeDirectory(pdid);
@@ -156,8 +162,8 @@ public class ProjectManagerTest {
 			if (dirName.equals(listName))
 				inList = true;
 		}
-		assertEquals(dirList.size(), 0);
-		assertFalse(inList);
+		assertEquals("Directories still exist", dirList.size(), 0);
+		assertFalse("Created directory not deleted", inList);
 	}
 	
 	@Test
@@ -175,7 +181,7 @@ public class ProjectManagerTest {
 			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
 			returnValue = testManager.createFile(fileName, pid, "null");
 			pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
-			returnValue = testManager.createLine(lineText, "null");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
 			lineList = testManager.getLines(pfid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -188,9 +194,9 @@ public class ProjectManagerTest {
 			if (lineText.equals(listText))
 				inList = true;
 		}
-		assertNotNull(returnValue);
-		assertEquals(returnValue.size(), 1);
-		assertTrue(inList);
+		assertNotNull("CreateLine returned null", returnValue);
+		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created line not found", inList);
 		
 		String pflid = (String)((JSONObject)returnValue.get(0)).get("pflid");
 		testManager.removeLine(pflid);
@@ -211,8 +217,8 @@ public class ProjectManagerTest {
 			if (lineText.equals(listText))
 				inList = true;
 		}
-		assertEquals(lineList.size(), 0);
-		assertFalse(inList);
+		assertEquals("Lines still exist in list",lineList.size(), 0);
+		assertFalse("Created line not deleted",inList);
 	}
 	
 	

@@ -176,12 +176,10 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLineChanges (String PFileID, String lastTime) throws SQLException{
-		String query =	"select * "+
-						"from "+
-							"call PFLTimeTraverser"+
-							"(( select `pflhead` from `PFiles` where `pfid` = ?), ?)";
+		String query = 		"call PFLTimeTraverser"+
+							"(( select `pflhead` from `PFiles` where `pfid` = ?), (SELECT FROM_UNIXTIME(?)))";
 		
-		String[] values = new String[1];
+		String[] values = new String[2];
 		values[0] = String.valueOf(PFileID);
 		values[1] = lastTime;
 		Timestamp stamp = new Timestamp(System.currentTimeMillis());
@@ -234,7 +232,7 @@ public class ProjectManager {
 		values[1] = "";
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		JSONArray projectID = new JSONArray();
 		String pid;
@@ -274,7 +272,7 @@ public class ProjectManager {
 		values[2] = projectID;
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		JSONArray dirID = new JSONArray();
 		try {
@@ -293,7 +291,7 @@ public class ProjectManager {
 		values[1] = projectID;
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		JSONArray dirID = new JSONArray();
 		try {
@@ -316,7 +314,7 @@ public class ProjectManager {
 		values[3] = pflhead;
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		JSONArray fileID = new JSONArray();
 		try {
@@ -337,7 +335,7 @@ public class ProjectManager {
 		values[2] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		JSONArray pflid = new JSONArray();
 		try {
@@ -360,7 +358,7 @@ public class ProjectManager {
 		values[3] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		String query3 = "Update PFLines set nextid = LAST_INSERT_ID() "
 				+ "where nextid = ? and pflid != LAST_INSERT_ID()";
@@ -389,7 +387,7 @@ public class ProjectManager {
 		values[3] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		String getHeadQuery = "Select pflhead from PFiles where pfid = ?";
 		String[] getHeadValues = new String[1];
@@ -423,7 +421,7 @@ public class ProjectManager {
 		values[2] = stamp.toString();
 		
 		String query2 = "Select LAST_INSERT_ID();";
-		String[] values2 = null;
+		String[] values2 = new String[0];
 		
 		String updateQuery = "Update PFLines set nextid = ? where pflid = ?";
 		String[] updateValues = new String[2];

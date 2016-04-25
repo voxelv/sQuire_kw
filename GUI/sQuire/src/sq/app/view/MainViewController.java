@@ -1106,9 +1106,9 @@ public class MainViewController implements Initializable{
         	this.Server = sq.app.MainApp.GetServer();
         }
         public void run() {
-            	while(sq.app.MainApp.GetServer().getStatus()){
-                    try {
-	            		if (Editor.GetFileID() >= 0){
+        	while(sq.app.MainApp.GetServer().getStatus()){
+                try {
+            		if (Editor.GetFileID() >= 0){
 	            		JSONObject jo = new JSONObject();
 	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
 	                	Object data = null;
@@ -1132,12 +1132,12 @@ public class MainViewController implements Initializable{
 	                	
 	            		jo = new JSONObject();
 	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	jo.put("time", Editor.GetLatestEditTime().toString());
-	                	data = null;
+	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
 	                	try{
 	                		data = Server.sendSingleRequest("project", "getLineChanges", jo);
 	                	}
 	                	catch(Exception e){
+	                		System.out.println("Exception");
 	                		//do nothing
 	                	}
 	            		out = null;
@@ -1146,13 +1146,13 @@ public class MainViewController implements Initializable{
 //	            			out = (Object) singleResponse.get("result");
 //	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
 	            		}
+	            		java.lang.Thread.sleep(1000);
             		}
-            		java.lang.Thread.sleep(1000);
-                    } 
-                    catch (Exception e){
-                    	System.out.println("Client Polling error: " + e.getMessage());
-                    }
-            	}
+                } 
+                catch (Exception e){
+                	System.out.println("Client Polling error: " + e.getMessage());
+                }
+        	}
         }
 	}
 }

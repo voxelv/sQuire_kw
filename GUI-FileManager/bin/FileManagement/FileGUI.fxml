@@ -21,9 +21,11 @@
                     </items>
                   </MenuButton>
                   <Button layoutX="69.0" layoutY="10.0" mnemonicParsing="false" onAction="#HomeButton" prefHeight="23.0" prefWidth="70.0" text="Home" />
-                  <Button mnemonicParsing="false" onAction="#DeleteButton" prefHeight="23.0" prefWidth="70.0" text="Delete" />
                   <Button layoutX="158.0" layoutY="10.0" mnemonicParsing="false" onAction="#Rename" prefHeight="23.0" prefWidth="70.0" text="Rename" />
+                  <Button mnemonicParsing="false" onAction="#DeleteButton" prefHeight="23.0" prefWidth="70.0" text="Delete" />
                   <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#locateFile" prefHeight="23.0" prefWidth="70.0" text="Input" />
+                  <Button layoutX="306.0" layoutY="8.0" mnemonicParsing="false" onAction="#projectAccess" prefHeight="23.0" prefWidth="70.0" text="Access" />
+                  <Button layoutX="380.0" layoutY="8.0" mnemonicParsing="false" onAction="#switchUser" prefHeight="23.0" prefWidth="70.0" text="Switch" />
               </items>
             </ToolBar>
             <ToolBar layoutX="10.0" layoutY="10.0" prefHeight="19.0" prefWidth="600.0">
@@ -45,10 +47,13 @@
             <HBox prefHeight="326.0" prefWidth="674.0">
                <children>
                   <TreeView fx:id="structure_tree" onMouseClicked="#file_select" prefHeight="319.0" prefWidth="194.0" />
-                  <TextArea prefHeight="326.0" prefWidth="480.0" />
+                  <TextArea fx:id="fileData" prefHeight="326.0" prefWidth="480.0" />
                </children>
             </HBox>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" System Info: " wrappingWidth="599.240234375" />
+            <Text fx:id="info" strokeType="OUTSIDE" strokeWidth="0.0" text=" System Info: " wrappingWidth="599.240234375">
+               <font>
+                  <Font size="13.0" />
+               </font></Text>
          </children>
       </VBox>
    </children>

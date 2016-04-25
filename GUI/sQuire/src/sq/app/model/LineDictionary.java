@@ -144,16 +144,27 @@ public class LineDictionary {
 	}
 	
 	private void lockIt(Line l){
-		if (l.getLastEditorID() != currentUserID && !lockedIDs.contains(l.getID())){
-			lockedLines.add(l.getLineNumber());
-			lockedIDs.add(l.getID());
+		if (l.getLastEditorID() != currentUserID){
+			if (!lockedIDs.contains(l.getID())){
+				lockedIDs.add(l.getID());
+			}		
+			if (!lockedLines.contains(l.getLineNumber())){
+				lockedLines.add(l.getLineNumber());
+			}		
 		}		
 	}
 	private void unlockIt(Line l){
-		if (lockedIDs.contains(l.getID())){
-			lockedLines.remove(l.getLineNumber());
-			lockedIDs.remove(lockedIDs.indexOf(l.getID()));
-		}		
+		try{
+			if (lockedIDs.contains(l.getID())){
+				lockedIDs.remove(lockedIDs.indexOf(l.getID()));
+			}		
+			if (lockedLines.contains(l.getLineNumber())){
+				lockedLines.remove(lockedLines.indexOf(l.getLineNumber()));
+			}		
+		}
+		catch(Exception e){
+			e = e;
+		}
 	}
 	
 	public ArrayList<Integer> getLockedLines(){
