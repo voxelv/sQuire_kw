@@ -302,9 +302,73 @@ public class ChatManagerTest {
 			fail("message sent and message received don't match");
 	}
 	
+	@Test
+	public void test_onLogin()
+	{
+		// Set userID for testing
+		this.setTestUserID();
+		
+		// leave all current channels
+		this.leaveAllChannels();
+		
+		// Add capitalized letter at front, since the first char will be capitalized anyway
+		String channelName = "A" + this.nextRandomName();
+		
+		// Join specific channel (name generated)
+		JSONArray channelList = testManager.joinChannel(channelName);
+		
+		String channelJoinTime = (String)( (JSONObject)channelList.get(0) ).get("joinTime");
+		
+		// wait 5 seconds, until the joinTime is definitely different
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		String nowTime = this.getDBTime();
+		
+		// Make sure the joinTime is old
+		assertNotEquals(nowTime, channelJoinTime);
+		
+		// update the joinTime of all channels
+		testManager.onLogin();
+		
+		// re-get the channel list
+		channelList = testManager.joinChannel(channelName);
+		
+		// get the updated joinTime
+		channelJoinTime = (String)( (JSONObject)channelList.get(0) ).get("joinTime");
+		
+		// Make sure joinTime is current now
+		assertEquals(nowTime, channelJoinTime);
+	}
+	
 /**************************************************************/	
 /**************************************************************/
 /******************* Supporting Functions *********************/
+	
+	public String getDBTime()
+	{
+		String outTime = null;
+		String query = "Select Now()";
+		String[] values = new String[0];
+		
+		Object output = null;
+		try {
+			output = this.dbc.query(query, values);
+			JSONArray resultList = (JSONArray) output;
+			JSONObject timeObj = (JSONObject) resultList.get(0);
+			
+			outTime = (String) timeObj.get("Now()"); 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return outTime;
+	}
 	
 	public void setTestUserID()
 	{
