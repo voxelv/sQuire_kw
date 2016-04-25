@@ -181,7 +181,7 @@ public class ProjectManager {
 							"call PFLTimeTraverser"+
 							"(( select `pflhead` from `PFiles` where `pfid` = ?), ?)";
 		
-		String[] values = new String[1];
+		String[] values = new String[2];
 		values[0] = String.valueOf(PFileID);
 		values[1] = lastTime;
 		Timestamp stamp = new Timestamp(System.currentTimeMillis());

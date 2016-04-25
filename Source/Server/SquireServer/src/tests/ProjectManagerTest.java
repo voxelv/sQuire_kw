@@ -175,7 +175,7 @@ public class ProjectManagerTest {
 			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
 			returnValue = testManager.createFile(fileName, pid, "null");
 			pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
-			returnValue = testManager.createLine(lineText, "null");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
 			lineList = testManager.getLines(pfid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
