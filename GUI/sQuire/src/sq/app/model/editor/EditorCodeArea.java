@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -15,13 +16,17 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleSpan;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import javafx.scene.input.KeyCode;
+import jdk.nashorn.internal.parser.JSONParser;
 import sq.app.model.Line;
+import sq.app.model.LineDictionary;
 import sq.app.model.ServerConnection;
 
-public class EditorCodeArea extends CodeArea implements KeyListener{
+public class EditorCodeArea extends CodeArea{
 
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
@@ -43,7 +48,6 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
     private static final String SEMICOLON_PATTERN = "\\;";
     private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-    private static final String ISLOCKED_PATTERN =  "" ;
     
     private static final Pattern PATTERN = Pattern.compile(
             "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
@@ -53,127 +57,224 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
             + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
             + "|(?<STRING>" + STRING_PATTERN + ")"
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
-//            + "|(?<ISLOCKED>" + ISLOCKED_PATTERN + ")"
     );
 	
-//    private static final String sampleCode = String.join("\n", new String[] {
-//            "package com.example;",
-//            "",
-//            "import java.util.*;",
-//            "",
-//            "public class Foo extends Bar implements Baz {",
-//            "",
-//            "    /*",
-//            "     * multi-line comment",
-//            "     */",
-//            "    public static void main(String[] args) {",
-//            "        // single-line comment",
-//            "        for(String arg: args) {",
-//            "            if(arg.length() != 0)",
-//            "                System.out.println(arg);",
-//            "            else",
-//            "                System.err.println(\"Warning: empty string as argument\");",
-//            "        }",
-//            "    }",
-//            "",
-//            "}"
-//        });
+    private String previousLineText = "";
+    private int previousLineNumber = -1;
+	ServerConnection server = sq.app.MainApp.GetServer();
+    //ArrayList<Line> listOfLineObjects = new ArrayList<Line>();
+    private int currentFileID = -1;
+	private LineDictionary lineDictionary = new LineDictionary();
+	private int currentUserID = -1;
 	
-    public String prevLine="";
-    public int prevLineNum=-1;
-    
+	public void setUserID(int userID){
+		currentUserID = userID;
+		lineDictionary.setUserID(userID);
+	}
+
 	public EditorCodeArea() {
 		super();
-
-      this.plainTextChanges().subscribe(change->{
-	      this.doHighlight();
-	  });
-
-//        this.setOnKeyPressed(event->{
-//        	KeyCode c = event.getCode();
-//        	if (this.getCurrentParagraph()==2 && !event.getCode().isArrowKey())
-//        	{
-//        		event.consume();
-//        		Boolean b = event.isConsumed();
-//        		b=b;
-//        	}
-//        });
-        this.currentParagraphProperty().addListener(change ->{       	
-        	if (this.getCurrentParagraph() != this.prevLineNum){
-        		int currentLineNum = this.getCurrentParagraph();
-    			String currentLine = "";
-    			if (this.prevLineNum != -1){
-    				currentLine = this.getText(this.prevLineNum); 
-    			}
-        		if (!new String(currentLine ).equals(this.prevLine) &&
-            			this.prevLineNum != -1)
-        		{
-                	try{
-                    	ServerConnection server = sq.app.MainApp.GetServer();
-            			JSONObject jo = new JSONObject();
-                		jo.put("lineID", lineArray.get(this.prevLineNum).getID());
-                		jo.put("text", this.getText(this.prevLineNum));
-                    	server.sendSingleRequest("project", "changeLine", jo);
-                    	this.lineArray.get(this.prevLineNum).setText(this.getText(this.prevLineNum));
-                	} catch (Exception e){
-                		System.out.println("an exception happened while trying to send line change data");
-                		//do nothing
-                	}
-
-        			if (new String(this.getText(this.prevLineNum)).equals(""))
-        			{
-        				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, "DELETED");
-        			}
-        			else
-        			{
-        				System.out.printf("%d : '%s' -> '%s'\n", this.prevLineNum, this.prevLine, this.getText(this.prevLineNum));
-        			}
-        		}
-            	try{
-                	ServerConnection server = sq.app.MainApp.GetServer();
-            		if (this.getCurrentParagraph() < lineArray.size()){
-                    	JSONObject jo = new JSONObject();
-                		jo.put("lineID", lineArray.get(currentLineNum).getID());
-                    	server.sendSingleRequest("project", "lockline", jo);
-            		}
-            		if (this.prevLineNum > -1 && this.prevLineNum < lineArray.size()){
-                		JSONObject jo = new JSONObject();
-                    	jo.put("lineID", lineArray.get(this.prevLineNum).getID());
-                    	server.sendSingleRequest("project", "unlockline", jo);
-                	}
-            	} catch (Exception e){
-            		System.out.println("an exception happened trying to send line lock/unclock data");
-            		//do nothing
-            	}
-        		this.prevLineNum = currentLineNum;
-        		this.prevLine = this.getText(this.prevLineNum);
-    		}
-        });
-        
-
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
-		addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+    	this.caretPositionProperty().addListener(event->{
+        	updateMyLockedLine();
+    	});
+    	
+//    	this.currentParagraphProperty().addListener(event->{
+//    		this.doHighlight();    		
+//    	});
+    	
+    	this.plainTextChanges().subscribe(change->{
+    		this.doHighlight();    		
+        	updateMyLockedLine();
+        	sendChangesToServer();
+    		int currentLineNum = this.getCurrentParagraph();
+        	if (currentLineNum != this.previousLineNumber){
+        		this.previousLineNumber = currentLineNum;
+        		this.previousLineText = this.getText(this.previousLineNumber);
+    		}
+    	});
+
+		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
 			int p = this.getCurrentParagraph();
-        	if (this.lockedParagraphs.contains(p) && !event.getCode().isArrowKey())
+        	if (this.lineDictionary.getLockedLines().contains(p) && !event.getCode().isArrowKey())
         	{
-        		this.selectLine();
-        		this.lineArray.get(p).getText();	        		
-        	}
+        		revertCurrentLine();
+    		}
         	if (event.getCode() == KeyCode.ENTER){
-            	try{
-                	ServerConnection server = sq.app.MainApp.GetServer();
-                	JSONObject jo = new JSONObject();
-            		jo.put("text", this.getText(p));
-            		jo.put("nextLineID", lineArray.get(p).getID());
-                	server.sendSingleRequest("project", "createLine", jo);
-            	}
-        		catch(Exception e){
-        			System.out.println("failed to create new line in server");
+        		createNewLine();
+        	}
+        	else if (event.getCode() == KeyCode.DELETE){
+        		char deleteChar = this.getText().charAt(this.caretPositionProperty().getValue()+1);
+        		if (deleteChar == '\r' || deleteChar == '\n'){
+        			deleteChar = deleteChar;
+        		}
+        	}
+        	else if (event.getCode() == KeyCode.BACK_SPACE){
+        		char backChar = this.getText().charAt(this.caretPositionProperty().getValue()-1);
+        		if (backChar == '\r' || backChar == '\n'){
+        			backChar = backChar;
         		}
         	}
 		});
-
+	}
+	
+	private void sendChangesToServer(){
+    	if (this.getCurrentParagraph() != this.previousLineNumber){
+    		int currentLineNum = this.getCurrentParagraph();
+			String currentLine = "";
+			if (this.previousLineNumber != -1){
+				currentLine = this.getText(this.previousLineNumber); 
+			}
+    		if (!new String(currentLine ).equals(this.previousLineText) && this.previousLineNumber != -1){
+            	if (this.previousLineNumber  == lineDictionary.getSize()){
+            		createNewLine();
+            	}
+    			try{
+        			JSONObject jo = new JSONObject();
+            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(this.previousLineNumber)));
+            		jo.put("text", this.getText(this.previousLineNumber));
+                	server.sendSingleRequest("project", "changeLine", jo);
+                	this.lineDictionary.updateText(this.previousLineNumber,(this.getText(this.previousLineNumber)));
+            	} 
+            	catch (Exception e){
+            		System.out.println("an exception happened while trying to send line change data");
+            	}
+    		}
+    	}
+	}
+	
+	private void updateMyLockedLine(){
+    	if (this.getCurrentParagraph() != this.previousLineNumber){
+    		int currentLineNum = this.getCurrentParagraph();
+        	try{
+        		if (this.getCurrentParagraph() < lineDictionary.getSize()){
+                	JSONObject jo = new JSONObject();
+            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(currentLineNum)));
+                	server.sendSingleRequest("project", "lockline", jo);
+        		}
+        		if (this.previousLineNumber > -1 && this.previousLineNumber < lineDictionary.getSize()){
+            		JSONObject jo = new JSONObject();
+                	jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(this.previousLineNumber)));
+                	server.sendSingleRequest("project", "unlockline", jo);
+            	}
+        	} 
+        	catch (Exception e){
+        		System.out.println("an exception happened trying to send line lock/unclock data");
+        	}
+    	}
+	}
+	
+	private void revertCurrentLine(){
+		int p = this.getCurrentParagraph();
+		this.selectLine();
+		this.replaceSelection(this.lineDictionary.getLine(p).getText());	        		
+	}
+	
+	private void createNewLine(){
+    	JSONObject jo = new JSONObject();
+		int p = this.getCurrentParagraph();
+    	String beforeCaretText = this.getText(this.getCaretPosition()-this.getCaretColumn(), this.getCaretPosition());
+    	String afterCaretText = this.getText(this.getCaretPosition(), this.getCaretPosition()-this.getCaretColumn()+this.getParagraph(p).length());
+    	Object response = null;
+		if (p==0){
+			try{
+				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
+				jo.put("text", afterCaretText);
+		    	server.sendSingleRequest("project", "changeLine", jo);
+				jo = new JSONObject();
+    			jo.put("fileID", String.valueOf(this.currentFileID));
+    			jo.put("text", beforeCaretText);
+    			response = server.sendSingleRequest("project", "createLineAtHead", jo);
+			}
+			catch(Exception e){
+				System.out.println("error trying to add line to begginning of file");
+			}
+		}
+		else if (p == lineDictionary.getSize()){
+			try{
+				jo.put("text", beforeCaretText);
+				jo.put("fileID", String.valueOf(this.currentFileID));
+				response = server.sendSingleRequest("project", "createLineAtEnd", jo);
+			}
+			catch(Exception e){
+				System.out.println("error trying to add line to end of file");
+			}
+		}
+		else if (p == lineDictionary.getSize()-1){
+			try{
+				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
+				jo.put("text", afterCaretText);
+		    	server.sendSingleRequest("project", "changeLine", jo);
+				jo = new JSONObject();
+				jo.put("fileID", String.valueOf(this.currentFileID));
+				jo.put("text", beforeCaretText);
+				response = server.sendSingleRequest("project", "createLineAtEnd", jo);
+			}
+			catch(Exception e){
+				System.out.println("error trying to add line to end of file");
+			}
+		}
+		else{
+			try{
+				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
+				jo.put("text", afterCaretText);
+		    	server.sendSingleRequest("project", "changeLine", jo);
+				jo = new JSONObject();
+				jo.put("nextLineID", String.valueOf(lineDictionary.getIDfromLine(p)));
+				jo.put("text", beforeCaretText);
+				response = server.sendSingleRequest("project", "createLine", jo);
+			}
+			catch(Exception e){
+				System.out.println("error trying to add line in middle of file");
+			}
+		}
+		if (response != null){
+			JSONArray ja;
+			try {
+				ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)response);
+				jo = (JSONObject)ja.get(0);
+//				int i1 = Integer.valueOf((String)jo.get("LAST_INSERT_ID()"));
+//				int i2 = listOfLineObjects.get(p+1).getID();
+//				String s = "";
+//				Timestamp t = new Timestamp(0);
+				
+				Line l = new Line(Integer.valueOf((String)jo.get("LAST_INSERT_ID()")), p+1, currentUserID, lineDictionary.getIDfromLine(p+1),"",new Timestamp(0));
+				this.lineDictionary.add(l);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// this function will need to update the server
+	// probably create file
+	// then insert on line at a time while updating the server?
+	public void CreateNewFileFromImportedText(String newFileName, String newFileText, int projectID, int directoryID){
+    	ServerConnection server = sq.app.MainApp.GetServer();
+    	JSONObject jo = new JSONObject();
+		jo.put("projectID", projectID);
+		jo.put("dirID", directoryID);
+		jo.put("fileName", newFileName);
+    	Object o = server.sendSingleRequest("project", "createFile", jo);	
+    	if (o!=null){
+	    	JSONArray ja = (JSONArray)o;
+	    	if (ja!= null){
+		    	jo = (JSONObject)ja.get(0);
+		    	if (ja!= null){
+			    	int newFileID = (int)jo.get("fileID");
+		    	
+			    	ArrayList<String> fileLines = new ArrayList<String>(Arrays.asList(newFileText.split("\r|\n")));
+			    	for (String line : fileLines){
+			    		jo = new JSONObject();
+						jo.put("fileID", newFileID);
+						jo.put("text", line);
+				    	server.sendSingleRequest("project", "createLineAtEnd", jo);
+			    	}
+		    	}
+	    	}
+    	}
 	}
 	
 	public Timestamp GetLatestEditTime(){
@@ -181,96 +282,57 @@ public class EditorCodeArea extends CodeArea implements KeyListener{
 	}
 	
 	public int GetLineIDFromIndex(int index){
-		return lineArray.get(this.getCurrentParagraph()).getID();
+		return lineDictionary.getIDfromLine(this.getCurrentParagraph());
 	}
 	
+	public int GetLineIndexFromID(int id){
+		return lineDictionary.getLinefromID(id);
+	}
 	
-    ArrayList<Line> lineArray = new ArrayList<Line>();
-    private int currentFileID = -1;
     public int GetFileID(){
     	return currentFileID;
 	}
 
 	public void ReplaceText(String text, List<Line> listOfLines, int fileID){
-		lineArray = (ArrayList<Line>)listOfLines;
-		this.prevLineNum = -1;
+		lineDictionary.resetTo(listOfLines);
+		this.previousLineNumber = -1;
 		this.currentFileID = fileID;
 		this.replaceText(text);
+		this.doHighlight();
 	}
 	
-	private ArrayList<Integer> lockedParagraphs = new ArrayList<Integer>();
-	//StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
 	
 	public void LockParagraph(int paragraphNumber){
-		lockedParagraphs.add(paragraphNumber);
-//		ArrayList<String> styleStr = new ArrayList<String>();
-//		styleStr.add("islocked");
-//		//this.clearStyle(2);
-////		this.clearParagraphStyle(2);
-//		StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<>();
-//		lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(2).length()));
-//		//StyleSpan newStyle = new StyleSpan(newStyle,this.getParagraph(2).length());
-//		//this.getParagraph(2).restyle(0, this.getParagraph(2).length(), styleStr);
-//		//this.getParagraph(2).restyle(styleStr);
-//		this.setStyleSpans(2, 0, lockedSpansBuilder.create());
-		//StyleSpans
+		lineDictionary.lockLine(paragraphNumber);
 	}
 	public void UnlockParagraph(int paragraphNumber){
-		lockedParagraphs.remove(paragraphNumber);
+		lineDictionary.unLockLine(paragraphNumber);
 		doHighlight();
 	}
-	
-	 @Override
-	 public void keyPressed(KeyEvent e) {
-	        if (this.getCurrentParagraph()==2){
-	//        	e.h
-	        }
-    }
-	 
-	 @Override
-	public void keyReleased(KeyEvent e) {
-		 
-	 }
-	
-	 //@Override
-	 public void keyTyped(KeyEvent event){
-			if (this.getCurrentParagraph()==2 && !(event.isActionKey())) {
-				event.consume();
+	public void SetLockedParagraphs(List<Integer> lockedPs){
+		if(!lockedPs.equals(lineDictionary.getLockedIDs()))
+		{
+			int size = lineDictionary.getSize();
+			for(int i = 0; i < size; i++){
+				lineDictionary.unLockLine(i);
 			}
-	 }
-
-	// KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
-//		  @Override
-//		  public boolean dispatchKeyEvent(final KeyEvent e) {
-//		    if (e.getID() == KeyEvent.KEY_TYPED) {
-//		      System.out.println(e);
-//		    }
-//		    // Pass the KeyEvent to the next KeyEventDispatcher in the chain
-//		    return false;
-//		  }
-	//	};
-	 
-//	public boolean dispatchKeyEvent (KeyEvent event) {
-//	
-//		
-//		if (this.getCurrentParagraph()==2 && !(event.isActionKey())) {
-//		//MY_GLOBAL_ACTION.actionPerformed(null);
-//		return true;
-//	}
-//	return false;
-//	}
+			for (int i : lockedPs){
+				lineDictionary.lockLinebyID(i);
+			}
+    		//this.doHighlight();
+		}
+	}
 	 
 	public void doHighlight() {
 		setStyleSpans(0, computeHighlighting(this.getText()));
 		
 		ArrayList<String> styleStr = new ArrayList<String>();
 		styleStr.add("islocked");
-//		StyleSpans<Collection<String>> ss = lockedSpansBuilder.create();
-		for (int i =0; i < lockedParagraphs.size(); i++){
+		for (int line : lineDictionary.getLockedLines()){
 			StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<Collection<String>>();
-			lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(lockedParagraphs.get(i)).length()));
-			this.clearParagraphStyle(lockedParagraphs.get(i));
-			this.setStyleSpans(lockedParagraphs.get(i), 0, lockedSpansBuilder.create());
+			lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(line).length()));
+			this.clearParagraphStyle(line);
+			this.setStyleSpans(line, 0, lockedSpansBuilder.create());
 		}
   	}
 
