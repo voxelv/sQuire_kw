@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -1145,17 +1146,19 @@ public class MainViewController implements Initializable{
 	                	
 	            		jo = new JSONObject();
 	                	jo.put("fileID", Editor.GetFileID());
-	                	jo.put("time", Editor.GetLatestEditTime());
-	                	data = null;
+	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
+	                	System.out.println(jo.get("time"));
 	                	try{
 	                		data = (JSONArray)Server.sendSingleRequest("project", "getLineChanges", jo);
 	                	}
 	                	catch(Exception e){
+	                		System.out.println("Exception");
 	                		//do nothing
 	                	}
 	            		out = null;
 	            		if (data != null){
 	            			JSONObject singleResponse = (JSONObject) data.get(0);
+	            			System.out.println(String.valueOf(singleResponse));
 	            			out = (Object) singleResponse.get("result");
 	            		}
             		}
