@@ -176,9 +176,7 @@ public class ProjectManager {
 	}
 	
 	public JSONArray getLineChanges (String PFileID, String lastTime) throws SQLException{
-		String query =	"select * "+
-						"from "+
-							"call PFLTimeTraverser"+
+		String query = 		"call PFLTimeTraverser"+
 							"(( select `pflhead` from `PFiles` where `pfid` = ?), ?)";
 		
 		String[] values = new String[2];
