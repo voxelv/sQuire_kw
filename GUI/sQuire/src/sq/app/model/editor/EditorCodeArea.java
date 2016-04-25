@@ -85,14 +85,13 @@ public class EditorCodeArea extends CodeArea{
     		}
     	});
     	
-//    	this.currentParagraphProperty().addListener(event->{
-//    		this.doHighlight();    		
-//    	});
+    	this.currentParagraphProperty().addListener(event->{
+        	sendChangesToServer();
+    	});
     	
     	this.plainTextChanges().subscribe(change->{
     		this.doHighlight();    		
         	updateMyLockedLine();
-        	sendChangesToServer();
     	});
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
