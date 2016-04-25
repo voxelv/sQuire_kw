@@ -115,9 +115,6 @@ public class DBConnector {
 	* Sets the properties for this DBConnector.
 	*/
     private void setProperties() {
-//        this.prop = new Properties();
-//        FileInputStream fis = new FileInputStream(fileName);
-//        prop.loadFromXML(fis);
 
         this.dbms = "mysql";
         this.jarFile = "";
@@ -127,23 +124,20 @@ public class DBConnector {
         this.password = "squire!";
         this.serverName = "localhost";
         this.portNumber = 9897;
-        
-//        this.dbms = this.prop.getProperty("dbms");
-//        this.jarFile = this.prop.getProperty("jar_file");
-//        this.driver = this.prop.getProperty("driver");
-//        this.dbName = this.prop.getProperty("database_name");
-//        this.userName = this.prop.getProperty("user_name");
-//        this.password = this.prop.getProperty("password");
-//        this.serverName = this.prop.getProperty("server_name");
-//        this.portNumber = Integer.parseInt(this.prop.getProperty("port_number"));
 
-//        System.out.println("Set the following properties:");
-//        System.out.println("dbms: " + dbms);
-//        System.out.println("driver: " + driver);
-//        System.out.println("dbName: " + dbName);
-//        System.out.println("userName: " + userName);
-//        System.out.println("serverName: " + serverName);
-//        System.out.println("portNumber: " + portNumber);
+    }
+    
+    public void setProperties(String d, String j, String dr, String dbn,
+    		String u, String p, String s, int port) {
+
+        this.dbms = d;
+        this.jarFile = j;
+        this.driver = dr;
+        this.dbName = dbn;
+        this.userName = u;
+        this.password = p;
+        this.serverName = s;
+        this.portNumber = port;
 
     }
 

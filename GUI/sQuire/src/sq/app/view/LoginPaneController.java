@@ -1,23 +1,23 @@
 package sq.app.view;
 
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.stage.Stage;
-import sq.app.MainApp;
-import sq.app.model.ServerConnection;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
+import sq.app.MainApp;
+import sq.app.model.ServerConnection;
 
 
 public class LoginPaneController {

@@ -1,24 +1,21 @@
 package sq.app.view;
-import sq.app.model.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
-import java.util.ResourceBundle;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ResourceBundle;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,16 +29,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-
-import javafx.scene.layout.StackPane;
 import sq.app.MainApp;
-import sq.app.model.editor.EditorCodeArea;
 import sq.app.model.Compiler;
-
-import sq.app.model.Compiler;
+import sq.app.model.Line;
 import sq.app.model.ServerConnection;
+import sq.app.model.editor.EditorCodeArea;
 
 public class MainViewController implements Initializable{
 	//FileManagement
@@ -1088,7 +1083,7 @@ public class MainViewController implements Initializable{
     	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
     	ResultSet rs = st.executeQuery(query);
     	if(rs.next()){
-    		lineArray.add(new Line(id, rs.getInt("nextid"),rs.getString("text")));
+    		lineArray.add(new Line(id, rs.getInt("nextid"), rs.getString("text"), rs.getTimestamp("timeEdited")));
             temp.append(rs.getString("text"));
             temp.append("\n");
     		getLine(rs.getInt("nextid"),temp);
@@ -1135,31 +1130,37 @@ public class MainViewController implements Initializable{
             		if (Editor.GetFileID() >= 0){
 	            		JSONObject jo = new JSONObject();
 	                	jo.put("fileID", Editor.GetFileID());
-	                	Object o = Server.sendSingleRequest("project", "getLineLocks", jo);
+	                	JSONArray data = null;
+	                	try{
+	                		// this appears to kill my connection?
+	                		//data = (JSONArray)Server.sendSingleRequest("project", "getLineLocks", jo);
+                		}
+	                	catch(Exception e){
+	                		//do nothing
+	                	}
 	            		Object out = null;
-	            		if (o!=null){
-	            			JSONArray a = (JSONArray)o;
-	            			JSONObject singleResponse = (JSONObject) a.get(0);
+	            		if (data != null){
+	            			JSONObject singleResponse = (JSONObject) data.get(0);
 	            			out = (Object) singleResponse.get("result");
 	            		}
 	                	
-	            		// Maybe store an integer in file info.
-	                	// Increment change counter for each change.
-	                	// For each change we update line text and 
-	                	// the value of the change counter.
-	                	// Then we can just ask for changes greater than 
-	                	// those from our last pull.
-
-//	            		JSONObject jo = new JSONObject();
-//	                	jo.put("fileID", Editor.GetFileID());
-//	                	jo.put("changeCount", Editor.GetFileID());
-//	                	Object o = Server.sendSingleRequest("project", "getLineChanges", jo);
-//	            		Object out = null;
-//	            		if (o!=null){
-//	            			JSONArray a = (JSONArray)o;
-//	            			JSONObject singleResponse = (JSONObject) a.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            		}
+	            		jo = new JSONObject();
+	                	jo.put("fileID", Editor.GetFileID());
+	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
+	                	//System.out.println(jo.get("time"));
+	                	try{
+	                		data = (JSONArray)Server.sendSingleRequest("project", "getLineChanges", jo);
+	                	}
+	                	catch(Exception e){
+	                		System.out.println("Exception");
+	                		//do nothing
+	                	}
+	            		out = null;
+	            		if (data != null){
+	            			JSONObject singleResponse = (JSONObject) data.get(0);
+	            			System.out.println(String.valueOf(singleResponse));
+	            			out = (Object) singleResponse.get("result");
+	            		}
             		}
             		java.lang.Thread.sleep(1000);
             	}

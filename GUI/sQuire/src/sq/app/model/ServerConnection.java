@@ -66,16 +66,17 @@ public class ServerConnection {
         Object output = null;
         try {
             response = in.readLine();
-            if (response == null || response.equals("")) {
-                  //System.out.println("No Response from server, but I'm not dead yet?");
+            if (response == null) {
+                  System.out.println("No Response from server, but I'm still running");
               }else{
                   output = JSONValue.parse(response);
+            	  if (!(response.contains("Chat") || new String(response).equals("[]"))){
+            		  System.out.println("Response from Server: " + response.toString());
+            	  }
               }
         } catch (IOException ex) {
                response = "Error: " + ex;
         }
-//        System.out.println("Response from Server: " + response);
-        
         
         return output;
 	}
@@ -93,12 +94,15 @@ public class ServerConnection {
 		
 		busy = true;
 		this.addRequest(category, action, parameters);
+		if (!(new String(category).equals("Chat") || new String(action).equals("getLineChanges"))){
+			System.out.println(category.toString() + action.toString() + parameters.toString());
+		}
 		
 		JSONArray fullResponse = (JSONArray) this.sendRequestBuffer();
 		busy = false;
 		
 		Object out = null;
-		if (fullResponse!=null){
+		if (fullResponse!=null && fullResponse.size()>0){
 			JSONObject singleResponse = (JSONObject) fullResponse.get(0);
 			out = (Object) singleResponse.get("result");
 		}

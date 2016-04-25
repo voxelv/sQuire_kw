@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.sql.Timestamp;
 
 
 /**
@@ -93,21 +94,24 @@ public class Server{
                     if (input == null || input.equals(".")) {
                         break;
                     }
-                    
+                    String category="", firstAction="", outString="";
+					JSONObject firstParams = new JSONObject();
                     JSONArray outArr = new JSONArray();
                     try {
 						Object inObj = new JSONParser().parse(input);
 						JSONArray inArr = (JSONArray)inObj;
+						
+						
 						
 						for (int i = 0; i< inArr.size(); i++)
 						{
 							JSONObject outObj = new JSONObject();
 							
 							JSONObject thisObj = (JSONObject)inArr.get(i);
-							String category = (String) thisObj.get("category");
-							String firstAction = (String) thisObj.get("action");
-							JSONObject firstParams = (JSONObject) thisObj.get("parameters");
-							String outString = this.runAction(category, firstAction, firstParams);
+							category = (String) thisObj.get("category");
+							firstAction = (String) thisObj.get("action");
+							firstParams = (JSONObject) thisObj.get("parameters");
+							outString = this.runAction(category, firstAction, firstParams);
 							
 							outObj.put("category", category);
 							outObj.put("result", outString);
@@ -119,6 +123,8 @@ public class Server{
 						
 					} catch (ParseException e) {
 						log("Was not able to parse the input");
+						log("\t"+input);
+						log("\t\t"+category+" "+firstAction+" "+(String.valueOf(firstParams)));
 					} catch (SQLException e) {
 						log("SQL Exception");
 						e.printStackTrace();
@@ -250,28 +256,28 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("getProjectAccessEntries") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
 					
         			output = this.projectManager.getProjectAccessEntries(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getDirectories") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
 					
         			output = this.projectManager.getDirectories(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getFiles") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
 					
         			output = this.projectManager.getFiles(projectID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("getDirectories") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
         					
 					output = this.projectManager.getDirectories(projectID).toJSONString();
         			
@@ -300,29 +306,29 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("getLineLocks") == 0)
         		{
-					String fileID = (String) params.get("fileID");
+					String fileID = (String.valueOf(params.get("fileID")));
         						
 					output = this.projectManager.getLineLocks(fileID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("createProject") == 0)
         		{
-					String projectName = (String) params.get("projectName");
+					String projectName = (String)params.get("projectName");
         						
         			output = this.projectManager.createProject(projectName).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("createProjectAccess") == 0)
         		{
-					String projectID = (String) params.get("projectID");
-					String newUserID = (String) params.get("newUserID");
+					String projectID = (String.valueOf(params.get("projectID")));
+					String newUserID = (String.valueOf(params.get("newUserID")));
          						
         			this.projectManager.createProjectAccess(newUserID, projectID);
         			
         		}
 				else if (action.compareToIgnoreCase("createDirectory") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
         			String dirName = (String) params.get("dirName");
 					
         			this.projectManager.createDirectory(projectID, dirName);
@@ -330,17 +336,17 @@ public class Server{
         		}
 				else if (action.compareToIgnoreCase("createSubdirectory") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf(params.get("projectID")));
         			String dirName = (String) params.get("dirName");
-					String parentDirID = (String) params.get("parentDirID");
+					String parentDirID = (String.valueOf(params.get("parentDirID")));
 					
         			this.projectManager.createDirectory(projectID, dirName, parentDirID);
         			
         		}
 				else if (action.compareToIgnoreCase("createFile") == 0)
         		{
-					String projectID = (String) params.get("projectID");
-        			String dirID = (String) params.get("dirID");
+					String projectID = (String.valueOf(params.get("projectID")));
+        			String dirID = (String.valueOf(params.get("dirID")));
 					String fileName = (String) params.get("fileName");
 					
 					output = this.projectManager.createDirectory(fileName, projectID, dirID).toJSONString();
@@ -349,43 +355,59 @@ public class Server{
 				else if (action.compareToIgnoreCase("createLine") == 0)
         		{
 					String text = (String) params.get("text");
-        			String nextLineID = (String) params.get("nextLineID");
-					
+        			String nextLineID = String.valueOf( params.get("nextLineID") );
+					System.out.println("Creating line before "+nextLineID+": "+text);
 					output = this.projectManager.createLine (text, nextLineID).toJSONString();
+        			
+        		}
+				else if (action.compareToIgnoreCase("createLineAtHead") == 0)
+        		{
+					String text = (String) params.get("text");
+        			String fileID = String.valueOf(params.get("fileID"));
+					
+					output = this.projectManager.createLineAtHead (text, fileID).toJSONString();
+        			
+        		}
+				else if (action.compareToIgnoreCase("createLineAtEnd") == 0)
+        		{
+					String text = (String) params.get("text");
+        			String fileID = String.valueOf( params.get("fileID") );
+					
+					output = this.projectManager.createLineAtEnd (text, fileID).toJSONString();
         			
         		}
 				else if (action.compareToIgnoreCase("removeProject") == 0)
         		{
-					String projectID = (String) params.get("projectID");
+					String projectID = (String.valueOf( params.get("projectID")));
 					
         			this.projectManager.removeProject(projectID);
         			
         		}
 				else if (action.compareToIgnoreCase("removeProjectAccess") == 0)
         		{
-					String projectID = (String) params.get("projectID");
-					String accUserID = (String) params.get("accUserID");
+					String projectID = (String.valueOf(params.get("projectID")));
+					String accUserID = (String.valueOf( params.get("accUserID")));
 					
         			this.projectManager.removeProjectAccess(projectID, accUserID);
         			
         		}
 				else if (action.compareToIgnoreCase("removeDirectory") == 0)
         		{
-					String dirID = (String) params.get("dirID");
+					String dirID = String.valueOf( params.get("dirID"));
 					
         			this.projectManager.removeDirectory(dirID);
         			
         		}
 				else if (action.compareToIgnoreCase("removeFile") == 0)
         		{
-					String fileID = (String) params.get("fileID");
+					String fileID = String.valueOf(params.get("fileID"));
 					
         			this.projectManager.removeFile(fileID);
         			
         		}
 				else if (action.compareToIgnoreCase("removeLine") == 0)
         		{
-					String lineID = (String) params.get("lineID");
+					String lineID = (String.valueOf(params.get("lineID")));
 					
         			this.projectManager.removeLine(lineID);
         			

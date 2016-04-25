@@ -1,23 +1,21 @@
 package sq.app;
 
 import java.io.IOException;
-
-
-import com.mysql.jdbc.Connection;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sq.app.model.ChatManager;
 import sq.app.model.ServerConnection;
 import sq.app.model.User;
 import sq.app.view.LoginPaneController;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 
 public class MainApp extends Application {
 
