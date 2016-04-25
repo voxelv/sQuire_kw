@@ -1,9 +1,15 @@
 package sq.app;
 
+import java.awt.Event;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.Action;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +22,7 @@ import sq.app.model.ChatManager;
 import sq.app.model.ServerConnection;
 import sq.app.model.User;
 import sq.app.view.LoginPaneController;
+import sq.app.view.MainViewController;
 
 public class MainApp extends Application {
 
@@ -24,15 +31,16 @@ public class MainApp extends Application {
 	
 	public static Connection conn = null;
 	public static ServerConnection server;
-	public static User CurrentUser;
+	private static User currentUser = null;
 	public static ChatManager chatManager = null;
+	private static MainViewController mainController = null;
 	
 	
 	public MainApp(){
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException {
-		CurrentUser = new User();
+		currentUser = new User();
 		server = new ServerConnection("squireRaspServer.ddns.net", 9898);
 		chatManager = new ChatManager(server);
 		
@@ -66,6 +74,9 @@ public class MainApp extends Application {
 			Scene scene = new Scene(rootLayout);
 			primaryStage.setScene(scene);
 			primaryStage.show();
+			primaryStage.setOnCloseRequest(event->{
+				sq.app.MainApp.GetServer().closeIt();
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,13 +93,24 @@ public class MainApp extends Application {
 			rootLayout.setCenter(MainView);
 	    	MainView.getScene().getStylesheets().add(sq.app.model.editor.EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
 
+	    	mainController = loader.getController();
   
 		} catch (IOException e){
 			e.printStackTrace();
 			
 		}
 	}
-	
+	public static void setUser(User user){
+		currentUser = user;
+		mainController.setUserID(user.getUserID());
+	}
+	public static void setUser(String userName){
+		mainController.setUserName(userName);
+	}
+	public static User getCurrentUser(){
+		return currentUser;
+	}
+
 	public void showChatPane() {
 	    try {
 	    	
@@ -111,7 +133,7 @@ public class MainApp extends Application {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-	    MainApp.chatManager.onLogin(MainApp.CurrentUser.getUserID());
+	    MainApp.chatManager.onLogin(MainApp.getCurrentUser().getUserID());
 	}
 	
 	public boolean showLoginPane() {

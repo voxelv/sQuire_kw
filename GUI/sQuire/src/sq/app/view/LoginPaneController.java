@@ -18,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import sq.app.MainApp;
 import sq.app.model.ServerConnection;
+import sq.app.model.User;
 
 
 public class LoginPaneController {
@@ -25,7 +26,7 @@ public class LoginPaneController {
 	private Stage dialogStage;
 	private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 	private ServerConnection server;
-	
+	private String userName = "None";
 	
 	@FXML
 	private TextField LPassword;
@@ -129,6 +130,7 @@ public class LoginPaneController {
 		if (errorMessage.length() == 0) {
 			if(performRegister()){
 			
+				userName = Username.getText();
 				Username.clear();
 	    		Email.clear();
 	    		FirstName.clear();
@@ -176,7 +178,7 @@ public class LoginPaneController {
 	private boolean Login(){
 		String errorMessage = "";
 		
-		if(Username.getText() == null || Username.getText().length() < 0){
+		if(LUsername.getText() == null || LUsername.getText().length() < 0){
 			errorMessage += "No valid Username (at least 1 characters)!\n";
 		}
 		
@@ -218,7 +220,8 @@ public class LoginPaneController {
 		// Set all the parameters you need
 		params.put("username", LUsername.getText());
 		params.put("password", LPassword.getText());
-		
+		userName = LUsername.getText();
+
 		// Set the category
 		String category = "User";
 		
@@ -231,15 +234,16 @@ public class LoginPaneController {
 //			System.out.println(stringResult);
 			loginObj = (JSONObject) new JSONParser().parse(returnValue);
 			
-			MainApp.CurrentUser.setUserID(Integer.parseInt((String) loginObj.get("userID"))) ;
+			MainApp.setUser(new User(Integer.parseInt((String) loginObj.get("userID"))));
+			MainApp.setUser(userName);
 			//MainViewController.setUser(MainApp.CurrentUser.getUserID());
-			System.out.println(Integer.toString(MainApp.CurrentUser.getUserID()));
+			System.out.println(Integer.toString(MainApp.getCurrentUser().getUserID()));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 			
 		}
         
-        if (MainApp.CurrentUser.getUserID() > 0)
+        if (MainApp.getCurrentUser().getUserID() > 0)
         {
         	return true;
         }

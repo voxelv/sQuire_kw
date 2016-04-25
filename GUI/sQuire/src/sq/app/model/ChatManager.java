@@ -418,8 +418,7 @@ public class ChatManager {
         @Override
         public void run()
         {
-        	while (true) 
-        	{
+        	while (sq.app.MainApp.GetServer().getStatus()){
                 // Sleep for a while
                 try {
                 	this.updateMessages();
