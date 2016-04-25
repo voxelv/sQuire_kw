@@ -10,18 +10,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -32,6 +36,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import jdk.nashorn.internal.parser.JSONParser;
 import sq.app.MainApp;
 import sq.app.model.Compiler;
 import sq.app.model.Line;
@@ -41,7 +46,8 @@ import sq.app.model.editor.EditorCodeArea;
 public class MainViewController implements Initializable{
 	//FileManagement
 	public static Connection conn = null;
-	public int MyuserID = 2;
+	public static int userID = 2;
+	public static String userName = "None";
     int currPID = 0;
     int tempFileId = 0;
 	String currProjectName = "";
@@ -52,7 +58,7 @@ public class MainViewController implements Initializable{
     
     
     @FXML
-	static Text user;
+	public Label user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
@@ -68,6 +74,7 @@ public class MainViewController implements Initializable{
     private StackPane editorStackPane; 
     @FXML
     private EditorCodeArea editorCodeArea;
+    private static EditorCodeArea editor = null;
     
     //calls Initialize
     @FXML
@@ -83,72 +90,19 @@ public class MainViewController implements Initializable{
     	
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
         
+        editor = editorCodeArea;
+        assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'MainView.fxml'.";
+        
         // initialize your logic here: all @FXML variables will have been injected
 
-        editorCodeArea.doHighlight();
-  
-//        editorCodeArea.plainTextChanges().subscribe(change->{
-//            editorCodeArea.doHighlight();
-//        });
-        
-//        this.editorStackPane.setOnKeyPressed(event->{
-//        	KeyCode c = event.getCode();
-//        	if (editorCodeArea.getCurrentParagraph()==2)
-//        	{
-//        		event.consume();
-//        		Boolean b = event.isConsumed();
-//        	}
-//        });
-        
-      //  editorCodeArea.setOnKeyTyped(editorCodeArea.keyTyped);
-        
-        //editorCodeArea.richChanges().subscribe(change -> {
-//            editorCodeArea.doHighlight();
-        //});
-        
-//        editorCodeArea.selectedTextProperty().addListener((observable, oldvalue, newvalue) -> {
-//        	System.out.println("Selected text is now: \"" + newvalue + "\"");
-//        	System.out.println("Interval: " + editorCodeArea.getSelection().getStart() + " to " + editorCodeArea.getSelection().getEnd());
-//        	
-//        });
-        
-//        editorCodeArea.caretPositionProperty().addListener((observable, oldvalue, newvalue) -> {
-//        	System.out.println("Caret Line: " + editorCodeArea.getCurrentParagraph() + " Caret Index: "+ newvalue);
-//        	System.out.println("Scene: " + editorCodeArea.getScene() != null);
-//	    	ServerConnection server = sq.app.MainApp.GetServer();
-//	    	JSONObject jo = new JSONObject();
-//	    	String id = Integer.toString(editorCodeArea.GetLineIDFromIndex(editorCodeArea.getCurrentParagraph()));
-//	    	jo.put("lineID", id);
-//	    	server.sendSingleRequest("project", "lockline", jo);
-//        });
-        
-//        editorCodeArea.setOnKeyReleased(event->{
-//            editorCodeArea.doHighlight();
-//        	System.out.print(event.getCode());
-//        });
-        
-//        editorCodeArea.selectionProperty().addListener((observable, oldvalue, newvalue) -> {
-//        	if (newvalue.getLength()>0)
-//        	{
-//        		System.out.println("Selection: " + newvalue);
-//        	}
-//        });
-               
-//        int parCounter = 0;
-//        for(Iterator<Paragraph<Collection<String>, Collection<String>>> par = this.getParagraphs().iterator(); par.hasNext();)
-//        {
-//        	parCounter++;
-//        	Paragraph<Collection<String>, Collection<String>> item = par.next();
-//        	System.out.println(Integer.toString(parCounter) + item.getText());
-//        }
-        
+        editorCodeArea.doHighlight();        
         
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
         new ClientPollingThread(this.editorCodeArea).start();
     }
     
-    
+
     
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////File Management Methods////////////////////////////////////////////////////////
@@ -170,7 +124,7 @@ public class MainViewController implements Initializable{
     	if (result.isPresent()){
     	    currProjName = result.get();
 
-        	String query = "SELECT PID FROM ProjectAccess where userID like '" + MyuserID + "'";
+        	String query = "SELECT PID FROM ProjectAccess where userID like '" + userID + "'";
             ResultSet rs = st.executeQuery(query);
 
             while(rs.next()){
@@ -197,7 +151,7 @@ public class MainViewController implements Initializable{
             	rs = st.executeQuery(sql);
             	if(rs.next()){
             		int currID = rs.getInt("LAST_INSERT_ID()");
-                	sql = "INSERT INTO ProjectAccess(PID, userID)VALUE('" + currID + "','" + MyuserID + "')";
+                	sql = "INSERT INTO ProjectAccess(PID, userID)VALUE('" + currID + "','" + userID + "')";
                 	st.executeUpdate(sql);
             	}
             }
@@ -220,7 +174,9 @@ public class MainViewController implements Initializable{
     	if(file != null){
     	String inputFileData = readFile(file);
 //    		System.out.println(inputFileData);
-    		editorCodeArea.replaceText(inputFileData);
+    		int directoryID = getParentDirectory().getValue().id;
+    		int projectID = getParentProject(selected).getValue().id;
+    		editorCodeArea.CreateNewFileFromImportedText(file.getName(), inputFileData, projectID, directoryID);
     	}
     }
     
@@ -295,11 +251,12 @@ public class MainViewController implements Initializable{
   	  }
   	}
 /***************************Display UserName***************************/
-    public static void setUser(int id) throws SQLException{
-		String query = "SELECT userName FROM Users WHERE userID like '" + id + "' LIMIT 1";
-        Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery(query);
-        if(rs.next()){ user.setText(rs.getString("userName"));}
+    public void setUserID(int id){ //throws SQLException{
+    	userID = id;
+    	editor.setUserID(userID);
+    }
+    public void setUserName(String userName){
+    	this.user.setText(userName);
     }
 
 /***************************Rename Function***************************/
@@ -319,7 +276,7 @@ public class MainViewController implements Initializable{
 
         	if (result.isPresent()){
         		currProjName = result.get();
-            	String query = "SELECT PID FROM ProjectAccess where userID like '" + MyuserID + "'";
+            	String query = "SELECT PID FROM ProjectAccess where userID like '" + userID + "'";
                 ResultSet rs = st.executeQuery(query);
                 while(rs.next()){
 
@@ -440,7 +397,7 @@ public class MainViewController implements Initializable{
     	treeRoot.setExpanded(true);
 
     	try {
-			String query = "SELECT * FROM ProjectAccess WHERE userID like '" + MyuserID + "'";
+			String query = "SELECT * FROM ProjectAccess WHERE userID like '" + userID + "'";
 	        Statement st = conn.createStatement();
 	        ResultSet rs = st.executeQuery(query);
 	        while (rs.next()){
@@ -932,7 +889,7 @@ public class MainViewController implements Initializable{
         		if(isExist == true){
         			warning("File name already exist.");
         		} else {
-        			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + MyuserID +  "')";
+        			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + userID +  "')";
         			st = conn.createStatement();
         			st.executeUpdate(query);
         			query = "SELECT LAST_INSERT_ID()";
@@ -978,9 +935,9 @@ public class MainViewController implements Initializable{
 
         		} else {
         	   		if(selected.getParent().getValue().isProject()){
-            			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','"+ MyuserID + "')";
+            			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','"+ userID + "')";
             		}else {
-            			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getParent().getValue().getID()+ "','" + MyuserID + "')";
+            			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getParent().getValue().getID()+ "','" + userID + "')";
             		}
         			st = conn.createStatement();
         			st.executeUpdate(query);
@@ -1024,7 +981,7 @@ public class MainViewController implements Initializable{
 	    		if(isExist == true){
 	    			warning("File name already exist.");
 	    		} else {
-	    			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "','" + MyuserID + "')";
+	    			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "','" + userID + "')";
 	    			st = conn.createStatement();
 	    			st.executeUpdate(query);
 	    			query = "SELECT LAST_INSERT_ID()";
@@ -1065,28 +1022,27 @@ public class MainViewController implements Initializable{
     private void readFile(TreeItem<StrucTree> item) throws SQLException{
         StringBuilder pos = new StringBuilder("");
         
-        //TODO push any changes?
         lineArray.clear();
         
     	if(item.getValue().isFile() && (Objects.equals(tempFileData,"") || tempFileId != item.getValue().getID())){
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
-    		tempFileData = getLine(item.getValue().getLine(),pos).toString();
-    		tempFileId = item.getValue().getID();
+    		tempFileData = getLine(item.getValue().getLine(), 0, pos).toString();
     		editorCodeArea.ReplaceText(tempFileData, lineArray, item.getValue().getID());
     	}
     }
     
     ArrayList<Line> lineArray = new ArrayList<Line>();
 
-    private StringBuilder getLine(int id, StringBuilder temp) throws SQLException{
+    private StringBuilder getLine(int id, int lineNo, StringBuilder temp) throws SQLException{
     	Statement st = conn.createStatement();
     	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
     	ResultSet rs = st.executeQuery(query);
     	if(rs.next()){
-    		lineArray.add(new Line(id, rs.getInt("nextid"), rs.getString("text"), rs.getTimestamp("timeEdited")));
-            temp.append(rs.getString("text"));
+    		int lastEditor = (rs.getString("lastEditor")!=null)?(rs.getInt("lastEditor")):(-1);
+    		lineArray.add(new Line(id, lineNo, lastEditor, rs.getInt("nextid"), rs.getString("text"), rs.getTimestamp("timeEdited")));
+    		temp.append(rs.getString("text"));
             temp.append("\n");
-    		getLine(rs.getInt("nextid"),temp);
+    		getLine(rs.getInt("nextid"), lineNo+1, temp);
     	}
     	return temp;
     }
@@ -1101,6 +1057,32 @@ public class MainViewController implements Initializable{
     			item.getValue().setLine(rs.getInt("pflhead"));
     		}
     	}
+    }
+    
+    // added by Joe
+    // returns null if no parent directory
+    private TreeItem<StrucTree> getParentDirectory(){
+    	TreeItem<StrucTree> parent = null;
+    	if(selected.getValue().isFile()){
+    		if (selected.getParent().getValue().isDirectory)
+    		parent = selected.getParent();
+    	}
+    	return parent;
+    }
+
+    // added by Joe
+    // returns null if no parent directory
+    private TreeItem<StrucTree> getParentProject(TreeItem<StrucTree> item){
+    	TreeItem<StrucTree> parent = null;
+    	if(!item.getValue().isProject()){
+    		try{
+    			parent = getParentProject(selected.getParent());
+    		}
+    		catch (Exception e){
+    			//dont care, return null
+    		}
+    	}
+    	return parent;
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
@@ -1125,31 +1107,35 @@ public class MainViewController implements Initializable{
         	this.Server = sq.app.MainApp.GetServer();
         }
         public void run() {
-            try {
-            	while(true){
+        	while(sq.app.MainApp.GetServer().getStatus()){
+                try {
             		if (Editor.GetFileID() >= 0){
 	            		JSONObject jo = new JSONObject();
-	                	jo.put("fileID", Editor.GetFileID());
-	                	JSONArray data = null;
+	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
+	                	Object data = null;
 	                	try{
 	                		// this appears to kill my connection?
-	                		//data = (JSONArray)Server.sendSingleRequest("project", "getLineLocks", jo);
+	                		data = Server.sendSingleRequest("project", "getLineLocks", jo);
                 		}
 	                	catch(Exception e){
 	                		//do nothing
 	                	}
 	            		Object out = null;
 	            		if (data != null){
-	            			JSONObject singleResponse = (JSONObject) data.get(0);
-	            			out = (Object) singleResponse.get("result");
+	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
+	            			ArrayList<Integer> locked = new ArrayList<Integer>();
+	            			for(Object o : ja.toArray()){
+	            				JSONObject joo = (JSONObject)o;
+	            				locked.add(Integer.parseInt((String)joo.get("pflid")));
+	            			}
+	            			Editor.SetLockedParagraphs(locked);
 	            		}
 	                	
 	            		jo = new JSONObject();
-	                	jo.put("fileID", Editor.GetFileID());
+	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
 	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
-	                	//System.out.println(jo.get("time"));
 	                	try{
-	                		data = (JSONArray)Server.sendSingleRequest("project", "getLineChanges", jo);
+	                		data = Server.sendSingleRequest("project", "getLineChanges", jo);
 	                	}
 	                	catch(Exception e){
 	                		System.out.println("Exception");
@@ -1157,17 +1143,17 @@ public class MainViewController implements Initializable{
 	                	}
 	            		out = null;
 	            		if (data != null){
-	            			JSONObject singleResponse = (JSONObject) data.get(0);
-	            			System.out.println(String.valueOf(singleResponse));
-	            			out = (Object) singleResponse.get("result");
+//	            			JSONObject singleResponse = (JSONObject) data.get(0);
+//	            			out = (Object) singleResponse.get("result");
+//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
 	            		}
+	            		java.lang.Thread.sleep(1000);
             		}
-            		java.lang.Thread.sleep(1000);
-            	}
-            } 
-            catch (Exception e){
-            	System.out.println("Client Polling thread exiting?");
-            }
+                } 
+                catch (Exception e){
+                	System.out.println("Client Polling error: " + e.getMessage());
+                }
+        	}
         }
 	}
 }

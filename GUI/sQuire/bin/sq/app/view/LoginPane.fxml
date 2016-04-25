@@ -114,7 +114,7 @@
                               </PasswordField>
                            </children>
                         </GridPane>
-                        <Button layoutX="98.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleOk" text="Login" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="98.0" />
+                        <Button layoutX="90.0" layoutY="336.0" mnemonicParsing="false" onAction="#handleOk" text="Register" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="90.0" />
                         <Button layoutX="150.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="95.0" />
                      </children>
                   </AnchorPane>

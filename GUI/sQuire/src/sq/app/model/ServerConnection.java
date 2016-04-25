@@ -15,20 +15,31 @@ public class ServerConnection {
 	BufferedReader in;
 	JSONArray requestBuffer;
 	Boolean busy;
+	Boolean Alive;
 	
 	public ServerConnection(String server, int port)
 	{
-		busy = false;
-		requestBuffer = new JSONArray();
+		this.Alive = true;
+		this.busy = false;
+		this.requestBuffer = new JSONArray();
 		try {
 			this.connectToServer(server, port);
 		} catch (IOException e) {
 			System.out.println("Error: Was not able to connect to server");
+			this.Alive = false;
 			System.exit(0);
 //			e.printStackTrace();
 		}
 	}
 	
+	public Boolean getStatus(){
+		return this.Alive;
+	}
+	
+	public void closeIt(){
+		this.Alive = false;
+	}
+
 	private void connectToServer(String serverAddress, int port) throws IOException 
 	{
 
