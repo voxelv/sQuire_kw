@@ -1147,7 +1147,7 @@ public class MainViewController implements Initializable{
 	            		jo = new JSONObject();
 	                	jo.put("fileID", Editor.GetFileID());
 	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
-	                	System.out.println(jo.get("time"));
+	                	//System.out.println(jo.get("time"));
 	                	try{
 	                		data = (JSONArray)Server.sendSingleRequest("project", "getLineChanges", jo);
 	                	}
