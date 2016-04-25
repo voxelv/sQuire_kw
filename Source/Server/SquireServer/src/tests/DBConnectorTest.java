@@ -2,15 +2,14 @@ package tests;
 
 import java.sql.SQLException;
 
+import org.junit.Test;
+
 import squire.DBConnector;
 
 public class DBConnectorTest {
 	DBConnector dbc;
 	
-	public void TestCreateDatabase(){
-		this.dbc.createDatabase("testdb", "mysql");
-	}
-	
+	@Test
 	public void TestSetDatabase(String dbName){
 		try {
 			this.dbc.setDatabase(dbName);
