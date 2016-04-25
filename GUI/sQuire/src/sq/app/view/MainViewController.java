@@ -22,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -52,7 +53,7 @@ public class MainViewController implements Initializable{
     
     
     @FXML
-	static Text user;
+	public static Label user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
@@ -294,14 +295,6 @@ public class MainViewController implements Initializable{
   		  }
   	  }
   	}
-/***************************Display UserName***************************/
-    public static void setUser(int id) throws SQLException{
-		String query = "SELECT userName FROM Users WHERE userID like '" + id + "' LIMIT 1";
-        Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery(query);
-        if(rs.next()){ user.setText(rs.getString("userName"));}
-    }
-
 /***************************Rename Function***************************/
     @FXML public void Rename() throws SQLException{
     	boolean isExist = false;
@@ -1065,7 +1058,6 @@ public class MainViewController implements Initializable{
     private void readFile(TreeItem<StrucTree> item) throws SQLException{
         StringBuilder pos = new StringBuilder("");
         
-        //TODO push any changes?
         lineArray.clear();
         
     	if(item.getValue().isFile() && (Objects.equals(tempFileData,"") || tempFileId != item.getValue().getID())){

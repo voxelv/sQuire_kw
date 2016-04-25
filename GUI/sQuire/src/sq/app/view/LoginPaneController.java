@@ -1,6 +1,7 @@
 package sq.app.view;
 
 
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,7 +134,9 @@ public class LoginPaneController {
 	    		Email.clear();
 	    		FirstName.clear();
 	    		LastName.clear();
-	    		Password1.clear();	
+	    		Password1.clear();
+	    		Password2.clear();
+	    		
 	    		
 	    		Alert alert = new Alert(AlertType.CONFIRMATION);
 	            alert.initOwner(dialogStage);
@@ -232,7 +235,6 @@ public class LoginPaneController {
 			loginObj = (JSONObject) new JSONParser().parse(returnValue);
 			
 			MainApp.CurrentUser.setUserID(Integer.parseInt((String) loginObj.get("userID"))) ;
-			//MainViewController.setUser(MainApp.CurrentUser.getUserID());
 			System.out.println(Integer.toString(MainApp.CurrentUser.getUserID()));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
@@ -241,6 +243,7 @@ public class LoginPaneController {
         
         if (MainApp.CurrentUser.getUserID() > 0)
         {
+        	
         	return true;
         }
         else
