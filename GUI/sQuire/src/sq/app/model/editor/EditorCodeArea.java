@@ -306,7 +306,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	public void UnlockParagraph(int paragraphNumber){
 		lineDictionary.unLockLine(paragraphNumber);
-		doHighlight();
+	//	doHighlight();
 	}
 	public void SetLockedParagraphs(List<Integer> lockedPs){
 		if(!lockedPs.equals(lineDictionary.getLockedIDs()))
@@ -318,7 +318,7 @@ public class EditorCodeArea extends CodeArea{
 			for (int i : lockedPs){
 				lineDictionary.lockLinebyID(i);
 			}
-    		//this.doHighlight();
+    		this.doHighlight();
 		}
 	}
 	 
