@@ -1,6 +1,7 @@
 package sq.app.view;
 
 
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,7 +136,9 @@ public class LoginPaneController {
 	    		Email.clear();
 	    		FirstName.clear();
 	    		LastName.clear();
-	    		Password1.clear();	
+	    		Password1.clear();
+	    		Password2.clear();
+	    		
 	    		
 	    		Alert alert = new Alert(AlertType.CONFIRMATION);
 	            alert.initOwner(dialogStage);
@@ -245,6 +248,7 @@ public class LoginPaneController {
         
         if (MainApp.getCurrentUser().getUserID() > 0)
         {
+        	
         	return true;
         }
         else

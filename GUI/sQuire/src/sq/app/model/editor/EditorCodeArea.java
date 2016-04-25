@@ -78,6 +78,11 @@ public class EditorCodeArea extends CodeArea{
 
     	this.caretPositionProperty().addListener(event->{
         	updateMyLockedLine();
+    		int currentLineNum = this.getCurrentParagraph();
+        	if (currentLineNum != this.previousLineNumber){
+        		this.previousLineNumber = currentLineNum;
+        		this.previousLineText = this.getText(this.previousLineNumber);
+    		}
     	});
     	
 //    	this.currentParagraphProperty().addListener(event->{
@@ -88,11 +93,6 @@ public class EditorCodeArea extends CodeArea{
     		this.doHighlight();    		
         	updateMyLockedLine();
         	sendChangesToServer();
-    		int currentLineNum = this.getCurrentParagraph();
-        	if (currentLineNum != this.previousLineNumber){
-        		this.previousLineNumber = currentLineNum;
-        		this.previousLineText = this.getText(this.previousLineNumber);
-    		}
     	});
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
