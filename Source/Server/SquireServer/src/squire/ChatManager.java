@@ -262,7 +262,7 @@ public class ChatManager {
 						+ "`Messages`.`channelID` = `Subscriptions`.`channelID` AND "
 						+ "`Channels`.`channelID` = `Subscriptions`.`channelID` AND "
 						+ "`Users`.`userID` = `Messages`.`fromID` AND "
-						+ "`Messages`.`timeSent` > `Subscriptions`.`joinTime` AND "
+						+ "`Messages`.`timeSent` >= `Subscriptions`.`joinTime` AND "
 						+ "`Subscriptions`.`userID` = ? AND "		// userID
 						+ "`Messages`.`MID` > ? "				// timestamp of last message received
 					+ "order by " 
