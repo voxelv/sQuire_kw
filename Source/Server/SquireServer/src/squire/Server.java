@@ -150,7 +150,7 @@ public class Server{
         
         public String runAction(String category, String action, JSONObject params) throws SQLException
         {
-//        	System.out.println("Cat: " + category + "; action: "+action + ";Params: "+params);
+        	System.out.println("Cat: " + category + "; action: "+action + ";Params: "+params);
         	String output = null;
         	
         	/************************** CHAT FUNCTIONS **************************/
