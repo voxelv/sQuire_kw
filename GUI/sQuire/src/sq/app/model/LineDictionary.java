@@ -21,7 +21,11 @@ public class LineDictionary {
 			this.removeID(value.getID());
 		}
 		
-	//	lockIt(value);
+
+		if (value.getLocked())
+		{
+			lockIt(value);
+		}
 		idMap.put(value.getID(), value);
 		lineList.add(value.getLineNumber(), value);
     }
@@ -141,6 +145,7 @@ public class LineDictionary {
 		lineList.clear();
 		idMap.clear();
 		lockedLines.clear();
+		lockedIDs.clear();
 	}
 	
 	private void lockIt(Line l){

@@ -84,14 +84,13 @@ public class EditorCodeArea extends CodeArea{
     		}
     	});
     	
-//    	this.currentParagraphProperty().addListener(event->{
-//    		this.doHighlight();    		
-//    	});
+    	this.currentParagraphProperty().addListener(event->{
+        	sendChangesToServer();
+    	});
     	
     	this.plainTextChanges().subscribe(change->{
     		this.doHighlight();    		
         	updateMyLockedLine();
-        	sendChangesToServer();
     	});
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
@@ -306,7 +305,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	public void UnlockParagraph(int paragraphNumber){
 		lineDictionary.unLockLine(paragraphNumber);
-		doHighlight();
+	//	doHighlight();
 	}
 	public void SetLockedParagraphs(List<Integer> lockedPs){
 		if(!lockedPs.equals(lineDictionary.getLockedIDs()))
@@ -318,7 +317,7 @@ public class EditorCodeArea extends CodeArea{
 			for (int i : lockedPs){
 				lineDictionary.lockLinebyID(i);
 			}
-    		//this.doHighlight();
+    		this.doHighlight();
 		}
 	}
 	 
