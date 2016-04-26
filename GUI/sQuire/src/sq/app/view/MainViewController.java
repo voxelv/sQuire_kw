@@ -36,7 +36,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import jdk.nashorn.internal.parser.JSONParser;
 import sq.app.MainApp;
 import sq.app.model.Compiler;
 import sq.app.model.Line;

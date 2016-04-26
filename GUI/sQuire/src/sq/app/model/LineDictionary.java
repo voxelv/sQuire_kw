@@ -21,7 +21,7 @@ public class LineDictionary {
 			this.removeID(value.getID());
 		}
 		
-		lockIt(value);
+	//	lockIt(value);
 		idMap.put(value.getID(), value);
 		lineList.add(value.getLineNumber(), value);
     }

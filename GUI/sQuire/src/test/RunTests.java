@@ -21,5 +21,17 @@ public class RunTests {
     for (Failure failure : result.getFailures()) {
       System.out.println(failure.toString());
     }
+    
+    result = JUnitCore.runClasses(MainAppTest.class);
+    for (Failure failure : result.getFailures()) {
+      System.out.println(failure.toString());
+    }
+    
+    result = JUnitCore.runClasses(UserTest.class);
+    for (Failure failure : result.getFailures()) {
+      System.out.println(failure.toString());
+    }
+    
+    
   }
 } 
