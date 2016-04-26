@@ -21,7 +21,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import javafx.scene.input.KeyCode;
-import jdk.nashorn.internal.parser.JSONParser;
 import sq.app.model.Line;
 import sq.app.model.LineDictionary;
 import sq.app.model.ServerConnection;

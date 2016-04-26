@@ -21,6 +21,7 @@ public class LineDictionary {
 			this.removeID(value.getID());
 		}
 		
+
 		if (value.getLocked())
 		{
 			lockIt(value);

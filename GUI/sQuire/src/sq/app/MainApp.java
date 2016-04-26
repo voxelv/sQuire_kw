@@ -27,13 +27,16 @@ import sq.app.view.MainViewController;
 public class MainApp extends Application {
 
 	private Stage primaryStage;
-	private BorderPane rootLayout;
+	private Stage chatStage;
 	
-	public static Connection conn = null;
-	public static ServerConnection server;
-	private static User currentUser = null;
+	private Stage loginStage;
+	public BorderPane rootLayout;
+	
+	private static Connection conn = null;
+	private static ServerConnection server;
+	public static User currentUser = null;
 	public static ChatManager chatManager = null;
-	private static MainViewController mainController = null;
+	public static MainViewController mainController = null;
 	
 	
 	public MainApp(){
@@ -120,15 +123,15 @@ public class MainApp extends Application {
 	        loader2.setLocation(MainApp.class.getResource("view/ChatPane.fxml"));
 	        AnchorPane page = (AnchorPane) loader2.load();
 	        
-	        Stage dialogStage = new Stage();
-	        dialogStage.initOwner(primaryStage);
-	        dialogStage.setTitle("Chat");
-	        dialogStage.setAlwaysOnTop(true);
-	        dialogStage.initModality(Modality.NONE);
+	        chatStage = new Stage();
+	        chatStage.initOwner(primaryStage);
+	        chatStage.setTitle("Chat");
+	        chatStage.setAlwaysOnTop(true);
+	        chatStage.initModality(Modality.NONE);
 	        Scene scene = new Scene(page);
-	        dialogStage.setScene(scene);
+	        chatStage.setScene(scene);
 
-	        dialogStage.show();
+	        chatStage.show();
 
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -144,19 +147,19 @@ public class MainApp extends Application {
 	        AnchorPane page = (AnchorPane) loader.load();
 
 	        // Create the dialog Stage.
-	        Stage dialogStage = new Stage();
-	        dialogStage.setTitle("Login");
-	        dialogStage.initModality(Modality.WINDOW_MODAL);
-	        dialogStage.initOwner(primaryStage);
+	        loginStage = new Stage();
+	        loginStage.setTitle("Login");
+	        loginStage.initModality(Modality.WINDOW_MODAL);
+	        loginStage.initOwner(primaryStage);
 	        Scene scene = new Scene(page);
-	        dialogStage.setScene(scene);
+	        loginStage.setScene(scene);
 
 	        LoginPaneController controller = loader.getController();
-	        controller.setDialogStage(dialogStage);
+	        controller.setDialogStage(loginStage);
 
 
 	        // Show the dialog and wait until the user closes it
-	        dialogStage.showAndWait();
+	        loginStage.showAndWait();
 
 	        return controller.isOkClicked();
 	    } catch (IOException e) {
@@ -169,6 +172,13 @@ public class MainApp extends Application {
 		return primaryStage;
 	}
 	
+	public Stage getChatStage() {
+		return chatStage;
+	}
+	
+	public Stage getLoginStage() {
+		return loginStage;
+	}
 	public static Connection GetConnection(){
     	return conn;
     }
