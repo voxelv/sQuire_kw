@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -262,15 +263,25 @@ public class ProjectManagerTest {
 		System.out.println(lineList);
 		boolean inList = false;
 		int lineListSize = lineList.size();
+		Timestamp mostRecent = Timestamp.valueOf((String)((JSONObject)lineList.get(0)).get("requestTime"));
 		for(int i = 0; i < lineList.size(); i++){
 			JSONObject jobj = (JSONObject) lineList.get(i);
-			String listText = (String) jobj.get("text");
-			if (lineText.equals(listText))
-				inList = true;
+			Timestamp temp = Timestamp.valueOf((String) jobj.get("requestTime"));
+			if (temp.after(mostRecent))
+				mostRecent = temp;
 		}
-		assertNotNull("CreateLine returned null", returnValue);
-		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
-		assertTrue("Created line not found", inList);
+		
+		JSONArray lineChangeList = new JSONArray();
+		JSONArray lineCreateReturn = new JSONArray();
+		try {
+			lineCreateReturn = testManager.createLineAtEnd("New line at end", pfid);
+			lineChangeList = testManager.getLineChanges(pfid, String.valueOf(mostRecent.getTime()/1000));
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Line change list");
+		System.out.println(String.valueOf(lineChangeList));
 		
 		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		testManager.removeLine(pflid);
@@ -292,7 +303,7 @@ public class ProjectManagerTest {
 				inList = true;
 		}
 		assertFalse("Created line not deleted",inList);
-		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize);
 	}
 	
 	
