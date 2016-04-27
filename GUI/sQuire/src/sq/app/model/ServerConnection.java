@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.locks.Lock;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -81,7 +82,9 @@ public class ServerConnection {
                   System.out.println("No Response from server, but I'm still running");
               }else{
                   output = JSONValue.parse(response);
-            	  if (!(response.contains("Chat") || new String(response).equals("[]"))){
+            	  if (!(response.contains("Chat") || 
+            			  new String(response).equals("[]")) || 
+            			  new String(response).equals("getLineLocks")){
             		  System.out.println("Response from Server: " + response.toString());
             	  }
               }
@@ -95,17 +98,19 @@ public class ServerConnection {
 	public Object sendSingleRequest(String category, String action, JSONObject parameters)
 	{
 		// If the connection is busy, sleep 1ms at a time until it isn't
-		while (busy)
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		busy = true;
+		synchronized (this) {
+			
+//		}(busy)
+//			try {
+//				Thread.sleep(1);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		
+//		busy = true;
 		this.addRequest(category, action, parameters);
-		if (!(new String(category).equals("Chat") || new String(action).equals("getLineChanges"))){
+		if (!(new String(category).equals("Chat") || new String(action).equals("getLineChanges") || new String(action).equals("getLineLocks"))){
 			System.out.println(category.toString() + action.toString() + parameters.toString());
 		}
 		
@@ -115,9 +120,9 @@ public class ServerConnection {
 		Object out = null;
 		if (fullResponse!=null && fullResponse.size()>0){
 			JSONObject singleResponse = (JSONObject) fullResponse.get(0);
-			out = (Object) singleResponse.get("result");
+			return (Object) singleResponse.get("result");
 		}
-		
-		return out;
+		}
+		return null;
 	}
 }

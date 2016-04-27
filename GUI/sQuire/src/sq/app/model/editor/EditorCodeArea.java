@@ -63,7 +63,7 @@ public class EditorCodeArea extends CodeArea{
 	ServerConnection server = sq.app.MainApp.GetServer();
     //ArrayList<Line> listOfLineObjects = new ArrayList<Line>();
     private int currentFileID = -1;
-	private LineDictionary lineDictionary = new LineDictionary();
+	public LineDictionary lineDictionary = new LineDictionary();
 	private int currentUserID = -1;
 	
 	public void setUserID(int userID){
@@ -76,20 +76,20 @@ public class EditorCodeArea extends CodeArea{
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
     	this.caretPositionProperty().addListener(event->{
+    	});
+    	
+    	this.currentParagraphProperty().addListener(event->{
     		int currentLineNum = this.getCurrentParagraph();
+        	sendChangesToServer();
+        	updateMyLockedLine();
         	if (currentLineNum != this.previousLineNumber){
         		this.previousLineNumber = currentLineNum;
         		this.previousLineText = this.getText(this.previousLineNumber);
     		}
     	});
     	
-    	this.currentParagraphProperty().addListener(event->{
-        	sendChangesToServer();
-    	});
-    	
     	this.plainTextChanges().subscribe(change->{
     		this.doHighlight();    		
-        	updateMyLockedLine();
     	});
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
@@ -117,8 +117,8 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void sendChangesToServer(){
-    	if (this.getCurrentParagraph() != this.previousLineNumber){
-    		int currentLineNum = this.getCurrentParagraph();
+		int currentLineNum = this.getCurrentParagraph();
+    	if (currentLineNum != this.previousLineNumber){
 			String currentLine = "";
 			if (this.previousLineNumber != -1){
 				currentLine = this.getText(this.previousLineNumber); 
@@ -127,39 +127,47 @@ public class EditorCodeArea extends CodeArea{
             	if (this.previousLineNumber  == lineDictionary.getSize()){
             		createNewLine();
             	}
-    			try{
-        			JSONObject jo = new JSONObject();
-            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(this.previousLineNumber)));
-            		jo.put("text", this.getText(this.previousLineNumber));
-                	server.sendSingleRequest("project", "changeLine", jo);
-                	this.lineDictionary.updateText(this.previousLineNumber,(this.getText(this.previousLineNumber)));
-            	} 
-            	catch (Exception e){
-            		System.out.println("an exception happened while trying to send line change data");
-            	}
+        		new Thread(new Runnable() {
+        		    @Override
+        		    public void run(){
+		    			try{
+		        			JSONObject jo = new JSONObject();
+		            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(previousLineNumber)));
+		            		jo.put("text", getText(previousLineNumber));
+		                	server.sendSingleRequest("project", "changeLine", jo);
+		                	lineDictionary.updateText(previousLineNumber,(getText(previousLineNumber)));
+		            	} 
+		            	catch (Exception e){
+		            		System.out.println("an exception happened while trying to send line change data");
+		            	}
+        		    }
+    		    }).start();
     		}
     	}
 	}
 	
 	private void updateMyLockedLine(){
-    //	if (this.getCurrentParagraph() != this.previousLineNumber){
-    		int currentLineNum = this.getCurrentParagraph();
-        	try{
-        		if (this.getCurrentParagraph() < lineDictionary.getSize()){
-                	JSONObject jo = new JSONObject();
-            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(currentLineNum)));
-                	server.sendSingleRequest("project", "lockline", jo);
-        		}
-        		if (this.previousLineNumber > -1 && this.previousLineNumber < lineDictionary.getSize()){
-            		JSONObject jo = new JSONObject();
-                	jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(this.previousLineNumber)));
-                	server.sendSingleRequest("project", "unlockline", jo);
-            	}
-        	} 
-        	catch (Exception e){
-        		System.out.println("an exception happened trying to send line lock/unclock data");
-        	}
-    	//}
+		int currentLineNum = this.getCurrentParagraph();
+		new Thread(new Runnable() {
+		    @Override
+		    public void run(){
+	        	try{
+	        		if (currentLineNum < lineDictionary.getSize()){
+	                	JSONObject jo = new JSONObject();
+	            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(currentLineNum)));
+	                	server.sendSingleRequest("project", "lockline", jo);
+	        		}
+	        		if (previousLineNumber > -1 && previousLineNumber < lineDictionary.getSize()){
+	            		JSONObject jo = new JSONObject();
+	                	jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(previousLineNumber)));
+	                	server.sendSingleRequest("project", "unlockline", jo);
+	            	}
+	        	} 
+	        	catch (Exception e){
+	        		System.out.println("an exception happened trying to send line lock/unclock data");
+	        	}
+		    }
+		}).start();		 
 	}
 	
 	private void revertCurrentLine(){

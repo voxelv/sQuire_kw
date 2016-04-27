@@ -1,5 +1,6 @@
 package sq.app.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -61,13 +62,26 @@ public class BackgroundWorker extends Thread{
             		if (data != null){
             			try{
 	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-	            			JSONObject singleResponse = (JSONObject) ja.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
+	            			if (ja != null && ja.size()>0)
+	            			{
+	            				for (Object o : ja.toArray())
+	            				{
+	            					jo = (JSONObject)o;
+	            					String newText = (String)jo.get("text");
+	            					int lineID = Integer.parseInt((String)jo.get("pflid"));
+	            					int lastEditor = Integer.parseInt((String)jo.get("lastEditor"));
+	            					int lineNumber = editor.GetLineIndexFromID(lineID);
+	            					
+	            					editor.lineDictionary.updateTextbyID(lineID, newText, Timestamp.valueOf((String)jo.get("timeEdited")), lastEditor);
+	            					editor.getParagraph(lineNumber).delete(0, editor.getParagraph(lineNumber).length()).append(newText); 
+		            				editor.layout();
+	            				}
+            				}
             			}
             			catch(Exception e){
+            				// this seems to happen because it was empty
                     		e.printStackTrace(System.out);
-                    		System.out.println("Exception: " + e.getMessage());
+                    		//System.out.println("Exception: " + e.getMessage());
             			}
             		}
             		java.lang.Thread.sleep(1000);
