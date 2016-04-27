@@ -37,6 +37,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import sq.app.MainApp;
+import sq.app.model.BackgroundWorker;
 import sq.app.model.Compiler;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
@@ -98,8 +99,11 @@ public class MainViewController implements Initializable{
         
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
-        new ClientPollingThread(this.editorCodeArea).start();
-    }
+        //new ClientPollingThread(this.editorCodeArea).start();
+        BackgroundWorker clientPolling = new BackgroundWorker(editor, sq.app.MainApp.GetServer());
+        clientPolling.setDaemon(true);
+        clientPolling.start();
+	}
     
 
     
@@ -1097,62 +1101,17 @@ public class MainViewController implements Initializable{
 ///////////////////////////////////////////////////////////////////////////////////
 ////////////////// Client Polling ////////////////////////////////////////////
     
-	private static class ClientPollingThread extends Thread {
-        private ServerConnection Server = null;
-        private EditorCodeArea Editor = null;
-
-        public ClientPollingThread(EditorCodeArea editor){
-        	this.Editor = editor;
-        	this.Server = sq.app.MainApp.GetServer();
-        }
-        public void run() {
-        	while(sq.app.MainApp.GetServer().getStatus()){
-                try {
-            		if (Editor.GetFileID() >= 0){
-	            		JSONObject jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	Object data = null;
-	                	try{
-	                		// this appears to kill my connection?
-	                		data = Server.sendSingleRequest("project", "getLineLocks", jo);
-                		}
-	                	catch(Exception e){
-	                		//do nothing
-	                	}
-	            		Object out = null;
-	            		if (data != null){
-	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-	            			ArrayList<Integer> locked = new ArrayList<Integer>();
-	            			for(Object o : ja.toArray()){
-	            				JSONObject joo = (JSONObject)o;
-	            				locked.add(Integer.parseInt((String)joo.get("pflid")));
-	            			}
-	            			Editor.SetLockedParagraphs(locked);
-	            		}
-	                	
-	            		jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
-	                	try{
-	                		data = Server.sendSingleRequest("project", "getLineChanges", jo);
-	                	}
-	                	catch(Exception e){
-	                		System.out.println("Exception");
-	                		//do nothing
-	                	}
-	            		out = null;
-	            		if (data != null){
-//	            			JSONObject singleResponse = (JSONObject) data.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
-	            		}
-	            		java.lang.Thread.sleep(1000);
-            		}
-                } 
-                catch (Exception e){
-                	System.out.println("Client Polling error: " + e.getMessage());
-                }
-        	}
-        }
-	}
+//	private static class ClientPollingThread extends Thread {
+//        private ServerConnection Server = null;
+//        private EditorCodeArea Editor = null;
+//
+//        public ClientPollingThread(EditorCodeArea editor){
+//        	this.Editor = editor;
+//        	this.Server = sq.app.MainApp.GetServer();
+//        }
+//        public void run() {
+//        	while(sq.app.MainApp.GetServer().getStatus()){
+//        	}
+//        }
+//	}
 }
