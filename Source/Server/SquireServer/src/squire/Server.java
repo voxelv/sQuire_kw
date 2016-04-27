@@ -423,7 +423,7 @@ public class Server{
 					String lineID = String.valueOf(params.get("lineID"));
 					String text = (String) params.get("text");
 					if(lineID != null && lineID != ""){
-						this.projectManager.changeLine(lineID, text);	
+						output = this.projectManager.changeLine(lineID, text).toJSONString();	
 					}
         			
         		}

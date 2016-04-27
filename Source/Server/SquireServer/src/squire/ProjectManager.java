@@ -564,7 +564,7 @@ public class ProjectManager {
 		}
 	}
 	
-	public void changeLine (String lineID, String text){
+	public JSONArray changeLine (String lineID, String text){
 		String query = "Update PFLines " +
 						"set text = ?, " +
 						"lastEditor = ?, " + 
@@ -573,17 +573,25 @@ public class ProjectManager {
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
-		//values[2] = "NULL";
-		values[3] = lineID;
-		
 		Timestamp stamp = new Timestamp(System.currentTimeMillis());
 		values[2] = stamp.toString();
+		values[3] = lineID;
+		
+		String newquery = "Select * from PFLines "
+				+ "where pflid = SELECT_LAST_INSERT_ID";
+		String[] newvalues = new String[0];
+		
+		
+		
+		JSONArray ret = new JSONArray();
 		try {
 			this.dbc.query(query, values);
+			ret = this.dbc.query(newquery, newvalues);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return ret;
 	}
 	
 	public void lockLine (String lineID){
