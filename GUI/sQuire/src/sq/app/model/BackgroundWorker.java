@@ -11,7 +11,6 @@ import sq.app.model.editor.EditorCodeArea;
 
 public class BackgroundWorker extends Thread{
 	private EditorCodeArea editor;
-	private LineDictionary dictionary;
 	private ServerConnection server;
 	
 	public BackgroundWorker(EditorCodeArea editor, ServerConnection server)
@@ -55,15 +54,21 @@ public class BackgroundWorker extends Thread{
                 		data = server.sendSingleRequest("project", "getLineChanges", jo);
                 	}
                 	catch(Exception e){
-                		System.out.println("Exception");
-                		//do nothing
+                		e.printStackTrace(System.out);
+                		System.out.println("Exception: " + e.getMessage());
                 	}
             		out = null;
             		if (data != null){
-            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-            			JSONObject singleResponse = (JSONObject) ja.get(0);
+            			try{
+	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
+	            			JSONObject singleResponse = (JSONObject) ja.get(0);
 //	            			out = (Object) singleResponse.get("result");
 //	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
+            			}
+            			catch(Exception e){
+                    		e.printStackTrace(System.out);
+                    		System.out.println("Exception: " + e.getMessage());
+            			}
             		}
             		java.lang.Thread.sleep(1000);
         		}
