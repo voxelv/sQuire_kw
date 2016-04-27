@@ -343,18 +343,25 @@ public class ProjectManagerTest {
 		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		String changeReturn = String.valueOf(testManager.changeLine(pflid, newlineText));
 		System.out.println(changeReturn);
+		JSONArray newLineList = new JSONArray();
+		try {
+			newLineList = testManager.getLines(pfid);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		boolean newInList = false;
-		lineListSize = lineList.size();
-		for(int i = 0; i < lineList.size(); i++){
-			JSONObject jobj = (JSONObject) lineList.get(i);
+		int newLineListSize = newLineList.size();
+		for(int i = 0; i < newLineList.size(); i++){
+			JSONObject jobj = (JSONObject) newLineList.get(i);
 			String listText = (String) jobj.get("text");
 			if (newlineText.equals(listText))
 				newInList = true;
 		}
 		assertNotNull("CreateLine returned null", returnValue);
 		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
-		assertTrue("Created line not found", inList);
+		assertTrue("Created line not found", newInList);
 		
 		
 		testManager.removeLine(pflid);
