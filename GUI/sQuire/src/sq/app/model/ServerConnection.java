@@ -82,11 +82,12 @@ public class ServerConnection {
                   System.out.println("No Response from server, but I'm still running");
               }else{
                   output = JSONValue.parse(response);
-            	  if (!(response.contains("Chat") || 
-            			  new String(response).equals("[]")) || 
-            			  new String(response).equals("getLineLocks")){
-            		  System.out.println("Response from Server: " + response.toString());
-            	  }
+//            	  if (!(response.contains("Chat") || 
+//            			  new String(response).equals("[]")) || 
+//            			  new String(response).equals("getLineLocks") ||
+//            			  response.contains("getLineChanges")){
+//            		  System.out.println("Response from Server: " + response.toString());
+//            	  }
               }
         } catch (IOException ex) {
                response = "Error: " + ex;
@@ -110,9 +111,11 @@ public class ServerConnection {
 //		
 //		busy = true;
 		this.addRequest(category, action, parameters);
-		if (!(new String(category).equals("Chat") || new String(action).equals("getLineChanges") || new String(action).equals("getLineLocks"))){
-			System.out.println(category.toString() + action.toString() + parameters.toString());
-		}
+//		if (!(new String(category).equals("Chat") || 
+//				new String(action).equals("getLineChanges") || 
+//				new String(action).equals("getLineLocks"))){
+//			System.out.println(category.toString() + action.toString() + parameters.toString());
+//		}
 		
 		JSONArray fullResponse = (JSONArray) this.sendRequestBuffer();
 		busy = false;

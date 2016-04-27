@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.Task;
 import javafx.scene.input.KeyCode;
 import sq.app.model.Line;
 import sq.app.model.LineDictionary;
@@ -65,6 +70,7 @@ public class EditorCodeArea extends CodeArea{
     private int currentFileID = -1;
 	public LineDictionary lineDictionary = new LineDictionary();
 	private int currentUserID = -1;
+	public BooleanProperty checkIt = new SimpleBooleanProperty();
 	
 	public void setUserID(int userID){
 		currentUserID = userID;
@@ -75,14 +81,36 @@ public class EditorCodeArea extends CodeArea{
 		super();
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
-    	this.caretPositionProperty().addListener(event->{
-    	});
+       	checkIt.addListener(change->{
+    		Platform.runLater(new Runnable(){
+    			@Override public void run() {
+    				if (lineDictionary.HasChanges()){
+		    			for(Line l : lineDictionary.GetChangeList()){
+		    				
+		    				int c = getCaretPosition();
+							String oldText = getText(l.getLineNumber());
+							int start = getText().indexOf(oldText);
+							int end = start + oldText.length();
+							replaceText(start, end, l.getText());
+							positionCaret(c);
+							doHighlight();
+							System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());
+		    			}
+		    		}
+		    	}
+    		});
+		});
+    	
+//    	this.caretPositionProperty().addListener(event->{
+//    	});
+    	
     	
     	this.currentParagraphProperty().addListener(event->{
-    		int currentLineNum = this.getCurrentParagraph();
-        	sendChangesToServer();
-        	updateMyLockedLine();
+    		System.out.println("cur par: " + String.valueOf(this.getCurrentParagraph()));
+    		int currentLineNum = getCurrentParagraph();
         	if (currentLineNum != this.previousLineNumber){
+            	sendChangesToServer();
+            	updateMyLockedLine();
         		this.previousLineNumber = currentLineNum;
         		this.previousLineText = this.getText(this.previousLineNumber);
     		}
@@ -117,14 +145,16 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void sendChangesToServer(){
-		int currentLineNum = this.getCurrentParagraph();
-    	if (currentLineNum != this.previousLineNumber){
-			String currentLine = "";
-			if (this.previousLineNumber != -1){
-				currentLine = this.getText(this.previousLineNumber); 
+		int curLineNum = this.getCurrentParagraph();
+		int prevLineNum = this.previousLineNumber;
+    	if (curLineNum != prevLineNum){
+			String curLineText = "";
+			String prevLineText = this.previousLineText;
+			if (prevLineNum != -1){
+				curLineText = this.getText(prevLineNum); 
 			}
-    		if (!new String(currentLine ).equals(this.previousLineText) && this.previousLineNumber != -1){
-            	if (this.previousLineNumber  == lineDictionary.getSize()){
+    		if (!new String(curLineText).equals(prevLineText) && prevLineNum != -1){
+            	if (prevLineNum == lineDictionary.getSize()){
             		createNewLine();
             	}
         		new Thread(new Runnable() {
@@ -132,10 +162,11 @@ public class EditorCodeArea extends CodeArea{
         		    public void run(){
 		    			try{
 		        			JSONObject jo = new JSONObject();
-		            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(previousLineNumber)));
-		            		jo.put("text", getText(previousLineNumber));
+		            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(prevLineNum)));
+		            		jo.put("text", getText(prevLineNum));
 		                	server.sendSingleRequest("project", "changeLine", jo);
-		                	lineDictionary.updateText(previousLineNumber,(getText(previousLineNumber)));
+		                	lineDictionary.updateText(prevLineNum,(getText(prevLineNum)));
+							System.out.println("snd chg: " + String.valueOf(prevLineNum) +", "+ getText(prevLineNum));
 		            	} 
 		            	catch (Exception e){
 		            		System.out.println("an exception happened while trying to send line change data");
@@ -147,20 +178,23 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void updateMyLockedLine(){
-		int currentLineNum = this.getCurrentParagraph();
+		int curLineNum = this.getCurrentParagraph();
+		int prevLineNum = this.previousLineNumber;
 		new Thread(new Runnable() {
 		    @Override
 		    public void run(){
 	        	try{
-	        		if (currentLineNum < lineDictionary.getSize()){
+	        		if (curLineNum < lineDictionary.getSize()){
 	                	JSONObject jo = new JSONObject();
-	            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(currentLineNum)));
+	            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(curLineNum)));
 	                	server.sendSingleRequest("project", "lockline", jo);
+	                	System.out.println("    lck " + String.valueOf(curLineNum));
 	        		}
-	        		if (previousLineNumber > -1 && previousLineNumber < lineDictionary.getSize()){
+	        		if (prevLineNum > -1 && prevLineNum < lineDictionary.getSize()){
 	            		JSONObject jo = new JSONObject();
-	                	jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(previousLineNumber)));
+	                	jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(prevLineNum)));
 	                	server.sendSingleRequest("project", "unlockline", jo);
+	                	System.out.println("unn lck " + String.valueOf(prevLineNum));
 	            	}
 	        	} 
 	        	catch (Exception e){

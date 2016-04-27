@@ -14,6 +14,7 @@ public class LineDictionary {
 	private ArrayList<Line> lineList = new ArrayList<Line>();
 	private HashMap<Integer,Line> idMap = new HashMap<Integer,Line>();
 	private int currentUserID = -1;
+	private ArrayList<Line> changeList = new ArrayList<Line>();
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -46,12 +47,12 @@ public class LineDictionary {
 		this.addAll(lines);
 	}
 	
-	public Line getLine(Integer key){
-		return lineList.get(key);
+	public Line getLine(Integer line){
+		return lineList.get(line);
 	}
 	
-	public Line getID(Integer key){
-		return idMap.get(key);
+	public Line getID(Integer id){
+		return idMap.get(id);
 	}
 	
 	public int getIDfromLine(Integer line){
@@ -211,6 +212,26 @@ public class LineDictionary {
 		}
 		catch(Exception e){
 			e = e;
+		}
+	}
+	
+	public void MarkChanged(int lineNumber){
+		synchronized (changeList) {
+			changeList.add(getLine(lineNumber));
+		}
+	}
+	
+	public ArrayList<Line> GetChangeList(){
+		synchronized (changeList) {
+			ArrayList<Line> copy = (ArrayList<Line>)changeList.clone();
+			changeList.clear();
+			return copy;
+		}
+	}
+	
+	public Boolean HasChanges(){
+		synchronized (changeList) {
+			return !changeList.isEmpty();
 		}
 	}
 	

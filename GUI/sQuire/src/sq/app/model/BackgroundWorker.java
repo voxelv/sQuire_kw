@@ -50,7 +50,7 @@ public class BackgroundWorker extends Thread{
                 	
             		jo = new JSONObject();
                 	jo.put("fileID", String.valueOf(editor.GetFileID()));
-                	jo.put("time", String.valueOf(editor.GetLatestEditTime().getTime()/1000));
+                	jo.put("time", String.valueOf(editor.GetLatestEditTime().getTime()/1000+1));
                 	try{
                 		data = server.sendSingleRequest("project", "getLineChanges", jo);
                 	}
@@ -73,8 +73,8 @@ public class BackgroundWorker extends Thread{
 	            					int lineNumber = editor.GetLineIndexFromID(lineID);
 	            					
 	            					editor.lineDictionary.updateTextbyID(lineID, newText, Timestamp.valueOf((String)jo.get("timeEdited")), lastEditor);
-	            					editor.getParagraph(lineNumber).delete(0, editor.getParagraph(lineNumber).length()).append(newText); 
-		            				editor.layout();
+	            					editor.lineDictionary.MarkChanged(lineNumber);
+	            					editor.checkIt.set(!editor.checkIt.get());
 	            				}
             				}
             			}
