@@ -153,6 +153,8 @@ public class Server{
         	System.out.println("Cat: " + category + "; action: "+action + ";Params: "+params);
         	String output = null;
         	
+        	this.accountManager.touchCurrentUserAccount();
+        	
         	/************************** CHAT FUNCTIONS **************************/
         	if (category.compareToIgnoreCase("CHAT") == 0 && this.userID > 0)
         	{
