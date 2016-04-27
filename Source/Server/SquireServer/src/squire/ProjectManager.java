@@ -578,8 +578,9 @@ public class ProjectManager {
 		values[3] = lineID;
 		
 		String newquery = "Select * from PFLines "
-				+ "where pflid = SELECT_LAST_INSERT_ID";
-		String[] newvalues = new String[0];
+				+ "where pflid = ?";
+		String[] newvalues = new String[1];
+		newvalues[1] = lineID;
 		
 		
 		
