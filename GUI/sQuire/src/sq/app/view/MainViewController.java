@@ -43,10 +43,10 @@ import sq.app.model.Line;
 import sq.app.model.ServerConnection;
 import sq.app.model.editor.EditorCodeArea;
 
-public class MainViewController implements Initializable{
+public class MainViewController{
 	//FileManagement
 	public static Connection conn = null;
-	public static int userID = 2;
+	public static int userID = 0;
 	public static String userName = "None";
     int currPID = 0;
     int tempFileId = 0;
@@ -80,10 +80,10 @@ public class MainViewController implements Initializable{
     @FXML
     public void init(){
     	System.out.println("test");
-    	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
+    	initialize();// This method is called by the FXMLLoader when initialization is complete
     }
     //Initiialize
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    public void initialize() {
     	conn = MainApp.GetConnection();
     	IniTree();
     	curr_position.setText("sQuire Project");
