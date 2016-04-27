@@ -78,7 +78,7 @@ public class ProjectManager {
 		String query =	"select "
 						+ "`pdid`, "
 						+ "`pdname`, "
-						+ "`parentid`, "
+						+ "`parentid` "
 					+ "from "
 						+ "`PDirs` "
 					+ "where "
@@ -194,9 +194,10 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", stamp.toString());
+			jobj.put("requestTime", String.valueOf(stamp.getTime()/1000));
 			returnList.add(jobj);
 		}
+		
 		
 		return returnList;
 	}
@@ -303,6 +304,28 @@ public class ProjectManager {
 		return dirID;
 	}
 	
+	public JSONArray createFile (String fileName, String projectID){
+		JSONArray returnValue = createLine("//"+fileName);
+		String pflhead = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		String query = "Insert into PFiles(pfname, pid, pflhead) values (?, ?, ?)";
+		String[] values = new String[3];
+		values[0] = fileName;
+		values[1] = projectID;
+		values[2] = pflhead;
+		
+		String query2 = "Select LAST_INSERT_ID();";
+		String[] values2 = new String[0];
+		
+		JSONArray fileID = new JSONArray();
+		try {
+			this.dbc.query(query, values);
+			fileID = this.dbc.query(query2, values2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return fileID;
+	}
+	
 	public JSONArray createFile (String fileName, String projectID, String dirID){
 		JSONArray returnValue = createLine("//"+fileName);
 		String pflhead = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
@@ -328,7 +351,7 @@ public class ProjectManager {
 	
 	public JSONArray createLine (String text){
 		String query = "Insert into PFLines(text, lastEditor, timeEdited) values (?, ?, ?)";
-		String[] values = new String[4];
+		String[] values = new String[3];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
 		Timestamp stamp = new Timestamp(System.currentTimeMillis());
@@ -512,15 +535,15 @@ public class ProjectManager {
 		String[] firstvalues = new String[1];
 		firstvalues[0] = lineID;
 		
-		String upquery = "Update pflid " +
-						 "set nextID = ? " +
-						 "where nextID = ? ";
+		String upquery = "Update PFLines " +
+						 "set nextid = ? " +
+						 "where nextid = ? ";
 		String[] upvalues = new String[2];
 		upvalues[1] = lineID;
 		
 		String query = "Delete from PFLines " + 
 							"where " +
-								"PFLID = ? ";
+								"pflid = ? ";
 		String[] values = new String[1];
 		values[0] = lineID;
 

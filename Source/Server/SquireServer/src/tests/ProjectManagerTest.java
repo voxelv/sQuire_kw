@@ -2,8 +2,9 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Random;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,15 +19,27 @@ public class ProjectManagerTest {
 	int userID = 3;
 	
 	public ProjectManagerTest(){
-		this.dbc.setProperties("mysql", "", "com.mysql.jdbc.Driver", 
-				"squire", "root", "squire!", "localhost", 3306);
+		try {
+			this.dbc = new DBConnector("mysql", "", "com.mysql.jdbc.Driver", 
+					"squire", "remote", "squire!", "SquireRaspServer.ddns.net", 9897);
+			//conn = (Connection) DriverManager.getConnection("jdbc:mysql://SquireRaspServer.ddns.net:9897/squire","remote","squire!");
+			System.out.println("Connected.");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//this.dbc.setProperties("mysql", "", "com.mysql.jdbc.Driver", 
+			//	"squire", "root", "squire!", "localhost", 3306);
 		testManager = new ProjectManager(this.dbc);
 	}
 	
 	
 	@Test
 	public void testCreateRemoveProject() {
-		String projName = "test project";
+		String projName = "test project j";
 		testManager.setUserID(userID);
 		JSONArray projectList = new JSONArray();
 		JSONArray returnValue = null;
@@ -68,16 +81,17 @@ public class ProjectManagerTest {
 	
 	@Test
 	public void testCreateRemoveFile() {
-		String projName = "test project";
-		String fileName = "test file";
+		String projName = "test project j";
+		String fileName = "test file j";
 		String pid = null;
 		testManager.setUserID(userID);
 		JSONArray fileList = new JSONArray();
 		JSONArray returnValue = null;
 		try {
 			returnValue = testManager.createProject(projName);
-			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
-			returnValue = testManager.createFile(fileName, pid, "null");
+			System.out.println("tcrf cp returnvalue"+String.valueOf(returnValue));
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
 			fileList = testManager.getFiles(pid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -94,7 +108,8 @@ public class ProjectManagerTest {
 		assertEquals("Create file returned <> 1 item",returnValue.size(), 1);
 		assertTrue("Created item not in list", inList);
 		
-		String pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
+		String pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		System.out.println("tcrf cf returnvalue"+String.valueOf(returnValue));
 		testManager.removeFile(pfid);
 		try {
 			if(pid != null){
@@ -118,8 +133,8 @@ public class ProjectManagerTest {
 	
 	@Test
 	public void testCreateRemoveDir() {
-		String projName = "test project";
-		String dirName = "test dir";
+		String projName = "test project j";
+		String dirName = "test dir j";
 		String pid = null;
 		testManager.setUserID(userID);
 		JSONArray dirList = new JSONArray();
@@ -127,7 +142,7 @@ public class ProjectManagerTest {
 		try {
 			returnValue = testManager.createProject(projName);
 			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
-			returnValue = testManager.createDirectory(dirName, pid);
+			returnValue = testManager.createDirectory(pid, dirName);
 			dirList = testManager.getDirectories(pid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -178,9 +193,9 @@ public class ProjectManagerTest {
 		JSONArray returnValue = null;
 		try {
 			returnValue = testManager.createProject(projName);
-			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
-			returnValue = testManager.createFile(fileName, pid, "null");
-			pfid = (String)((JSONObject)returnValue.get(0)).get("pfid");
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
+			pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 			returnValue = testManager.createLineAtEnd(lineText, pfid);
 			lineList = testManager.getLines(pfid);
 		} catch (SQLException e) {
@@ -188,6 +203,7 @@ public class ProjectManagerTest {
 			e.printStackTrace();
 		}
 		boolean inList = false;
+		int lineListSize = lineList.size();
 		for(int i = 0; i < lineList.size(); i++){
 			JSONObject jobj = (JSONObject) lineList.get(i);
 			String listText = (String) jobj.get("text");
@@ -198,7 +214,7 @@ public class ProjectManagerTest {
 		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
 		assertTrue("Created line not found", inList);
 		
-		String pflid = (String)((JSONObject)returnValue.get(0)).get("pflid");
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		testManager.removeLine(pflid);
 		try {
 			if(pid != null){
@@ -217,8 +233,8 @@ public class ProjectManagerTest {
 			if (lineText.equals(listText))
 				inList = true;
 		}
-		assertEquals("Lines still exist in list",lineList.size(), 0);
 		assertFalse("Created line not deleted",inList);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
 	}
 	
 	

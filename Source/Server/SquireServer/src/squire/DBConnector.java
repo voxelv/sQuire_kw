@@ -49,6 +49,18 @@ public class DBConnector {
         this.connection = this.getConnection(); 
     }
     
+    /**
+	* Constructs this DBConnector, setting its properties and its Java SQL Connection
+	*/
+    public DBConnector(String d, String j, String dr, String dbn,
+    		String u, String p, String s, int port) throws ClassNotFoundException,
+    		SQLException {
+//        super();
+        this.setProperties(d, j, dr, dbn, u, p, s, port);
+        this.connection = this.getConnection(); 
+        this.setDatabase(dbn);
+    }
+    
 	/**
 	* Creates and returns the Java SQL Connection, after properties have been set.
 	* @return the Java SQL Connection
