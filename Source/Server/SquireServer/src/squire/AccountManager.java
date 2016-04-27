@@ -159,6 +159,23 @@ public class AccountManager {
 		}
 	}
 	
+	public String getOnlineUsers()
+	{
+		String query = "select * from Users where lastOnline >= NOW() - INTERVAL 1 MINUTE;";
+		String[] values = new String[0];
+		
+		JSONArray output = null;
+		try {
+			output = this.dbc.query(query, values);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			output = new JSONArray();
+			e.printStackTrace();
+		}
+		
+		return output.toJSONString();
+	}
+	
 	public int GetUserAccountID()
 	{
 		if (this.loggedInAccount != null)
