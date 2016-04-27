@@ -580,7 +580,7 @@ public class ProjectManager {
 		String newquery = "Select * from PFLines "
 				+ "where pflid = ?";
 		String[] newvalues = new String[1];
-		newvalues[1] = lineID;
+		newvalues[0] = lineID;
 		
 		
 		
