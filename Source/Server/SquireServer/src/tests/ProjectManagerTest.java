@@ -238,6 +238,62 @@ public class ProjectManagerTest {
 		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
 	}
 	
+	@Test
+	public void testGetLineChanges(){
+		String projName = "test project";
+		String fileName = "test file";
+		String lineText = "test line";
+		String pid = null;
+		String pfid = null;
+		testManager.setUserID(userID);
+		JSONArray lineList = new JSONArray();
+		JSONArray returnValue = null;
+		try {
+			returnValue = testManager.createProject(projName);
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
+			pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
+			lineList = testManager.getLines(pfid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(lineList);
+		boolean inList = false;
+		int lineListSize = lineList.size();
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertNotNull("CreateLine returned null", returnValue);
+		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created line not found", inList);
+		
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		testManager.removeLine(pflid);
+		try {
+			if(pid != null){
+				lineList = testManager.getLines(pfid);
+				testManager.removeFile(pfid);
+				testManager.removeProject(pid);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		inList = false;
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertFalse("Created line not deleted",inList);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
+	}
 	
 	
 }
