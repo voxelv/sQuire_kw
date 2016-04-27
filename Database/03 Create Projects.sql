@@ -3,7 +3,7 @@ use squire;
 create table Projects (
 	PID integer unsigned not null primary key auto_increment,
 	pname varchar(30),
-	location varchar(40)
+	passHash char(64)
 );
 
 create table PFLines (
