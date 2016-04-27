@@ -32,6 +32,7 @@ public class AccountManager {
 	com.stormpath.sdk.application.Application app;
 	private UserAccount loggedInAccount;
 	
+	
 	public AccountManager(DBConnector dbc)
 	{
 		this.dbc = dbc;
@@ -41,6 +42,7 @@ public class AccountManager {
 		tenant = null;
 		applications = null;
 		app = null;
+		
 		
 	}
 	
@@ -138,6 +140,23 @@ public class AccountManager {
         }
         
         return output;
+	}
+	
+	public void touchCurrentUserAccount()
+	{
+		if (this.loggedInAccount != null)
+		{
+			String query = "UPDATE Users set lastOnline=NOW() where userID=?";
+			String[] values = new String[1];
+			values[0] = String.valueOf(this.loggedInAccount.localUserID);
+			
+			try {
+				this.dbc.query(query, values);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public int GetUserAccountID()
