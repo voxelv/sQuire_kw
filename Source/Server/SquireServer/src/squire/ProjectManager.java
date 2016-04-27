@@ -227,10 +227,9 @@ public class ProjectManager {
 	
 	
 	public JSONArray createProject (String projectName) throws SQLException{
-		String query = "Insert into Projects(pname, location) values (?, ?);";
-		String[] values = new String[2];
+		String query = "Insert into Projects(pname) values (?);";
+		String[] values = new String[1];
 		values[0] = projectName;
-		values[1] = "";
 		
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = new String[0];
@@ -468,6 +467,9 @@ public class ProjectManager {
 	}
 	
 	public void removeProject (String projectID){
+		String querypa = "Delete from ProjectAccess "
+						+ "where PID = ?";
+		
 		String query = "Delete from Projects " + 
 							"where " +
 								"PID = ? ";
@@ -475,6 +477,7 @@ public class ProjectManager {
 		values[0] = projectID;
 		
 		try {
+			this.dbc.query(querypa, values);
 			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -503,7 +506,7 @@ public class ProjectManager {
 	public void removeDirectory (String dirID){
 		String query = "Delete from PDirs " + 
 							"where " +
-								"PID = ?";
+								"pdid = ?";
 		String[] values = new String[1];
 		values[0] = dirID;
 		
