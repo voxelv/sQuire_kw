@@ -2,9 +2,8 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -262,6 +261,73 @@ public class ProjectManagerTest {
 		System.out.println(lineList);
 		boolean inList = false;
 		int lineListSize = lineList.size();
+		Timestamp mostRecent = Timestamp.valueOf((String)((JSONObject)lineList.get(0)).get("requestTime"));
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			Timestamp temp = Timestamp.valueOf((String) jobj.get("requestTime"));
+			if (temp.after(mostRecent))
+				mostRecent = temp;
+		}
+		
+		JSONArray lineChangeList = new JSONArray();
+		JSONArray lineCreateReturn = new JSONArray();
+		try {
+			lineCreateReturn = testManager.createLineAtEnd("New line at end", pfid);
+			lineChangeList = testManager.getLineChanges(pfid, String.valueOf(mostRecent.getTime()/1000));
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Line change list");
+		System.out.println(String.valueOf(lineChangeList));
+		
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		testManager.removeLine(pflid);
+		try {
+			if(pid != null){
+				lineList = testManager.getLines(pfid);
+				testManager.removeFile(pfid);
+				testManager.removeProject(pid);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		inList = false;
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertFalse("Created line not deleted",inList);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize);
+	}
+	
+	@Test
+	public void testChangeLine() {
+		String projName = "test project";
+		String fileName = "test file";
+		String lineText = "test line";
+		String newlineText = "new test line";
+		String pid = null;
+		String pfid = null;
+		testManager.setUserID(userID);
+		JSONArray lineList = new JSONArray();
+		JSONArray returnValue = null;
+		try {
+			returnValue = testManager.createProject(projName);
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
+			pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
+			lineList = testManager.getLines(pfid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		boolean inList = false;
+		int lineListSize = lineList.size();
 		for(int i = 0; i < lineList.size(); i++){
 			JSONObject jobj = (JSONObject) lineList.get(i);
 			String listText = (String) jobj.get("text");
@@ -273,6 +339,29 @@ public class ProjectManagerTest {
 		assertTrue("Created line not found", inList);
 		
 		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		String changeReturn = String.valueOf(testManager.changeLine(pflid, newlineText));
+		System.out.println(changeReturn);
+		JSONArray newLineList = new JSONArray();
+		try {
+			newLineList = testManager.getLines(pfid);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		boolean newInList = false;
+		int newLineListSize = newLineList.size();
+		for(int i = 0; i < newLineList.size(); i++){
+			JSONObject jobj = (JSONObject) newLineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (newlineText.equals(listText))
+				newInList = true;
+		}
+		assertNotNull("CreateLine returned null", returnValue);
+		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created line not found", newInList);
+		
+		
 		testManager.removeLine(pflid);
 		try {
 			if(pid != null){

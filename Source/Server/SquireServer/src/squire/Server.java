@@ -423,7 +423,7 @@ public class Server{
 					String lineID = String.valueOf(params.get("lineID"));
 					String text = (String) params.get("text");
 					if(lineID != null && lineID != ""){
-						this.projectManager.changeLine(lineID, text);	
+						output = this.projectManager.changeLine(lineID, text).toJSONString();	
 					}
         			
         		}
@@ -453,6 +453,10 @@ public class Server{
         			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
+        		else if(action.compareToIgnoreCase("allUsers") == 0)
+				{
+        			output = this.accountManager.getOnlineUsers();
+				}
         	}
         	
         	/* UNKNOWN/NO CATEGORY */

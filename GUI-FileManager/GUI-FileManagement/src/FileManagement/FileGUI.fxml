@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="674.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FileManagement.FileGUIController">
+   <children>
+      <VBox prefHeight="400.0" prefWidth="674.0">
+         <children>
+            <ToolBar prefHeight="19.0" prefWidth="600.0">
+              <items>
+                  <MenuButton fx:id="create_button" ellipsisString="" mnemonicParsing="false" prefHeight="23.0" prefWidth="70.0" text="Create">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#CreateProject" text="Project" />
+                      <MenuItem mnemonicParsing="false" onAction="#CreateFolder" text="Directory" />
+                        <MenuItem mnemonicParsing="false" onAction="#CreateFile" text="File" />
+                    </items>
+                  </MenuButton>
+                  <Button layoutX="69.0" layoutY="10.0" mnemonicParsing="false" onAction="#HomeButton" prefHeight="23.0" prefWidth="70.0" text="Home" />
+                  <Button layoutX="158.0" layoutY="10.0" mnemonicParsing="false" onAction="#Rename" prefHeight="23.0" prefWidth="70.0" text="Rename" />
+                  <Button mnemonicParsing="false" onAction="#DeleteButton" prefHeight="23.0" prefWidth="70.0" text="Delete" />
+                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#locateFile" prefHeight="23.0" prefWidth="70.0" text="Input" />
+                  <Button layoutX="306.0" layoutY="8.0" mnemonicParsing="false" onAction="#projectAccess" prefHeight="23.0" prefWidth="70.0" text="Access" />
+                  <Button layoutX="380.0" layoutY="8.0" mnemonicParsing="false" onAction="#switchUser" prefHeight="23.0" prefWidth="70.0" text="Switch" />
+                  <Button layoutX="454.0" layoutY="8.0" mnemonicParsing="false" onAction="#showPassword" prefHeight="27.0" prefWidth="81.0" text="ShowPass" />
+              </items>
+            </ToolBar>
+            <ToolBar layoutX="10.0" layoutY="10.0" prefHeight="19.0" prefWidth="600.0">
+               <items>
+                  <Text layoutX="451.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="sQuire" textAlignment="CENTER" wrappingWidth="47.240234375">
+                     <font>
+                        <Font name="Arial" size="14.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="curr_position" prefHeight="23.0" prefWidth="507.0" />
+                  <Pane layoutX="10.0" layoutY="10.0" prefHeight="23.0" prefWidth="18.0" />
+                  <Text fx:id="user" strokeType="OUTSIDE" strokeWidth="0.0" text="asdas" textAlignment="CENTER" wrappingWidth="73.240234375">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Text>
+               </items>
+            </ToolBar>
+            <HBox prefHeight="326.0" prefWidth="674.0">
+               <children>
+                  <TreeView fx:id="structure_tree" onMouseClicked="#file_select" prefHeight="319.0" prefWidth="194.0" />
+                  <TextArea fx:id="fileData" prefHeight="326.0" prefWidth="480.0" />
+               </children>
+            </HBox>
+            <Text fx:id="info" strokeType="OUTSIDE" strokeWidth="0.0" text=" System Info: " wrappingWidth="599.240234375">
+               <font>
+                  <Font size="13.0" />
+               </font></Text>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

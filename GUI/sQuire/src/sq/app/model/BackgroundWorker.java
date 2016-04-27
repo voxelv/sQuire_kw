@@ -1,5 +1,6 @@
 package sq.app.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -11,7 +12,6 @@ import sq.app.model.editor.EditorCodeArea;
 
 public class BackgroundWorker extends Thread{
 	private EditorCodeArea editor;
-	private LineDictionary dictionary;
 	private ServerConnection server;
 	
 	public BackgroundWorker(EditorCodeArea editor, ServerConnection server)
@@ -50,20 +50,39 @@ public class BackgroundWorker extends Thread{
                 	
             		jo = new JSONObject();
                 	jo.put("fileID", String.valueOf(editor.GetFileID()));
-                	jo.put("time", String.valueOf(editor.GetLatestEditTime().getTime()/1000));
+                	jo.put("time", String.valueOf(editor.GetLatestEditTime().getTime()/1000+1));
                 	try{
                 		data = server.sendSingleRequest("project", "getLineChanges", jo);
                 	}
                 	catch(Exception e){
-                		System.out.println("Exception");
-                		//do nothing
+                		e.printStackTrace(System.out);
+                		System.out.println("Exception: " + e.getMessage());
                 	}
             		out = null;
             		if (data != null){
-            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-            			JSONObject singleResponse = (JSONObject) ja.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
+            			try{
+	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
+	            			if (ja != null && ja.size()>0)
+	            			{
+	            				for (Object o : ja.toArray())
+	            				{
+	            					jo = (JSONObject)o;
+	            					String newText = (String)jo.get("text");
+	            					int lineID = Integer.parseInt((String)jo.get("pflid"));
+	            					int lastEditor = Integer.parseInt((String)jo.get("lastEditor"));
+	            					int lineNumber = editor.GetLineIndexFromID(lineID);
+	            					
+	            					editor.lineDictionary.updateTextbyID(lineID, newText, Timestamp.valueOf((String)jo.get("timeEdited")), lastEditor);
+	            					editor.lineDictionary.MarkChanged(lineNumber);
+	            					editor.checkIt.set(!editor.checkIt.get());
+	            				}
+            				}
+            			}
+            			catch(Exception e){
+            				// this seems to happen because it was empty
+                    		e.printStackTrace(System.out);
+                    		//System.out.println("Exception: " + e.getMessage());
+            			}
             		}
             		java.lang.Thread.sleep(1000);
         		}

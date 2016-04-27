@@ -28,8 +28,9 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private Stage chatStage;
-	
+	public BorderPane chatRoot;
 	private Stage loginStage;
+	private Stage secondaryStage;
 	public BorderPane rootLayout;
 	
 	private static Connection conn = null;
@@ -64,6 +65,8 @@ public class MainApp extends Application {
 
 		showLoginPane();
 		
+		initChatRoot();
+		
 		showChatPane();
 		
 	}
@@ -80,6 +83,25 @@ public class MainApp extends Application {
 			primaryStage.setOnCloseRequest(event->{
 				sq.app.MainApp.GetServer().closeIt();
 			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void initChatRoot(){
+		try{
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/ChatPaneRoot.fxml"));
+			chatRoot = (BorderPane) loader.load();
+			
+			Scene scene = new Scene(chatRoot);
+			
+			secondaryStage = new Stage();
+			secondaryStage.setScene(scene);
+			secondaryStage.initOwner(primaryStage);
+			secondaryStage.show();
+
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -125,15 +147,9 @@ public class MainApp extends Application {
 	        loader2.setLocation(MainApp.class.getResource("view/ChatPane.fxml"));
 	        AnchorPane page = (AnchorPane) loader2.load();
 	        
-	        chatStage = new Stage();
-	        chatStage.initOwner(primaryStage);
-	        chatStage.setTitle("Chat");
-	        chatStage.setAlwaysOnTop(true);
-	        chatStage.initModality(Modality.NONE);
-	        Scene scene = new Scene(page);
-	        chatStage.setScene(scene);
-
-	        chatStage.show();
+	        
+	        chatRoot.setCenter(page);
+	    	
 
 	    } catch (IOException e) {
 	        e.printStackTrace();

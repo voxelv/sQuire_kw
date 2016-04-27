@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import sq.app.MainApp;
 
 public class ChatPaneController {
@@ -18,6 +19,7 @@ public class ChatPaneController {
 	
 //	ObservableList<String> channelList = FXCollections.observableArrayList("Gen", "1", "2");
 	
+	private Stage ChatStage;
 	@FXML
 	private TextField Message;
 	@FXML
@@ -34,7 +36,10 @@ public class ChatPaneController {
     }
 	
 	public ChatPaneController(){
+		this.ChatStage = ChatStage;
 	}
+	
+	
 	
 	private boolean matches(String str){
 		Matcher matcher = ADD_REGEX.matcher(str);

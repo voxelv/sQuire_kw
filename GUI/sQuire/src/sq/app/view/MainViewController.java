@@ -74,7 +74,7 @@ public class MainViewController{
     private StackPane editorStackPane; 
     @FXML
     private EditorCodeArea editorCodeArea;
-    private static EditorCodeArea editor = null;
+    private static EditorCodeArea editor;
     
     //calls Initialize
     @FXML
@@ -89,8 +89,9 @@ public class MainViewController{
     	curr_position.setText("sQuire Project");
     	
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
-        
         editor = editorCodeArea;
+        
+       // editorCodeArea = editorCodeArea;
         assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'MainView.fxml'.";
         
         // initialize your logic here: all @FXML variables will have been injected
@@ -100,7 +101,7 @@ public class MainViewController{
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
         //new ClientPollingThread(this.editorCodeArea).start();
-        BackgroundWorker clientPolling = new BackgroundWorker(editor, sq.app.MainApp.GetServer());
+        BackgroundWorker clientPolling = new BackgroundWorker(editorCodeArea, sq.app.MainApp.GetServer());
         clientPolling.setDaemon(true);
         clientPolling.start();
 	}
@@ -256,7 +257,7 @@ public class MainViewController{
 /***************************Display UserName***************************/
     public void setUserID(int id){ //throws SQLException{
     	userID = id;
-    	editor.setUserID(userID);
+    	editorCodeArea.setUserID(userID);
     }
     public void setUserName(String userName){
     	this.user.setText(userName);
