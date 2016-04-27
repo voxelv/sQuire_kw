@@ -237,6 +237,10 @@ public class Server{
         			output = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
         			
         		}
+        		else if (action.compareToIgnoreCase("getOnlineUsers") == 0)
+        		{
+        			output = this.accountManager.getOnlineUsers();
+        		}
 				/*else if (action.compareToIgnoreCase("getUserID") == 0)
         		{
         			String uName = (String) params.get("username");

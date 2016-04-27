@@ -142,7 +142,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void updateMyLockedLine(){
-    	if (this.getCurrentParagraph() != this.previousLineNumber){
+    //	if (this.getCurrentParagraph() != this.previousLineNumber){
     		int currentLineNum = this.getCurrentParagraph();
         	try{
         		if (this.getCurrentParagraph() < lineDictionary.getSize()){
@@ -159,7 +159,7 @@ public class EditorCodeArea extends CodeArea{
         	catch (Exception e){
         		System.out.println("an exception happened trying to send line lock/unclock data");
         	}
-    	}
+    	//}
 	}
 	
 	private void revertCurrentLine(){

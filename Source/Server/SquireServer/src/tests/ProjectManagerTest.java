@@ -61,7 +61,7 @@ public class ProjectManagerTest {
 		assertEquals("Create Project return value size != 1", returnValue.size(), 1);
 		assertTrue("Created Project not found", inList);
 		
-		String pid = (String)((JSONObject)returnValue.get(0)).get("pid");
+		String pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		testManager.removeProject(pid);
 		try {
 			projectList = testManager.getProjects();
@@ -72,8 +72,8 @@ public class ProjectManagerTest {
 		inList = false;
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject) projectList.get(i);
-			String listName = (String) jobj.get("pname");
-			if (projName.equals(listName))
+			String listID = (String) jobj.get("pid");
+			if (pid.equals(listID))
 				inList = true;
 		}
 		assertFalse("Created project not deleted", inList);
@@ -141,7 +141,7 @@ public class ProjectManagerTest {
 		JSONArray returnValue = null;
 		try {
 			returnValue = testManager.createProject(projName);
-			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 			returnValue = testManager.createDirectory(pid, dirName);
 			dirList = testManager.getDirectories(pid);
 		} catch (SQLException e) {
@@ -159,7 +159,8 @@ public class ProjectManagerTest {
 		assertEquals("createDirectory returned <> 1 item", returnValue.size(), 1);
 		assertTrue("Created Directory not found", inList);
 		
-		String pdid = (String)((JSONObject)returnValue.get(0)).get("pdid");
+		String pdid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		System.out.println("pdid " +pdid);
 		testManager.removeDirectory(pdid);
 		try {
 			if(pid != null){
@@ -173,12 +174,12 @@ public class ProjectManagerTest {
 		inList = false;
 		for(int i = 0; i < dirList.size(); i++){
 			JSONObject jobj = (JSONObject) dirList.get(i);
-			String listName = (String) jobj.get("pdname");
-			if (dirName.equals(listName))
+			String listName = (String) jobj.get("pdid");
+			if (pdid.equals(listName))
 				inList = true;
 		}
-		assertEquals("Directories still exist", dirList.size(), 0);
 		assertFalse("Created directory not deleted", inList);
+		assertEquals("Directories still exist", dirList.size(), 0);
 	}
 	
 	@Test
