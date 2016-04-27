@@ -107,6 +107,7 @@ public class MainApp extends Application {
 		currentUser = user;
 		mainController.setUserID(user.getUserID());
 		MainViewController.userID = user.getUserID();
+		mainController.initialize();
 	}
 	public static void setUser(String userName){
 		mainController.setUserName(userName);

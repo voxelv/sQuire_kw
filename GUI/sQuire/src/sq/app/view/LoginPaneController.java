@@ -239,6 +239,7 @@ public class LoginPaneController {
 			
 			MainApp.setUser(new User(Integer.parseInt((String) loginObj.get("userID"))));
 			MainApp.setUser(userName);
+			
 			//MainViewController.setUser(MainApp.CurrentUser.getUserID());
 			System.out.println(Integer.toString(MainApp.getCurrentUser().getUserID()));
 		} catch (ParseException e1) {
