@@ -76,7 +76,6 @@ public class EditorCodeArea extends CodeArea{
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
     	this.caretPositionProperty().addListener(event->{
-        	updateMyLockedLine();
     		int currentLineNum = this.getCurrentParagraph();
         	if (currentLineNum != this.previousLineNumber){
         		this.previousLineNumber = currentLineNum;
@@ -143,7 +142,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void updateMyLockedLine(){
-    	if (this.getCurrentParagraph() != this.previousLineNumber){
+    //	if (this.getCurrentParagraph() != this.previousLineNumber){
     		int currentLineNum = this.getCurrentParagraph();
         	try{
         		if (this.getCurrentParagraph() < lineDictionary.getSize()){
@@ -160,7 +159,7 @@ public class EditorCodeArea extends CodeArea{
         	catch (Exception e){
         		System.out.println("an exception happened trying to send line lock/unclock data");
         	}
-    	}
+    	//}
 	}
 	
 	private void revertCurrentLine(){
@@ -317,7 +316,7 @@ public class EditorCodeArea extends CodeArea{
 			for (int i : lockedPs){
 				lineDictionary.lockLinebyID(i);
 			}
-    		this.doHighlight();
+    		//this.doHighlight();
 		}
 	}
 	 
@@ -329,7 +328,8 @@ public class EditorCodeArea extends CodeArea{
 		for (int line : lineDictionary.getLockedLines()){
 			StyleSpansBuilder<Collection<String>> lockedSpansBuilder = new StyleSpansBuilder<Collection<String>>();
 			lockedSpansBuilder.add(new StyleSpan(styleStr, this.getParagraph(line).length()));
-			this.clearParagraphStyle(line);
+			this.clearStyle(line);
+			//this.clearParagraphStyle(line);
 			this.setStyleSpans(line, 0, lockedSpansBuilder.create());
 		}
   	}

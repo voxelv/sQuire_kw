@@ -605,16 +605,21 @@ public class ChatManager {
             
             for (int i = 0; i < msgArray.size(); i++)
             {
-            	JSONObject msg = (JSONObject) msgArray.get(i);
-            	Message msgObj = this.manager.parseMessage(msg);
-            	this.manager.channelByServerID.get( msgObj.serverChannelID ).addMsg(msgObj);
-            	
-            	String outString = msgObj.getPrintString();
-
-            	this.manager.addMessageToGUI(outString);
-            	
-            	String thisMID = (String) msg.get("MID");
-            	this.manager.lastMID = thisMID;
+            	try{
+	            	JSONObject msg = (JSONObject) msgArray.get(i);
+	            	Message msgObj = this.manager.parseMessage(msg);
+	            	this.manager.channelByServerID.get( msgObj.serverChannelID ).addMsg(msgObj);
+	            	
+	            	String outString = msgObj.getPrintString();
+	
+	            	this.manager.addMessageToGUI(outString);
+	            	
+	            	String thisMID = (String) msg.get("MID");
+	            	this.manager.lastMID = thisMID;
+            	}
+            	catch(Exception e){
+            		
+            	}
             }
             
             this.manager.helperBusy = false;

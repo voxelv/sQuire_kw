@@ -37,15 +37,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import sq.app.MainApp;
+import sq.app.model.BackgroundWorker;
 import sq.app.model.Compiler;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
 import sq.app.model.editor.EditorCodeArea;
 
-public class MainViewController implements Initializable{
+public class MainViewController{
 	//FileManagement
 	public static Connection conn = null;
-	public static int userID = 2;
+	public static int userID = 0;
 	public static String userName = "None";
     int currPID = 0;
     int tempFileId = 0;
@@ -73,23 +74,24 @@ public class MainViewController implements Initializable{
     private StackPane editorStackPane; 
     @FXML
     private EditorCodeArea editorCodeArea;
-    private static EditorCodeArea editor = null;
+    private static EditorCodeArea editor;
     
     //calls Initialize
     @FXML
     public void init(){
     	System.out.println("test");
-    	initialize(fxmlFileLocation, resources);// This method is called by the FXMLLoader when initialization is complete
+    	initialize();// This method is called by the FXMLLoader when initialization is complete
     }
     //Initiialize
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    public void initialize() {
     	conn = MainApp.GetConnection();
     	IniTree();
     	curr_position.setText("sQuire Project");
     	
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
-        
         editor = editorCodeArea;
+        
+       // editorCodeArea = editorCodeArea;
         assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'MainView.fxml'.";
         
         // initialize your logic here: all @FXML variables will have been injected
@@ -98,8 +100,11 @@ public class MainViewController implements Initializable{
         
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
-        new ClientPollingThread(this.editorCodeArea).start();
-    }
+        //new ClientPollingThread(this.editorCodeArea).start();
+        BackgroundWorker clientPolling = new BackgroundWorker(editorCodeArea, sq.app.MainApp.GetServer());
+        clientPolling.setDaemon(true);
+        clientPolling.start();
+	}
     
 
     
@@ -252,7 +257,7 @@ public class MainViewController implements Initializable{
 /***************************Display UserName***************************/
     public void setUserID(int id){ //throws SQLException{
     	userID = id;
-    	editor.setUserID(userID);
+    	editorCodeArea.setUserID(userID);
     }
     public void setUserName(String userName){
     	this.user.setText(userName);
@@ -1091,68 +1096,24 @@ public class MainViewController implements Initializable{
     
     @FXML private void compileAndRun() throws Exception{
     	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), "21", "Hello World");
+    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
+    	CompilerOutput.setText(compiler.compilerOutput);
     }
     
 ///////////////////////////////////////////////////////////////////////////////////
 ////////////////// Client Polling ////////////////////////////////////////////
     
-	private static class ClientPollingThread extends Thread {
-        private ServerConnection Server = null;
-        private EditorCodeArea Editor = null;
-
-        public ClientPollingThread(EditorCodeArea editor){
-        	this.Editor = editor;
-        	this.Server = sq.app.MainApp.GetServer();
-        }
-        public void run() {
-        	while(sq.app.MainApp.GetServer().getStatus()){
-                try {
-            		if (Editor.GetFileID() >= 0){
-	            		JSONObject jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	Object data = null;
-	                	try{
-	                		// this appears to kill my connection?
-	                		data = Server.sendSingleRequest("project", "getLineLocks", jo);
-                		}
-	                	catch(Exception e){
-	                		//do nothing
-	                	}
-	            		Object out = null;
-	            		if (data != null){
-	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-	            			ArrayList<Integer> locked = new ArrayList<Integer>();
-	            			for(Object o : ja.toArray()){
-	            				JSONObject joo = (JSONObject)o;
-	            				locked.add(Integer.parseInt((String)joo.get("pflid")));
-	            			}
-	            			Editor.SetLockedParagraphs(locked);
-	            		}
-	                	
-	            		jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
-	                	try{
-	                		data = Server.sendSingleRequest("project", "getLineChanges", jo);
-	                	}
-	                	catch(Exception e){
-	                		System.out.println("Exception");
-	                		//do nothing
-	                	}
-	            		out = null;
-	            		if (data != null){
-//	            			JSONObject singleResponse = (JSONObject) data.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
-	            		}
-	            		java.lang.Thread.sleep(1000);
-            		}
-                } 
-                catch (Exception e){
-                	System.out.println("Client Polling error: " + e.getMessage());
-                }
-        	}
-        }
-	}
+//	private static class ClientPollingThread extends Thread {
+//        private ServerConnection Server = null;
+//        private EditorCodeArea Editor = null;
+//
+//        public ClientPollingThread(EditorCodeArea editor){
+//        	this.Editor = editor;
+//        	this.Server = sq.app.MainApp.GetServer();
+//        }
+//        public void run() {
+//        	while(sq.app.MainApp.GetServer().getStatus()){
+//        	}
+//        }
+//	}
 }

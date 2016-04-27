@@ -153,6 +153,8 @@ public class Server{
         	System.out.println("Cat: " + category + "; action: "+action + ";Params: "+params);
         	String output = null;
         	
+        	this.accountManager.touchCurrentUserAccount();
+        	
         	/************************** CHAT FUNCTIONS **************************/
         	if (category.compareToIgnoreCase("CHAT") == 0 && this.userID > 0)
         	{
@@ -234,6 +236,10 @@ public class Server{
         			
         			output = this.accountManager.CreateAccount(fName, lName, uName, email, pWord);
         			
+        		}
+        		else if (action.compareToIgnoreCase("getOnlineUsers") == 0)
+        		{
+        			output = this.accountManager.getOnlineUsers();
         		}
 				/*else if (action.compareToIgnoreCase("getUserID") == 0)
         		{
