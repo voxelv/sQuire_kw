@@ -1091,7 +1091,8 @@ public class MainViewController implements Initializable{
     
     @FXML private void compileAndRun() throws Exception{
     	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), "21", "Hello World");
+    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
+    	CompilerOutput.setText(compiler.compilerOutput);
     }
     
 ///////////////////////////////////////////////////////////////////////////////////
