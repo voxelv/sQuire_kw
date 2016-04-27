@@ -1097,6 +1097,7 @@ public class MainViewController{
     	Compiler compiler = new Compiler();
     	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
     	CompilerOutput.setText(compiler.compilerOutput);
+    	CompilerOutput.appendText(compiler.systemOutput);
     }
     
 ///////////////////////////////////////////////////////////////////////////////////

@@ -2,8 +2,10 @@ package sq.app.model;
 
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -47,7 +49,7 @@ public class Compiler
 {
     /** where shall the compiled class be saved to (should exist already) */
 	String path;
-	public static String compilerOutput;
+	public static String compilerOutput, systemOutput;
 	File directory;
     
 	private static String classOutputFolder;
@@ -70,22 +72,36 @@ public class Compiler
     {
         public void report(Diagnostic<? extends JavaFileObject> diagnostic)
         {
+            // Create a stream to hold the output
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+            // IMPORTANT: Save the old System.out!
+            PrintStream old = System.out;
+            // Tell Java to use your special stream
+            System.setOut(ps);
+
+        	
+        	
 //        	MainViewController.CompilerOutput.appendText("Line Number->" + diagnostic.getLineNumber());
 //        	MainViewController.CompilerOutput.appendText("code->" + diagnostic.getCode());
 //        	MainViewController.CompilerOutput.appendText("Message->" + diagnostic.getMessage(Locale.ENGLISH));
 //        	MainViewController.CompilerOutput.appendText("Source->" + diagnostic.getSource());
 //        	MainViewController.CompilerOutput.appendText("  ");
-            compilerOutput = "Line Number-> " + diagnostic.getLineNumber() + "\n"
-            						+ "Code-> " + diagnostic.getCode() + "\n"
-            						+ "Message-> " + diagnostic.getMessage(Locale.ENGLISH) + "\n"
-            						+ "Source-> " + diagnostic.getSource() + "\n";
+//            compilerOutput = "Line Number-> " + diagnostic.getLineNumber() + "\n"
+//            						+ "Code-> " + diagnostic.getCode() + "\n"
+//            						+ "Message-> " + diagnostic.getMessage(Locale.ENGLISH) + "\n"
+//            						+ "Source-> " + diagnostic.getSource() + "\n";
 //            System.out.println(compilerOutput);
-            //        	System.out.println("Line Number->" + diagnostic.getLineNumber());
-//            System.out.println("Code->" + diagnostic.getCode());
-//            System.out.println("Message->"
-//                               + diagnostic.getMessage(Locale.ENGLISH));
-//            System.out.println("Source->" + diagnostic.getSource());
-//            System.out.println(" ");
+            System.out.println("Line Number->" + diagnostic.getLineNumber());
+        	System.out.println("Code->" + diagnostic.getCode());
+            System.out.println("Message->"
+            		+ diagnostic.getMessage(Locale.ENGLISH));
+           System.out.println("Source->" + diagnostic.getSource());
+           System.out.println(" ");
+           
+           System.out.flush();
+           System.setOut(old);
+           compilerOutput.concat(baos.toString());
         }
     }
     
@@ -146,7 +162,7 @@ public class Compiler
     	params.put("fileID",fileID);
     	
     	String returnString = (String) server.sendSingleRequest(category, action, params);
-    	System.out.println(returnString);
+//    	System.out.println(returnString);
     	Object returnObj;
     	returnObj = new JSONParser().parse(returnString);
     	JSONArray lineArray = (JSONArray) returnObj;
@@ -157,7 +173,7 @@ public class Compiler
     		String codeLine = (String) line.get("text");
     		code += codeLine + "\n";
     	}
-//    	System.out.println(code);
+    	System.out.println(code);
     	return code;
 
     }
@@ -206,6 +222,14 @@ public class Compiler
     /** Run class from the compiled byte code file by URLClassloader */
     public static void runIt(String packageDotClassName)
     {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        // IMPORTANT: Save the old System.out!
+        PrintStream old = System.out;
+        // Tell Java to use your special stream
+        System.setOut(ps);
+    	
+    	
         // Create a File object on the root of the directory
         // containing the class file
         File file = new File(classOutputFolder);
@@ -237,6 +261,9 @@ public class Compiler
         {
             ex.printStackTrace();
         }
+        System.out.flush();
+        System.setOut(old);
+        systemOutput = baos.toString();
     }
  
 }
