@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import sq.app.MainApp;
 
 public class ChatManager {
 	private BufferedReader in;
@@ -62,9 +63,11 @@ public class ChatManager {
     	this.userID = String.valueOf(userID);
     	
     	autoHelper = new ChatHelper(this, server, this.userID);
+    	autoHelper.setDaemon(true);
     	autoHelper.start();
     	
     	manualHelper = new ChatHelper(this, server, this.userID);
+    	manualHelper.setDaemon(true);
     	
     	updateChannels( manualHelper.initJoinChannels() );
     }

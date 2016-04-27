@@ -453,6 +453,10 @@ public class Server{
         			this.projectManager.unlockMyLines();
         			System.exit(0);
         		}
+        		else if(action.compareToIgnoreCase("allUsers") == 0)
+				{
+        			output = this.accountManager.getOnlineUsers();
+				}
         	}
         	
         	/* UNKNOWN/NO CATEGORY */
