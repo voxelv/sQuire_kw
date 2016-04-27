@@ -29,6 +29,12 @@
                         <MenuItem mnemonicParsing="false" onAction="#CreateFile" text="File" />
                     </items>
                   </MenuButton>
+                  <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="User...">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Add to Project" />
+                        <MenuItem mnemonicParsing="false" text="View Current Users" />
+                     </items>
+                  </MenuButton>
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
                   <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
                   <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
