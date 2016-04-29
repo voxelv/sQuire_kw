@@ -32,6 +32,7 @@ import sq.app.model.ServerConnection;
 
 public class EditorCodeArea extends CodeArea{
 
+	private KeyCode lastCharEntered;
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
             "case", "catch", "char", "class", "const",
@@ -80,7 +81,8 @@ public class EditorCodeArea extends CodeArea{
 	public EditorCodeArea() {
 		super();
     	this.setParagraphGraphicFactory(LineNumberFactory.get(this));
-
+    	this.lastCharEntered = KeyCode.SHIFT;	// innocuous key that won't affect anything
+    	
        	checkIt.addListener(change->{
     		Platform.runLater(new Runnable(){
     			@Override public void run() {
@@ -122,6 +124,8 @@ public class EditorCodeArea extends CodeArea{
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
 			int p = this.getCurrentParagraph();
+			this.lastCharEntered = event.getCode();
+//			System.out.println("Last Char entered: '" + this.lastCharEntered.getName() + "'");
         	if (this.lineDictionary.getLockedLines().contains(p) && !event.getCode().isArrowKey())
         	{
         		revertCurrentLine();
@@ -139,14 +143,28 @@ public class EditorCodeArea extends CodeArea{
         		char backChar = this.getText().charAt(this.caretPositionProperty().getValue()-1);
         		if (backChar == '\r' || backChar == '\n'){
         			backChar = backChar;
+        			this.lineDictionary.removeLine(this.getCurrentParagraph());
         		}
         	}
+//        	for (int i = 0; i < this.lineDictionary.getSize(); i++)
+//        	{
+//        		System.out.println(String.valueOf(i) + "::" + this.lineDictionary.getLine(i).getText());
+//        	}
 		});
 	}
 	
 	private void sendChangesToServer(){
 		int curLineNum = this.getCurrentParagraph();
 		int prevLineNum = this.previousLineNumber;
+		
+//		System.out.println("Sending changes. curLineNum: " + curLineNum + "; prevLineNum: " + prevLineNum);
+		// Detect if it was a backspace that moved to a different line...
+		// go through 5 lines below the current space to see if they would are what you would expect after a backspace
+		if (this.lastCharEntered == KeyCode.BACK_SPACE)
+		{
+			System.out.println("Send the command to delete line "+prevLineNum+" to server");
+		}
+		
     	if (curLineNum != prevLineNum){
 			String curLineText = "";
 			String prevLineText = this.previousLineText;
