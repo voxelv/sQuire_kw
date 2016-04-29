@@ -47,6 +47,7 @@ public class Compiler
 {
     /** where shall the compiled class be saved to (should exist already) */
 	String path;
+	public static String compilerOutput;
 	File directory;
     
 	private static String classOutputFolder;
@@ -55,6 +56,7 @@ public class Compiler
     public Compiler()
     {
     	path = System.getProperty("user.dir") + "\\classes";
+    	compilerOutput = "";
     	File directory = new File(path);
     	if(!directory.exists())
     		directory.mkdir();
@@ -73,12 +75,17 @@ public class Compiler
 //        	MainViewController.CompilerOutput.appendText("Message->" + diagnostic.getMessage(Locale.ENGLISH));
 //        	MainViewController.CompilerOutput.appendText("Source->" + diagnostic.getSource());
 //        	MainViewController.CompilerOutput.appendText("  ");
-            System.out.println("Line Number->" + diagnostic.getLineNumber());
-            System.out.println("Code->" + diagnostic.getCode());
-            System.out.println("Message->"
-                               + diagnostic.getMessage(Locale.ENGLISH));
-            System.out.println("Source->" + diagnostic.getSource());
-            System.out.println(" ");
+            compilerOutput = "Line Number-> " + diagnostic.getLineNumber() + "\n"
+            						+ "Code-> " + diagnostic.getCode() + "\n"
+            						+ "Message-> " + diagnostic.getMessage(Locale.ENGLISH) + "\n"
+            						+ "Source-> " + diagnostic.getSource() + "\n";
+//            System.out.println(compilerOutput);
+            //        	System.out.println("Line Number->" + diagnostic.getLineNumber());
+//            System.out.println("Code->" + diagnostic.getCode());
+//            System.out.println("Message->"
+//                               + diagnostic.getMessage(Locale.ENGLISH));
+//            System.out.println("Source->" + diagnostic.getSource());
+//            System.out.println(" ");
         }
     }
     
@@ -94,7 +101,7 @@ public class Compiler
     	String action2 = "GETLINES";
     	
     	String getFilesReturn = (String) server.sendSingleRequest(category1, action1, params1);
-    	System.out.println(getFilesReturn);
+//    	System.out.println(getFilesReturn);
     	
     	Object returnObj;
     	returnObj = new JSONParser().parse(getFilesReturn);
@@ -106,11 +113,11 @@ public class Compiler
     		JSONObject file = (JSONObject) fileArray.get(i);
     		String fileID = (String) file.get("pfid");
     		String fileName = (String) file.get("pfname");
-    		System.out.println(fileName);
+//    		System.out.println(fileName);
         	params2.put("fileID", fileID);
     		String getLinesReturn = (String) server.sendSingleRequest(category2, action2, params2);
     		
-    		System.out.println(getLinesReturn);
+//    		System.out.println(getLinesReturn);
     		
     		returnObj = new JSONParser().parse(getLinesReturn);
         	JSONArray lineArray = (JSONArray) returnObj;
@@ -119,6 +126,7 @@ public class Compiler
         		JSONObject line = (JSONObject) lineArray.get(j);
         		String codeLine = (String) line.get("text");
         		code += codeLine + "\n";
+        		System.out.println(code);
         	}
         	
         	javaFileList.add(i, this.new InMemoryJavaFileObject(fileName, code));
@@ -149,7 +157,7 @@ public class Compiler
     		String codeLine = (String) line.get("text");
     		code += codeLine + "\n";
     	}
-    	System.out.println(code);
+//    	System.out.println(code);
     	return code;
 
     }
@@ -162,7 +170,7 @@ public class Compiler
  
         public InMemoryJavaFileObject(String className, String contents) throws Exception
         {
-            super(URI.create("string:///" + className.replace('.', '/').replace(" ", "")
+            super(URI.create("string:///" + className.replace(".java","").replace('.', '/').replace(" ", "")
                              + Kind.SOURCE.extension), Kind.SOURCE);
             this.contents = contents;
         }

@@ -25,6 +25,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -37,6 +38,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import sq.app.MainApp;
+import sq.app.model.BackgroundWorker;
 import sq.app.model.Compiler;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
@@ -51,34 +53,33 @@ public class MainViewController{
     int tempFileId = 0;
 	String currProjectName = "";
 	String tempFileData = "";
-	
+
 	TreeItem<StrucTree> selected = null;
     TreeItem<StrucTree> selectedFile = null;
-    
-    
+
+
     @FXML
 	public Label user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
     @FXML Text info;
-    
+
     //Compiler
     @FXML public TextArea CompilerOutput;
-    
+
     //Editor
     ResourceBundle resources;
     URL fxmlFileLocation;
 	@FXML
-    private StackPane editorStackPane; 
+    private StackPane editorStackPane;
     @FXML
     private EditorCodeArea editorCodeArea;
-    private static EditorCodeArea editor = null;
-    
+    private static EditorCodeArea editor;
+
     //calls Initialize
     @FXML
     public void init(){
-    	System.out.println("test");
     	initialize();// This method is called by the FXMLLoader when initialization is complete
     }
     //Initiialize
@@ -86,30 +87,32 @@ public class MainViewController{
     	conn = MainApp.GetConnection();
     	IniTree();
     	curr_position.setText("sQuire Project");
-    	
+
         assert editorCodeArea != null : "fx:id=\"editorCodeArea\" was not injected: check your FXML file 'MainView.fxml'.";
-        
         editor = editorCodeArea;
+
+       // editorCodeArea = editorCodeArea;
         assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'MainView.fxml'.";
-        
+
         // initialize your logic here: all @FXML variables will have been injected
 
-        editorCodeArea.doHighlight();        
-        
+        editorCodeArea.doHighlight();
+
         /************** Compiler Text Area *************************************************************************/
         CompilerOutput.setEditable(false);
-        new ClientPollingThread(this.editorCodeArea).start();
-    }
-    
+        //new ClientPollingThread(this.editorCodeArea).start();
+        BackgroundWorker clientPolling = new BackgroundWorker(editorCodeArea, sq.app.MainApp.GetServer());
+        clientPolling.setDaemon(true);
+        clientPolling.start();
+	}
 
-    
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////File Management Methods////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
-    
-    @FXML
+
+
     public void CreateProject() throws SQLException, ClassNotFoundException{
         TextInputDialog dialog = new TextInputDialog("");
     	dialog.setTitle("Create Project");
@@ -144,7 +147,11 @@ public class MainViewController{
             }
 
             if(isExist == false){
-            	String sql = "INSERT INTO Projects(pname)VALUE('" + currProjName + "')";
+            	String pass = setPassword();
+            	if( !Objects.equals(pass, "")){
+
+
+            	String sql = "INSERT INTO Projects(pname,passHash,projectOwnerID)VALUE('" + currProjName + "','" + pass + "','" + userID+"')";
             	st.executeUpdate(sql);
             	sql = "SELECT LAST_INSERT_ID()";
             	rs = st.executeQuery(sql);
@@ -153,6 +160,7 @@ public class MainViewController{
                 	sql = "INSERT INTO ProjectAccess(PID, userID)VALUE('" + currID + "','" + userID + "')";
                 	st.executeUpdate(sql);
             	}
+            }else{warning("Create Project Failed");}
             }
     	}
     	IniTree();
@@ -178,7 +186,7 @@ public class MainViewController{
     		editorCodeArea.CreateNewFileFromImportedText(file.getName(), inputFileData, projectID, directoryID);
     	}
     }
-    
+
     /**************************Read Input File Data**************************/
     private String readFile(File file) throws IOException{
     	BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
@@ -252,7 +260,7 @@ public class MainViewController{
 /***************************Display UserName***************************/
     public void setUserID(int id){ //throws SQLException{
     	userID = id;
-    	editor.setUserID(userID);
+    	editorCodeArea.setUserID(userID);
     }
     public void setUserName(String userName){
     	this.user.setText(userName);
@@ -401,7 +409,6 @@ public class MainViewController{
 	        ResultSet rs = st.executeQuery(query);
 	        while (rs.next()){
 	        	int PID = rs.getInt("PID");
-//	        	System.out.println(PID);
 	        	query = "SELECT * FROM Projects WHERE PID like '" + PID + "'";
 	        	Statement st1 = conn.createStatement();
 	        	ResultSet rs1 = st1.executeQuery(query);
@@ -481,10 +488,10 @@ public class MainViewController{
 
     		if(Objects.equals(currProjectName, "")){
     			curr_position.setText(item.getValue().toString());
-    			System.out.println("if " + item.getValue().toString());
+//    			System.out.println("if " + item.getValue().toString());
     		}else {
     			curr_position.setText(getCurrPosition(item));
-    			System.out.println("else " + item.getValue().toString());
+//    			System.out.println("else " + item.getValue().toString());
     		}
     	}
         if(mouse.getClickCount() == 2 && item != null){
@@ -602,37 +609,56 @@ public class MainViewController{
 
     	}
 */
-    	if(selected == null){
+      	if(selected == null){
             warning("No project or file selected.");
     	} else if(selected.getValue().isProject()){
     		int pid = selected.getValue().getID();
-    		Statement st = conn.createStatement();
-    		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
-    		st.executeUpdate(query);
 
-        	query = "SELECT * FROM PFiles WHERE pid LIKE '" + pid + "' AND pdid IS NULL";
-    	    st = conn.createStatement();
-    	    ResultSet rs = st.executeQuery(query);
-    	    while(rs.next()){
-    	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
-    		    Statement st1 = conn.createStatement();
-    		    st1.executeUpdate(query);
-    	    	deleteFileLine(rs.getInt("pflhead"));
-    	    }
 
-    		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
-    		rs = st.executeQuery(query);
-    		while(rs.next()){
-    			deleteDirectory(rs.getInt("pdid"));
+    		String query1 = "SELECT * FROM Projects WHERE PID LIKE '" + pid + "'";
+    		Statement st1 = conn.createStatement();
+    		ResultSet rs1 = st1.executeQuery(query1);
+    		if(rs1.next()){
+    			if(rs1.getInt("projectOwnerID") == userID){
+
+
+
+    	    		Statement st = conn.createStatement();
+    	    		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
+    	    		st.executeUpdate(query);
+
+    	        	query = "SELECT * FROM PFiles WHERE pid LIKE '" + pid + "' AND pdid IS NULL";
+    	    	    st = conn.createStatement();
+    	    	    ResultSet rs = st.executeQuery(query);
+    	    	    while(rs.next()){
+    	    	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
+    	    		    Statement st2 = conn.createStatement();
+    	    		    st2.executeUpdate(query);
+    	    	    	deleteFileLine(rs.getInt("pflhead"));
+    	    	    }
+
+    	    		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
+    	    		rs = st.executeQuery(query);
+    	    		while(rs.next()){
+    	    			deleteDirectory(rs.getInt("pdid"));
+    	    		}
+    	    		query = "DELETE FROM Projects WHERE pid LIKE '" + pid + "'";
+    	    		st.executeUpdate(query);
+    	    		IniTree();
+
+
+
+    			}else{
+    				warning("You are not the owner of this project.");
+    			}
     		}
-    		query = "DELETE FROM Projects WHERE pid LIKE '" + pid + "'";
-    		st.executeUpdate(query);
-    		IniTree();
+
+
 
     	} else if(selected.getValue().isDirectory()){
-    		System.out.println(selected.getValue().getID());
+//    		System.out.println(selected.getValue().getID());
     		deleteDirectory(selected.getValue().getID());
-    		System.out.println(currPID);
+//    		System.out.println(currPID);
        		selected.getParent().getChildren().remove(selected);
     	} else if(selected.getValue().isFile()){
     		int pfid = selected.getValue().getID();
@@ -643,7 +669,7 @@ public class MainViewController{
     		selected.getParent().getChildren().remove(selected);
     	}
     }
-    
+
 /***************************Delete File Line Routine***************************/
     private void deleteFileLine(int id) throws SQLException{
     	Statement st = conn.createStatement();
@@ -667,7 +693,7 @@ public class MainViewController{
 		    Statement st1 = conn.createStatement();
 		    st1.executeUpdate(query);
 	    	deleteFileLine(rs.getInt("pflhead"));
-	    	System.out.println(rs.getInt("pflhead"));
+//	    	System.out.println(rs.getInt("pflhead"));
 	    }
 
     	query = "SELECT pdid FROM PDirs where parentid like '" + id + "'";
@@ -997,8 +1023,8 @@ public class MainViewController{
 	    	}
 	    }
     }
-    
-    
+
+
 /***************************Initialize File Line***************************/
 
     private void iniFile(TreeItem<StrucTree> item) throws SQLException{
@@ -1020,16 +1046,16 @@ public class MainViewController{
 /***************************Read File Data***************************/
     private void readFile(TreeItem<StrucTree> item) throws SQLException{
         StringBuilder pos = new StringBuilder("");
-        
+
         lineArray.clear();
-        
+
     	if(item.getValue().isFile() && (Objects.equals(tempFileData,"") || tempFileId != item.getValue().getID())){
 //    		System.out.println(getLine(item.getValue().getLine(),pos).toString());
     		tempFileData = getLine(item.getValue().getLine(), 0, pos).toString();
     		editorCodeArea.ReplaceText(tempFileData, lineArray, item.getValue().getID());
     	}
     }
-    
+
     ArrayList<Line> lineArray = new ArrayList<Line>();
 
     private StringBuilder getLine(int id, int lineNo, StringBuilder temp) throws SQLException{
@@ -1045,7 +1071,7 @@ public class MainViewController{
     	}
     	return temp;
     }
-    
+
 /***************************Get Initial File Line***************************/
     private void getIniLine(TreeItem<StrucTree> item) throws SQLException{
     	if(item.getValue().isFile()){
@@ -1057,7 +1083,7 @@ public class MainViewController{
     		}
     	}
     }
-    
+
     // added by Joe
     // returns null if no parent directory
     private TreeItem<StrucTree> getParentDirectory(){
@@ -1083,76 +1109,199 @@ public class MainViewController{
     	}
     	return parent;
     }
+
+
+    /***************************Project Access***************************/
+    @FXML public void projectAccess() throws SQLException{
+    	Statement st = conn.createStatement();
+    	String query = "SELECT * FROM  Projects";
+    	ResultSet rs = st.executeQuery(query);
+
+
+    	List<String> choices = new ArrayList<>();
+
+
+
+    	while(rs.next()){
+    		if(rs.getInt("projectOwnerID") != 0){
+
+    			Statement st1 = conn.createStatement();
+    			String query1 = "SELECT * FROM Users WHERE userID LIKE '" + rs.getInt("projectOwnerID") + "'";
+    			ResultSet rs1 = st1.executeQuery(query1);
+    			if(rs1.next()){choices.add(rs.getString("pname") + "--"+ rs1.getString("userName"));}
+    		}
+    	}
+
+
+
+    		/*    		Statement st1 = conn.createStatement();
+    		String query1 = "SELECT * FROM ProjectAccess WHERE pid LIKE '" + rs.getInt("PID") + "' AND userID NOT LIKE '" + MyuserID + "'" ;
+    		ResultSet rs1 = st1.executeQuery(query1);
+    		if(rs1.next()){
+    			Statement st4 = conn.createStatement();
+    			String query4 = "SELECT * FROM Projects WHERE pname LIKE '" + rs.getString("pname") +"' AND PID LIKE '" +rs1.getInt("PID")+ "'";
+    			ResultSet rs4 = st4.executeQuery(query4);
+    			System.out.println("2");
+    			if(rs4.next()){
+
+    			Statement st2 = conn.createStatement();
+    			String query2 = "SELECT * FROM Users WHERE userID LIKE '" + rs4.getInt("projectOwnerID") + "'";
+    			ResultSet rs2 = st2.executeQuery(query2);
+    			System.out.println("3");
+    			if(rs2.next()){choices.add(rs.getString("pname") + "--"+ rs2.getString("userName"));}
+    			}
+    		}
+*/
+
+
+
+    	ChoiceDialog<String> dialog = new ChoiceDialog<>("", choices);
+    	dialog.setTitle("Project Access");
+    	dialog.setHeaderText("Choose the project you want to access.");
+    	dialog.setContentText("Project:");
+
+    	Optional<String> result = dialog.showAndWait();
+
+    	if (result.isPresent()){
+    		String tempPass = setPassword();
+    		String[] temp= result.get().split("--");
+        	Statement st3 = conn.createStatement();
+        	String query3 = "SELECT * FROM Users WHERE userName LIKE '" + temp[1]+ "'";
+        	ResultSet rs3 = st3.executeQuery(query3);
+           	if(rs3.next()){
+           		Statement st4 = conn.createStatement();
+            	String query4 = "SELECT * FROM Projects WHERE pname LIKE '" + temp[0]+ "' AND projectOwnerID LIKE '"+  rs3.getInt("userID") + "'";
+            	ResultSet rs4 = st4.executeQuery(query4);
+
+
+
+            	if(rs4.next() || !Objects.equals(tempPass,"")){
+            		if(Objects.equals(tempPass,rs4.getString("passHash"))){
+            			Statement st6 = conn.createStatement();
+            			String query6 = "SELECT * FROM ProjectAccess WHERE PID LIKE '" + rs4.getInt("PID") + "' AND userID LIKE '" + userID + "'";
+            			ResultSet rs6 = st6.executeQuery(query6);
+            			boolean isExist = rs6.next();
+            			if(isExist == false){
+            				warning("Successful!");
+            				Statement st5 = conn.createStatement();
+            				String query5 = "INSERT INTO ProjectAccess(PID,userID)VALUE('" + rs4.getInt("PID") + "','" + userID+"')";
+            				st5.executeUpdate(query5);
+            				IniTree();
+            			} else{warning("You Already Got The Project Access.");}
+            		} else {
+            			warning("Wrong Password!");
+            		}
+            	}
+
+        	}
+
+    	}
+
+    }
+
+
+
+
+
+/***************************Switch User***************************/
+    @FXML public void switchUser() throws SQLException{
+		String query = "SELECT * FROM Users WHERE userID NOT LIKE '" + userID + "'" ;
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery(query);
+
+		List<String> choices = new ArrayList<>();
+
+		while(rs.next()){
+			choices.add(rs.getString("userName"));
+		}
+
+	 	ChoiceDialog<String> dialog = new ChoiceDialog<>("", choices);
+    	dialog.setTitle("Switch User");
+    	dialog.setHeaderText("Choose the user you want to be.");
+    	dialog.setContentText("User:");
+
+    	Optional<String> result = dialog.showAndWait();
+    	if (result.isPresent()){
+    		query = "SELECT * FROM Users WHERE userName LIKE '" + result.get()  + "'";
+    		st = conn.createStatement();
+    		rs = st.executeQuery(query);
+    		if(rs.next()){
+    			userID = rs.getInt("userID");
+    			user.setText(result.get());
+    		}
+    		IniTree();
+    	}
+    }
+
+/***************************Set Password***************************/
+    private String setPassword(){
+    	TextInputDialog dialog = new TextInputDialog("Password");
+    	dialog.setTitle("Password");
+    	dialog.setHeaderText("Password Setting");
+
+    	dialog.setContentText("Please enter the password:");
+
+    	// Traditional way to get the response value.
+    	Optional<String> result = dialog.showAndWait();
+    	if (result.isPresent()){
+    		return result.get();
+    	} else {
+    		return "";
+    	}
+
+    }
+
+/***************************Show Password***************************/
+
+    @FXML public void showPassword() throws SQLException{
+     	if(selected == null){
+            warning("No project selected.");
+    	} else if(selected.getValue().isProject()){
+    		String query = "SELECT * FROM Projects WHERE PID LIKE '" + selected.getValue().getID() + "'";
+    		Statement st = conn.createStatement();
+    		ResultSet rs = st.executeQuery(query);
+    		if(rs.next()){
+    			if(rs.getInt("projectOwnerID") == userID){
+    				warning("Password: " + rs.getString("passHash"));
+    			}else{
+    				warning("You are not the owner of this project.");
+    			}
+    		}
+    	} else{
+        	warning("No project selected.");
+    	}
+    }
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////End File Management Methods////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-////////////////////////////////////////////Compiler Methods/////////////////////////////////////////////////    
-    
+
+////////////////////////////////////////////Compiler Methods/////////////////////////////////////////////////
+
     @FXML private void compileAndRun() throws Exception{
     	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), "21", "Hello World");
+    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
+    	CompilerOutput.setText(compiler.compilerOutput);
     }
-    
+
 ///////////////////////////////////////////////////////////////////////////////////
 ////////////////// Client Polling ////////////////////////////////////////////
-    
-	private static class ClientPollingThread extends Thread {
-        private ServerConnection Server = null;
-        private EditorCodeArea Editor = null;
 
-        public ClientPollingThread(EditorCodeArea editor){
-        	this.Editor = editor;
-        	this.Server = sq.app.MainApp.GetServer();
-        }
-        public void run() {
-        	while(sq.app.MainApp.GetServer().getStatus()){
-                try {
-            		if (Editor.GetFileID() >= 0){
-	            		JSONObject jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	Object data = null;
-	                	try{
-	                		// this appears to kill my connection?
-	                		data = Server.sendSingleRequest("project", "getLineLocks", jo);
-                		}
-	                	catch(Exception e){
-	                		//do nothing
-	                	}
-	            		Object out = null;
-	            		if (data != null){
-	            			JSONArray ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)data);
-	            			ArrayList<Integer> locked = new ArrayList<Integer>();
-	            			for(Object o : ja.toArray()){
-	            				JSONObject joo = (JSONObject)o;
-	            				locked.add(Integer.parseInt((String)joo.get("pflid")));
-	            			}
-	            			Editor.SetLockedParagraphs(locked);
-	            		}
-	                	
-	            		jo = new JSONObject();
-	                	jo.put("fileID", String.valueOf(Editor.GetFileID()));
-	                	jo.put("time", String.valueOf(Editor.GetLatestEditTime().getTime()/1000));
-	                	try{
-	                		data = Server.sendSingleRequest("project", "getLineChanges", jo);
-	                	}
-	                	catch(Exception e){
-	                		System.out.println("Exception");
-	                		//do nothing
-	                	}
-	            		out = null;
-	            		if (data != null){
-//	            			JSONObject singleResponse = (JSONObject) data.get(0);
-//	            			out = (Object) singleResponse.get("result");
-//	            			this.Editor.SetLockedParagraphs((List<Integer>)out);
-	            		}
-	            		java.lang.Thread.sleep(1000);
-            		}
-                } 
-                catch (Exception e){
-                	System.out.println("Client Polling error: " + e.getMessage());
-                }
-        	}
-        }
-	}
+//	private static class ClientPollingThread extends Thread {
+//        private ServerConnection Server = null;
+//        private EditorCodeArea Editor = null;
+//
+//        public ClientPollingThread(EditorCodeArea editor){
+//        	this.Editor = editor;
+//        	this.Server = sq.app.MainApp.GetServer();
+//        }
+//        public void run() {
+//        	while(sq.app.MainApp.GetServer().getStatus()){
+//        	}
+//        }
+//	}
 }

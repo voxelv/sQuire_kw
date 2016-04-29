@@ -194,7 +194,7 @@ public class ProjectManager {
 		JSONArray returnList = new JSONArray();
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject)projectList.get(i);
-			jobj.put("requestTime", String.valueOf(stamp.getTime()/1000));
+			jobj.put("requestTime", stamp.toString());
 			returnList.add(jobj);
 		}
 		
@@ -227,10 +227,9 @@ public class ProjectManager {
 	
 	
 	public JSONArray createProject (String projectName) throws SQLException{
-		String query = "Insert into Projects(pname, location) values (?, ?);";
-		String[] values = new String[2];
+		String query = "Insert into Projects(pname) values (?);";
+		String[] values = new String[1];
 		values[0] = projectName;
-		values[1] = "";
 		
 		String query2 = "Select LAST_INSERT_ID();";
 		String[] values2 = new String[0];
@@ -468,6 +467,9 @@ public class ProjectManager {
 	}
 	
 	public void removeProject (String projectID){
+		String querypa = "Delete from ProjectAccess "
+						+ "where PID = ?";
+		
 		String query = "Delete from Projects " + 
 							"where " +
 								"PID = ? ";
@@ -475,6 +477,7 @@ public class ProjectManager {
 		values[0] = projectID;
 		
 		try {
+			this.dbc.query(querypa, values);
 			this.dbc.query(query, values);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -503,7 +506,7 @@ public class ProjectManager {
 	public void removeDirectory (String dirID){
 		String query = "Delete from PDirs " + 
 							"where " +
-								"PID = ?";
+								"pdid = ?";
 		String[] values = new String[1];
 		values[0] = dirID;
 		
@@ -561,7 +564,7 @@ public class ProjectManager {
 		}
 	}
 	
-	public void changeLine (String lineID, String text){
+	public JSONArray changeLine (String lineID, String text){
 		String query = "Update PFLines " +
 						"set text = ?, " +
 						"lastEditor = ?, " + 
@@ -570,17 +573,26 @@ public class ProjectManager {
 		String[] values = new String[4];
 		values[0] = text;
 		values[1] = String.valueOf(this.userID);
-		//values[2] = "NULL";
-		values[3] = lineID;
-		
 		Timestamp stamp = new Timestamp(System.currentTimeMillis());
 		values[2] = stamp.toString();
+		values[3] = lineID;
+		
+		String newquery = "Select * from PFLines "
+				+ "where pflid = ?";
+		String[] newvalues = new String[1];
+		newvalues[0] = lineID;
+		
+		
+		
+		JSONArray ret = new JSONArray();
 		try {
 			this.dbc.query(query, values);
+			ret = this.dbc.query(newquery, newvalues);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return ret;
 	}
 	
 	public void lockLine (String lineID){

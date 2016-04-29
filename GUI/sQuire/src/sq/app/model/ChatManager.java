@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import sq.app.MainApp;
 
 public class ChatManager {
 	private BufferedReader in;
@@ -62,9 +63,11 @@ public class ChatManager {
     	this.userID = String.valueOf(userID);
     	
     	autoHelper = new ChatHelper(this, server, this.userID);
+    	autoHelper.setDaemon(true);
     	autoHelper.start();
     	
     	manualHelper = new ChatHelper(this, server, this.userID);
+    	manualHelper.setDaemon(true);
     	
     	updateChannels( manualHelper.initJoinChannels() );
     }
@@ -605,16 +608,21 @@ public class ChatManager {
             
             for (int i = 0; i < msgArray.size(); i++)
             {
-            	JSONObject msg = (JSONObject) msgArray.get(i);
-            	Message msgObj = this.manager.parseMessage(msg);
-            	this.manager.channelByServerID.get( msgObj.serverChannelID ).addMsg(msgObj);
-            	
-            	String outString = msgObj.getPrintString();
-
-            	this.manager.addMessageToGUI(outString);
-            	
-            	String thisMID = (String) msg.get("MID");
-            	this.manager.lastMID = thisMID;
+            	try{
+	            	JSONObject msg = (JSONObject) msgArray.get(i);
+	            	Message msgObj = this.manager.parseMessage(msg);
+	            	this.manager.channelByServerID.get( msgObj.serverChannelID ).addMsg(msgObj);
+	            	
+	            	String outString = msgObj.getPrintString();
+	
+	            	this.manager.addMessageToGUI(outString);
+	            	
+	            	String thisMID = (String) msg.get("MID");
+	            	this.manager.lastMID = thisMID;
+            	}
+            	catch(Exception e){
+            		
+            	}
             }
             
             this.manager.helperBusy = false;

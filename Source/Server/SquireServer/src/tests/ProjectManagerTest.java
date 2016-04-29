@@ -2,9 +2,8 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -61,7 +60,7 @@ public class ProjectManagerTest {
 		assertEquals("Create Project return value size != 1", returnValue.size(), 1);
 		assertTrue("Created Project not found", inList);
 		
-		String pid = (String)((JSONObject)returnValue.get(0)).get("pid");
+		String pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 		testManager.removeProject(pid);
 		try {
 			projectList = testManager.getProjects();
@@ -72,8 +71,8 @@ public class ProjectManagerTest {
 		inList = false;
 		for(int i = 0; i < projectList.size(); i++){
 			JSONObject jobj = (JSONObject) projectList.get(i);
-			String listName = (String) jobj.get("pname");
-			if (projName.equals(listName))
+			String listID = (String) jobj.get("pid");
+			if (pid.equals(listID))
 				inList = true;
 		}
 		assertFalse("Created project not deleted", inList);
@@ -141,7 +140,7 @@ public class ProjectManagerTest {
 		JSONArray returnValue = null;
 		try {
 			returnValue = testManager.createProject(projName);
-			pid = (String)((JSONObject)returnValue.get(0)).get("pid");
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
 			returnValue = testManager.createDirectory(pid, dirName);
 			dirList = testManager.getDirectories(pid);
 		} catch (SQLException e) {
@@ -159,7 +158,8 @@ public class ProjectManagerTest {
 		assertEquals("createDirectory returned <> 1 item", returnValue.size(), 1);
 		assertTrue("Created Directory not found", inList);
 		
-		String pdid = (String)((JSONObject)returnValue.get(0)).get("pdid");
+		String pdid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		System.out.println("pdid " +pdid);
 		testManager.removeDirectory(pdid);
 		try {
 			if(pid != null){
@@ -173,12 +173,12 @@ public class ProjectManagerTest {
 		inList = false;
 		for(int i = 0; i < dirList.size(); i++){
 			JSONObject jobj = (JSONObject) dirList.get(i);
-			String listName = (String) jobj.get("pdname");
-			if (dirName.equals(listName))
+			String listName = (String) jobj.get("pdid");
+			if (pdid.equals(listName))
 				inList = true;
 		}
-		assertEquals("Directories still exist", dirList.size(), 0);
 		assertFalse("Created directory not deleted", inList);
+		assertEquals("Directories still exist", dirList.size(), 0);
 	}
 	
 	@Test
@@ -237,6 +237,152 @@ public class ProjectManagerTest {
 		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
 	}
 	
+	@Test
+	public void testGetLineChanges(){
+		String projName = "test project";
+		String fileName = "test file";
+		String lineText = "test line";
+		String pid = null;
+		String pfid = null;
+		testManager.setUserID(userID);
+		JSONArray lineList = new JSONArray();
+		JSONArray returnValue = null;
+		try {
+			returnValue = testManager.createProject(projName);
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
+			pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
+			lineList = testManager.getLines(pfid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(lineList);
+		boolean inList = false;
+		int lineListSize = lineList.size();
+		Timestamp mostRecent = Timestamp.valueOf((String)((JSONObject)lineList.get(0)).get("requestTime"));
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			Timestamp temp = Timestamp.valueOf((String) jobj.get("requestTime"));
+			if (temp.after(mostRecent))
+				mostRecent = temp;
+		}
+		
+		JSONArray lineChangeList = new JSONArray();
+		JSONArray lineCreateReturn = new JSONArray();
+		try {
+			lineCreateReturn = testManager.createLineAtEnd("New line at end", pfid);
+			lineChangeList = testManager.getLineChanges(pfid, String.valueOf(mostRecent.getTime()/1000));
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Line change list");
+		System.out.println(String.valueOf(lineChangeList));
+		
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		testManager.removeLine(pflid);
+		try {
+			if(pid != null){
+				lineList = testManager.getLines(pfid);
+				testManager.removeFile(pfid);
+				testManager.removeProject(pid);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		inList = false;
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertFalse("Created line not deleted",inList);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize);
+	}
+	
+	@Test
+	public void testChangeLine() {
+		String projName = "test project";
+		String fileName = "test file";
+		String lineText = "test line";
+		String newlineText = "new test line";
+		String pid = null;
+		String pfid = null;
+		testManager.setUserID(userID);
+		JSONArray lineList = new JSONArray();
+		JSONArray returnValue = null;
+		try {
+			returnValue = testManager.createProject(projName);
+			pid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createFile(fileName, pid);
+			pfid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+			returnValue = testManager.createLineAtEnd(lineText, pfid);
+			lineList = testManager.getLines(pfid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		boolean inList = false;
+		int lineListSize = lineList.size();
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertNotNull("CreateLine returned null", returnValue);
+		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created line not found", inList);
+		
+		String pflid = (String)((JSONObject)returnValue.get(0)).get("LAST_INSERT_ID()");
+		String changeReturn = String.valueOf(testManager.changeLine(pflid, newlineText));
+		System.out.println(changeReturn);
+		JSONArray newLineList = new JSONArray();
+		try {
+			newLineList = testManager.getLines(pfid);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		boolean newInList = false;
+		int newLineListSize = newLineList.size();
+		for(int i = 0; i < newLineList.size(); i++){
+			JSONObject jobj = (JSONObject) newLineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (newlineText.equals(listText))
+				newInList = true;
+		}
+		assertNotNull("CreateLine returned null", returnValue);
+		assertEquals("CreateLine returned <> 1 item", returnValue.size(), 1);
+		assertTrue("Created line not found", newInList);
+		
+		
+		testManager.removeLine(pflid);
+		try {
+			if(pid != null){
+				lineList = testManager.getLines(pfid);
+				testManager.removeFile(pfid);
+				testManager.removeProject(pid);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		inList = false;
+		for(int i = 0; i < lineList.size(); i++){
+			JSONObject jobj = (JSONObject) lineList.get(i);
+			String listText = (String) jobj.get("text");
+			if (lineText.equals(listText))
+				inList = true;
+		}
+		assertFalse("Created line not deleted",inList);
+		assertEquals("More lines exist than should", lineList.size(), lineListSize - 1);
+	}
 	
 	
 }
