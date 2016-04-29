@@ -60,12 +60,9 @@ public class MainViewController{
     int tempFileId = 0;
 	String currProjectName = "";
 	String tempFileData = "";
-<<<<<<< HEAD
 	
 	ObservableList<String> names = FXCollections.observableArrayList("Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
-=======
 
->>>>>>> origin/master
 	TreeItem<StrucTree> selected = null;
     TreeItem<StrucTree> selectedFile = null;
 
@@ -76,13 +73,8 @@ public class MainViewController{
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
     @FXML Text info;
-<<<<<<< HEAD
     @FXML ListView<String> userList = new ListView<String>(names);
     
-    
-=======
-
->>>>>>> origin/master
     //Compiler
     @FXML public TextArea CompilerOutput;
 
