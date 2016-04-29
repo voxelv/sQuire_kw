@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -16,7 +20,7 @@
 <?import javafx.scene.text.Text?>
 <?import sq.app.model.editor.*?>
 
-<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sq.app.view.MainViewController"> 
+<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sq.app.view.MainViewController"> 
   <children>
       <VBox prefHeight="700.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -32,7 +36,7 @@
                   <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="User...">
                      <items>
                         <MenuItem mnemonicParsing="false" text="Add to Project" />
-                        <MenuItem mnemonicParsing="false" text="View Current Users" />
+                        <MenuItem mnemonicParsing="false" onAction="#showUsers" text="View Current Users" />
                      </items>
                   </MenuButton>
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
@@ -40,6 +44,9 @@
                   <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
                   <Button mnemonicParsing="false" onAction="#locateFile" text="Input" />
                   <Button layoutX="255.0" layoutY="10.0" mnemonicParsing="false" onAction="#compileAndRun" text="Run" />
+                  <Button layoutX="338.0" layoutY="11.0" mnemonicParsing="false" onAction="#projectAccess" text="Project Access" />
+                  <Button layoutX="432.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchUser" text="Switch User" />
+                  <Button layoutX="491.0" layoutY="11.0" mnemonicParsing="false" onAction="#showPassword" text="Show Password" />
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">

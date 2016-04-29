@@ -604,29 +604,55 @@ public class FileGUIController implements Initializable {
     	if(selected == null){
             warning("No project or file selected.");
     	} else if(selected.getValue().isProject()){
+
+
     		int pid = selected.getValue().getID();
-    		Statement st = conn.createStatement();
-    		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
-    		st.executeUpdate(query);
 
-        	query = "SELECT * FROM PFiles WHERE pid LIKE '" + pid + "' AND pdid IS NULL";
-    	    st = conn.createStatement();
-    	    ResultSet rs = st.executeQuery(query);
-    	    while(rs.next()){
-    	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
-    		    Statement st1 = conn.createStatement();
-    		    st1.executeUpdate(query);
-    	    	deleteFileLine(rs.getInt("pflhead"));
-    	    }
 
-    		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
-    		rs = st.executeQuery(query);
-    		while(rs.next()){
-    			deleteDirectory(rs.getInt("pdid"));
+    		String query1 = "SELECT * FROM Projects WHERE PID LIKE '" + pid + "'";
+    		Statement st1 = conn.createStatement();
+    		ResultSet rs1 = st1.executeQuery(query1);
+    		if(rs1.next()){
+    			if(rs1.getInt("projectOwnerID") == MyuserID){
+
+
+
+    	    		Statement st = conn.createStatement();
+    	    		String query = "DELETE FROM ProjectAccess WHERE PID LIKE '" + pid + "'";
+    	    		st.executeUpdate(query);
+
+    	        	query = "SELECT * FROM PFiles WHERE pid LIKE '" + pid + "' AND pdid IS NULL";
+    	    	    st = conn.createStatement();
+    	    	    ResultSet rs = st.executeQuery(query);
+    	    	    while(rs.next()){
+    	    	    	query = "DELETE FROM PFiles WHERE pfid LIKE '" + rs.getInt("pfid") + "'";
+    	    		    Statement st2 = conn.createStatement();
+    	    		    st2.executeUpdate(query);
+    	    	    	deleteFileLine(rs.getInt("pflhead"));
+    	    	    }
+
+    	    		query = "SELECT pdid FROM PDirs WHERE pid like '" + pid + "' AND parentid is NULL";
+    	    		rs = st.executeQuery(query);
+    	    		while(rs.next()){
+    	    			deleteDirectory(rs.getInt("pdid"));
+    	    		}
+    	    		query = "DELETE FROM Projects WHERE pid LIKE '" + pid + "'";
+    	    		st.executeUpdate(query);
+    	    		IniTree();
+
+
+
+    			}else{
+    				warning("You are not the owner of this project.");
+    			}
     		}
-    		query = "DELETE FROM Projects WHERE pid LIKE '" + pid + "'";
-    		st.executeUpdate(query);
-    		IniTree();
+
+
+
+
+
+
+
 
     	} else if(selected.getValue().isDirectory()){
     		System.out.println(selected.getValue().getID());
