@@ -32,7 +32,7 @@
                   <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="User...">
                      <items>
                         <MenuItem mnemonicParsing="false" text="Add to Project" />
-                        <MenuItem mnemonicParsing="false" text="View Current Users" />
+                        <MenuItem mnemonicParsing="false" onAction="#showUsers" text="View Current Users" />
                      </items>
                   </MenuButton>
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />

@@ -20,12 +20,17 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -36,6 +41,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import sq.app.MainApp;
 import sq.app.model.BackgroundWorker;
 import sq.app.model.Compiler;
@@ -53,6 +60,7 @@ public class MainViewController{
 	String currProjectName = "";
 	String tempFileData = "";
 	
+	ObservableList<String> names = FXCollections.observableArrayList("Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
 	TreeItem<StrucTree> selected = null;
     TreeItem<StrucTree> selectedFile = null;
     
@@ -63,6 +71,8 @@ public class MainViewController{
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
     @FXML Text info;
+    @FXML ListView<String> userList = new ListView<String>(names);
+    
     
     //Compiler
     @FXML public TextArea CompilerOutput;
@@ -1116,4 +1126,27 @@ public class MainViewController{
 //        	}
 //        }
 //	}
+
+/////////////////// Show users /////////////////////
+    @FXML
+    private void showUsers() throws IOException{
+    	try{
+	        FXMLLoader loader = new FXMLLoader();
+	        loader.setLocation(MainApp.class.getResource("view/UserList.fxml"));
+	        AnchorPane page = (AnchorPane) loader.load();
+
+	        Stage ulist = new Stage();
+	        ulist.initModality(Modality.NONE);
+	        Scene scene = new Scene(page);
+	        ulist.setScene(scene);
+	        userList.setItems(names);
+	        System.out.println(userList.getItems());
+	        //userList.setItems(names);
+	        ulist.show();
+	        
+    	} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 }
+
