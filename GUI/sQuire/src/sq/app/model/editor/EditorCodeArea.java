@@ -109,6 +109,7 @@ public class EditorCodeArea extends CodeArea{
     	
     	this.currentParagraphProperty().addListener(event->{
     		System.out.println("cur par: " + String.valueOf(this.getCurrentParagraph()));
+    		
     		int currentLineNum = getCurrentParagraph();
         	if (currentLineNum != this.previousLineNumber){
             	sendChangesToServer();
@@ -142,15 +143,39 @@ public class EditorCodeArea extends CodeArea{
         	else if (event.getCode() == KeyCode.BACK_SPACE){
         		char backChar = this.getText().charAt(this.caretPositionProperty().getValue()-1);
         		if (backChar == '\r' || backChar == '\n'){
+        			System.out.println("Killing line #: " + String.valueOf(this.getCurrentParagraph()));
         			backChar = backChar;
-        			this.lineDictionary.removeLine(this.getCurrentParagraph());
+        			
+        			if (this.lineDictionary.getSize() > this.getCurrentParagraph())
+        				this.removeLineNum(this.getCurrentParagraph());
         		}
         	}
-//        	for (int i = 0; i < this.lineDictionary.getSize(); i++)
-//        	{
-//        		System.out.println(String.valueOf(i) + "::" + this.lineDictionary.getLine(i).getText());
-//        	}
+        	
 		});
+	}
+	
+	private void removeLineNum(int lineNum)
+	{
+		this.UnlockParagraph(lineNum);
+		
+		
+		JSONObject params = new JSONObject();
+		
+		int delLineID =  this.lineDictionary.getLine(lineNum).getID();
+				
+		params.put("lineID", String.valueOf(delLineID) );
+		server.addRequest("project", "unlockline", params);
+		
+		// Sending the command to delete this line...
+		// uses the same parameters as unlocking
+		server.addRequest("project", "removeline", params);
+		
+		System.out.println("Trying to unlock and then remove line: " + String.valueOf(lineNum) + "; ID: " + String.valueOf(delLineID));
+		
+		// send both requests at once.
+		server.sendRequestBuffer();
+		
+		this.lineDictionary.removeLine(lineNum);
 	}
 	
 	private void sendChangesToServer(){
@@ -159,13 +184,32 @@ public class EditorCodeArea extends CodeArea{
 		
 //		System.out.println("Sending changes. curLineNum: " + curLineNum + "; prevLineNum: " + prevLineNum);
 		// Detect if it was a backspace that moved to a different line...
-		// go through 5 lines below the current space to see if they would are what you would expect after a backspace
 		if (this.lastCharEntered == KeyCode.BACK_SPACE)
 		{
-			System.out.println("Send the command to delete line "+prevLineNum+" to server");
+//			this.UnlockParagraph(prevLineNum);
+			// unlock line
+//			JSONObject params = new JSONObject();
+//			int delLineNum = prevLineNum;
+//			Line delLineObj = this.lineDictionary.getLine(delLineNum);
+//			int delLineID = delLineObj.getID();
+			
+//    		params.put("lineID", String.valueOf(this.lineDictionary.getLine(prevLineNum).getID() ));
+//    		server.addRequest("project", "unlockline", params);
+    		
+			// Sending the command to delete this line...
+			// uses the same parameters as unlocking
+//    		server.addRequest("project", "removeline", params);
+//    		
+//    		System.out.println("Trying to unlock and then remove line: " + String.valueOf(delLineNum) + "; ID: " + String.valueOf(delLineID));
+    		
+    		// send both requests at once.
+//    		server.sendRequestBuffer();
+    		
+//        	server.sendSingleRequest("project", "removeLine", params);
+			
+//			System.out.println("Send the command to delete line "+prevLineNum+" to server");
 		}
-		
-    	if (curLineNum != prevLineNum){
+		else if (curLineNum != prevLineNum){
 			String curLineText = "";
 			String prevLineText = this.previousLineText;
 			if (prevLineNum != -1){
@@ -196,6 +240,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void updateMyLockedLine(){
+		
 		int curLineNum = this.getCurrentParagraph();
 		int prevLineNum = this.previousLineNumber;
 		new Thread(new Runnable() {
@@ -229,6 +274,7 @@ public class EditorCodeArea extends CodeArea{
 	}
 	
 	private void createNewLine(){
+		System.out.println("Creating new line...");
     	JSONObject jo = new JSONObject();
 		int p = this.getCurrentParagraph();
     	String beforeCaretText = this.getText(this.getCaretPosition()-this.getCaretColumn(), this.getCaretPosition());
@@ -262,11 +308,19 @@ public class EditorCodeArea extends CodeArea{
 			try{
 				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
 				jo.put("text", afterCaretText);
-		    	server.sendSingleRequest("project", "changeLine", jo);
+				server.addRequest("project", "changeLine", jo);
+
 				jo = new JSONObject();
 				jo.put("fileID", String.valueOf(this.currentFileID));
 				jo.put("text", beforeCaretText);
-				response = server.sendSingleRequest("project", "createLineAtEnd", jo);
+				server.addRequest("project", "createLineAtEnd", jo);
+				
+				
+				JSONArray multipleResponses = (JSONArray) server.sendRequestBuffer();
+				JSONObject t = (JSONObject) multipleResponses.get(1);
+				
+				response = (Object) ( t.get("result") );
+				
 			}
 			catch(Exception e){
 				System.out.println("error trying to add line to end of file");
@@ -291,12 +345,17 @@ public class EditorCodeArea extends CodeArea{
 			try {
 				ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)response);
 				jo = (JSONObject)ja.get(0);
+				System.out.println("JSONObject: " + jo);
 //				int i1 = Integer.valueOf((String)jo.get("LAST_INSERT_ID()"));
+//				System.out.println("")
 //				int i2 = listOfLineObjects.get(p+1).getID();
 //				String s = "";
 //				Timestamp t = new Timestamp(0);
+				int nextLineID = 0;
+				if (p+1 < this.lineDictionary.getSize())
+					nextLineID = lineDictionary.getIDfromLine(p+1);
 				
-				Line l = new Line(Integer.valueOf((String)jo.get("LAST_INSERT_ID()")), p+1, currentUserID, lineDictionary.getIDfromLine(p+1),"",new Timestamp(0));
+				Line l = new Line(Integer.valueOf((String)jo.get("LAST_INSERT_ID()")), p+1, currentUserID, nextLineID,"",new Timestamp(0));
 				this.lineDictionary.add(l);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
