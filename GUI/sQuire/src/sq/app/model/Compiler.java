@@ -59,6 +59,7 @@ public class Compiler
     {
     	path = System.getProperty("user.dir") + "\\classes";
     	compilerOutput = "";
+    	systemOutput = "";
     	File directory = new File(path);
     	if(!directory.exists())
     		directory.mkdir();
@@ -204,7 +205,9 @@ public class Compiler
     {
         //get system compiler:
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
- 
+        if(compiler==null)
+        	System.out.println("JDK not found");
+        
         // for compilation diagnostic message processing on compilation WARNING/ERROR
         MyDiagnosticListener c = new MyDiagnosticListener();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(c, Locale.ENGLISH,null);
@@ -222,6 +225,7 @@ public class Compiler
     /** Run class from the compiled byte code file by URLClassloader */
     public static void runIt(String packageDotClassName)
     {
+    	systemOutput = "";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	PrintStream ps = new PrintStream(baos);
         // IMPORTANT: Save the old System.out!
