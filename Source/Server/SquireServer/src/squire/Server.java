@@ -465,6 +465,12 @@ public class Server{
         		output = new JSONObject().toJSONString();
         	}
         	
+        	// Send success back if nothing was returned
+        	if (output == null)
+        	{
+        		output = "Success";
+        	}
+        	
         	return output;
         }
 	}

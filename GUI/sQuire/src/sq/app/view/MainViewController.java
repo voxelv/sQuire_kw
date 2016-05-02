@@ -1067,7 +1067,7 @@ public class MainViewController{
     }
 
     ArrayList<Line> lineArray = new ArrayList<Line>();
-
+    
     private StringBuilder getLine(int id, int lineNo, StringBuilder temp) throws SQLException{
     	Statement st = conn.createStatement();
     	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
@@ -1076,7 +1076,10 @@ public class MainViewController{
     		int lastEditor = (rs.getString("lastEditor")!=null)?(rs.getInt("lastEditor")):(-1);
     		lineArray.add(new Line(id, lineNo, lastEditor, rs.getInt("nextid"), rs.getString("text"), rs.getTimestamp("timeEdited")));
     		temp.append(rs.getString("text"));
-            temp.append("\n");
+    		
+    		// If the nextID is null, then don't append a newline - that's end of file.
+    		if (rs.getInt("nextid") != 0)
+    			temp.append("\n");
     		getLine(rs.getInt("nextid"), lineNo+1, temp);
     	}
     	return temp;
