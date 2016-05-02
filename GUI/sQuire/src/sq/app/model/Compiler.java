@@ -101,7 +101,7 @@ public class Compiler
            
            System.out.flush();
            System.setOut(old);
-           compilerOutput.concat(baos.toString());
+           compilerOutput += baos.toString();
         }
     }
     
@@ -223,11 +223,11 @@ public class Compiler
     public static void runIt(String packageDotClassName)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
+    	PrintStream ps = new PrintStream(baos);
         // IMPORTANT: Save the old System.out!
-        PrintStream old = System.out;
+    	PrintStream old = System.out;
         // Tell Java to use your special stream
-        System.setOut(ps);
+    	System.setOut(ps);
     	
     	
         // Create a File object on the root of the directory
@@ -253,7 +253,7 @@ public class Compiler
         }
         catch (MalformedURLException e)
         {
-        }
+        } 
         catch (ClassNotFoundException e)
         {
         }
@@ -263,7 +263,7 @@ public class Compiler
         }
         System.out.flush();
         System.setOut(old);
-        systemOutput = baos.toString();
+        systemOutput += baos.toString();
     }
  
 }

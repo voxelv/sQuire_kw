@@ -1297,8 +1297,9 @@ public class MainViewController{
 
     @FXML private void compileAndRun() throws Exception{
     	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
+    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString().replace(".java", ""));
     	CompilerOutput.setText(compiler.compilerOutput);
+    	CompilerOutput.appendText("Running main() of " + selectedFile.getValue().toString());
     	CompilerOutput.appendText(compiler.systemOutput);
     }
 
