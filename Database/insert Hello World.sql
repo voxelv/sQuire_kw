@@ -1,10 +1,10 @@
 insert into PFLines(nextid, text) values (NULL, "}");
-insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "    }");
+insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "    }//Nice things");
 insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "        System.out.println(\"Hello, World\");");
 insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "        // Prints \"Hello, World\" to the terminal window.");
-insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "    public static void main(String[] args) {");
+insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "    public static void main(String[] args) {//Hang in there!");
 insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "");
-insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "public class HelloWorld {");
+insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "public class HelloWorld {//You're a beutiful person");
 insert into PFiles(pfname, pflhead) values ("Hello World.java", (select LAST_INSERT_ID()));
 
 /*Add Scott's Tots*/
@@ -90,10 +90,15 @@ insert into PFLines(nextid, text) values ((select LAST_INSERT_ID()), "//Hi Scott
 insert into PFiles(pfname, pflhead) values ("SqrtTest.java", (select LAST_INSERT_ID()));
 
 
+"Update PFLines set text = " ", lastEditor = 9, timeEdited = NOW() where pflid = ?";
 
 
+Alter table PFiles ()
+
+select * from (call PFLTraverser(( select `pflhead` from `PFiles` where `pfid` = 72))) where timeEdited > (NOW() - 60000);
 
 
+Update PFLines set nextid = LAST_INSERT_ID() where nextid = ? and pflid != LAST_INSERT_ID()
 
 
 
