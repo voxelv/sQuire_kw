@@ -1285,8 +1285,31 @@ public class MainViewController{
         	warning("No project selected.");
     	}
     }
-
-
+/***************************Logout***************************/
+    @FXML public void Logout(){
+    	MainApp mainApp = new MainApp();
+    	reset();
+    	IniTree();
+    	mainApp.showLoginPane();
+    	if(userID == 0){
+    		Platform.exit();
+    	} else {
+    		mainApp.initChatRoot();
+        	mainApp.showChatPane();
+    	}
+	}
+/***************************Reset***************************/
+    private void reset(){
+    	currPID = 0;
+    	selected = null;
+    	selectedFile = null;
+    	currProjectName = "";
+    	tempFileId = 0;
+    	tempFileData = "";
+    	userID = 0;
+    	userName = "None";
+    	user.setText("username");
+    }
 
 
 
