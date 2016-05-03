@@ -73,12 +73,9 @@ public class Compiler
     {
         public void report(Diagnostic<? extends JavaFileObject> diagnostic)
         {
-            // Create a stream to hold the output
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream(baos);
-            // IMPORTANT: Save the old System.out!
             PrintStream old = System.out;
-            // Tell Java to use your special stream
             System.setOut(ps);
 
         	
@@ -125,6 +122,7 @@ public class Compiler
     	JSONArray fileArray = (JSONArray) returnObj;
     	String code = "";
     	List<JavaFileObject> javaFileList = new ArrayList<JavaFileObject>();
+    	
     	for(int i = 0; i < fileArray.size(); i++)
     	{
     		JSONObject file = (JSONObject) fileArray.get(i);
@@ -143,7 +141,7 @@ public class Compiler
         		JSONObject line = (JSONObject) lineArray.get(j);
         		String codeLine = (String) line.get("text");
         		code += codeLine + "\n";
-        		System.out.println(code);
+//        		System.out.println(code);
         	}
         	
         	javaFileList.add(i, this.new InMemoryJavaFileObject(fileName, code));
@@ -151,8 +149,8 @@ public class Compiler
 
     	}
     	Iterable<? extends JavaFileObject> files = javaFileList;
-    	compile(files);
-    	runIt(mainFile);  	
+    	if(compile(files))
+    		runIt(mainFile);  	
     }
     
     public String getCodeFromFile(ServerConnection server, String fileID) throws ParseException
@@ -201,30 +199,53 @@ public class Compiler
  
  
     /** Compile your files by JavaCompiler */
-    public static void compile(Iterable<? extends JavaFileObject> files)
+    public static boolean compile(Iterable<? extends JavaFileObject> files)
     {
+    	//initialize new ps for compiler s/f results
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        PrintStream old = System.out;
+        System.setOut(ps);
+    	
+    	
         //get system compiler:
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if(compiler==null)
-        	System.out.println("JDK not found");
-        
-        // for compilation diagnostic message processing on compilation WARNING/ERROR
-        MyDiagnosticListener c = new MyDiagnosticListener();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(c, Locale.ENGLISH,null);
-        Iterable options = Arrays.asList("-d", classOutputFolder);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
+        {
+        	System.out.println("Error: JDK not found");
+        	System.out.println("Add JDK to system PATH variable and try again");
+            System.out.flush();
+            System.setOut(old);
+            compilerOutput += baos.toString();
+        	return false;
+        }
+        else
+        {
+        	// for compilation diagnostic message processing on compilation WARNING/ERROR
+        	MyDiagnosticListener c = new MyDiagnosticListener();
+        	StandardJavaFileManager fileManager = compiler.getStandardFileManager(c, Locale.ENGLISH,null);
+        	Iterable options = Arrays.asList("-d", classOutputFolder);
+        	JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
                                                              c, options, null,
                                                              files);
-        Boolean result = task.call();
-        if (result == true)
-        {
-            System.out.println("Succeeded");
-        }
+        	Boolean result = task.call();
+        	if (result == true)
+        	{
+        		System.out.println("Compilation successful");
+        	}
+            
+        	//reset System.out
+            System.out.flush();
+            System.setOut(old);
+            compilerOutput += baos.toString();
+            return true;
+        }        
     }
  
     /** Run class from the compiled byte code file by URLClassloader */
     public static void runIt(String packageDotClassName)
     {
+    	
     	systemOutput = "";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	PrintStream ps = new PrintStream(baos);
@@ -233,6 +254,7 @@ public class Compiler
         // Tell Java to use your special stream
     	System.setOut(ps);
     	
+    	System.out.println("Running main() of class " + packageDotClassName);
     	
         // Create a File object on the root of the directory
         // containing the class file

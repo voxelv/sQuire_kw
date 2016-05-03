@@ -1299,7 +1299,6 @@ public class MainViewController{
     	Compiler compiler = new Compiler();
     	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString().replace(".java", "").replace(" ",""));
     	CompilerOutput.setText(compiler.compilerOutput);
-    	CompilerOutput.appendText("Running main() of " + selectedFile.getValue().toString());
     	CompilerOutput.appendText(compiler.systemOutput);
     }
 
