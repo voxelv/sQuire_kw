@@ -70,8 +70,12 @@ public class BackgroundWorker extends Thread{
 	            					String newText = (String)jo.get("text");
 	            					int lineID = Integer.parseInt((String)jo.get("pflid"));
 	            					int lastEditor = Integer.parseInt((String)jo.get("lastEditor"));
+	            					int nextLineID = -1;
+	            					if ((Object)jo.get("nextid") != null){
+	            						nextLineID = Integer.parseInt((String)jo.get("nextid"));	            					
+	            					}
+	            					editor.lineDictionary.updateNextID(lineID, nextLineID);
 	            					int lineNumber = editor.GetLineIndexFromID(lineID);
-	            					
 	            					editor.lineDictionary.updateTextbyID(lineID, newText, Timestamp.valueOf((String)jo.get("timeEdited")), lastEditor);
 	            					editor.lineDictionary.MarkChanged(lineNumber);
 	            					editor.checkIt.set(!editor.checkIt.get());

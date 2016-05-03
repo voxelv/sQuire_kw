@@ -26,6 +26,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.scene.input.KeyCode;
+import jdk.net.NetworkPermission;
 import sq.app.model.Line;
 import sq.app.model.LineDictionary;
 import sq.app.model.ServerConnection;
@@ -90,10 +91,18 @@ public class EditorCodeArea extends CodeArea{
 		    			for(Line l : lineDictionary.GetChangeList()){
 		    				
 		    				int c = getCaretPosition();
-							String oldText = getText(l.getLineNumber());
-							int start = getText().indexOf(oldText);
-							int end = start + oldText.length();
-							replaceText(start, end, l.getText());
+		    				try{
+		    					String oldText = getText(l.getLineNumber());
+								int start = getText().indexOf(oldText);
+								int end = start + oldText.length();
+								replaceText(start, end, l.getText());
+								int oldLen = end - start;
+								int newLen = l.getText().length();
+								c += (newLen - oldLen);
+		    				} catch (Exception e){
+		    					
+		    					insertText(lengthProperty().getValue()-1, "\n"+l.getText());
+		    				}
 							positionCaret(c);
 							doHighlight();
 							System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());

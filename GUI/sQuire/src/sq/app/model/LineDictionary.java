@@ -180,6 +180,34 @@ public class LineDictionary {
 		}
 	}
 	
+	public void updateNextID(int id, int nextID){
+		Line l = idMap.get(id);
+		Line ll = idMap.get(nextID);
+		// create a new line
+		if (nextID != -1){
+			if (ll == null){
+				ll = new Line(nextID, lineList.indexOf(l)+1,1,l.getNextID(),"",l.getTimestamp());
+				idMap.put(nextID, ll);
+				lineList.add(ll.getLineNumber(),ll);
+				if (l != null){
+					l.setNextID(nextID);
+					idMap.put(id, l);
+					lineList.set(l.getLineNumber(),l);
+				}
+			}
+			// delete a line
+			else{
+				while (l.getNextID()!=nextID){
+					Line lll = idMap.get(l.getNextID());
+					l.setNextID(lll.getNextID());
+					lineList.remove(lll);
+					changeList.add(lll);
+					lll = idMap.get(l.getNextID());
+				}
+			}
+		}
+	}
+	
 	public int getSize(){
 		return lineList.size();
 	}
