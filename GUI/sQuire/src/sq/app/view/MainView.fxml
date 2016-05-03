@@ -47,6 +47,7 @@
                   <Button layoutX="338.0" layoutY="11.0" mnemonicParsing="false" onAction="#projectAccess" text="Project Access" />
                   <Button layoutX="432.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchUser" text="Switch User" />
                   <Button layoutX="491.0" layoutY="11.0" mnemonicParsing="false" onAction="#showPassword" text="Show Password" />
+                  <Button layoutX="622.0" layoutY="11.0" mnemonicParsing="false" onAction="#Logout" text="logout" />
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
