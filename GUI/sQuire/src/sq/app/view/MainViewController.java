@@ -30,6 +30,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -37,6 +38,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -50,8 +53,9 @@ import sq.app.model.Compiler;
 import sq.app.model.Line;
 import sq.app.model.ServerConnection;
 import sq.app.model.editor.EditorCodeArea;
+import sq.app.view.UserList.UserListController;
 
-public class MainViewController{
+public class MainViewController {
 	//FileManagement
 	public static Connection conn = null;
 	public static int userID = 0;
@@ -60,20 +64,17 @@ public class MainViewController{
     int tempFileId = 0;
 	String currProjectName = "";
 	String tempFileData = "";
-	
-	ObservableList<String> names = FXCollections.observableArrayList("Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
 
 	TreeItem<StrucTree> selected = null;
     TreeItem<StrucTree> selectedFile = null;
 
 
-    @FXML
-	public Label user;
+    @FXML public Label user;
     @FXML TextField curr_position;
     @FXML TreeView<StrucTree> structure_tree;
     @FXML AnchorPane root;
     @FXML Text info;
-    @FXML ListView<String> userList = new ListView<String>(names);
+    
     
     //Compiler
     @FXML public TextArea CompilerOutput;
@@ -86,7 +87,15 @@ public class MainViewController{
     @FXML
     private EditorCodeArea editorCodeArea;
     private static EditorCodeArea editor;
-
+    
+    //chat
+	@FXML
+	private TextField Message;
+	@FXML
+	private TextArea History;
+	@FXML
+	private ComboBox channelBox;
+    
     //calls Initialize
     @FXML
     public void init(){
@@ -114,6 +123,11 @@ public class MainViewController{
         BackgroundWorker clientPolling = new BackgroundWorker(editorCodeArea, sq.app.MainApp.GetServer());
         clientPolling.setDaemon(true);
         clientPolling.start();
+        /***************** Chat *************************************************************************************/
+        MainApp.chatManager.history = History;
+		MainApp.chatManager.channelBox = channelBox;
+		
+		History.setEditable(false);
 	}
 
 
@@ -150,7 +164,7 @@ public class MainViewController{
             		String projName = re1.getString("pname");
                 	if( Objects.equals(projName,currProjName)){
                 		isExist = true;
-                		warning("Project name already exist.");
+                		warning("Project name already exists.");
                         break;
                 	}
             	}
@@ -170,7 +184,7 @@ public class MainViewController{
                 	sql = "INSERT INTO ProjectAccess(PID, userID)VALUE('" + currID + "','" + userID + "')";
                 	st.executeUpdate(sql);
             	}
-            }else{warning("Create Project Failed");}
+            }else{warning("Failed to create a project.");}
             }
     	}
     	IniTree();
@@ -274,6 +288,7 @@ public class MainViewController{
     }
     public void setUserName(String userName){
     	this.user.setText(userName);
+    	MainApp.chatManager.onLogin(MainApp.getCurrentUser().getUserID());
     }
 
 /***************************Rename Function***************************/
@@ -281,7 +296,7 @@ public class MainViewController{
     	boolean isExist = false;
 
     	if(selected == null){
-            warning("No project or file selected.");
+            warning("Select an Project, Folder, or File.");
     	} else if(selected.getValue().isProject()){
     		TextInputDialog dialog = new TextInputDialog("");
         	dialog.setTitle("Rename");
@@ -306,7 +321,7 @@ public class MainViewController{
                 		String projName = re1.getString("pname");
                     	if( Objects.equals(projName,currProjName)){
                     		isExist = true;
-                    		warning("Project name already exist.");
+                    		warning("Project name already exists.");
                             break;
                     	}
                 	}
@@ -350,7 +365,7 @@ public class MainViewController{
 
 
                 if(isExist == true){
-         			warning("Directory name already exist.");
+         			warning("Directory name already exists.");
          		} else {
                 	query = "UPDATE PDirs SET pdname='" + inputFolderName + "' WHERE pdid='" + selected.getValue().getID() + "'";
 
@@ -389,7 +404,7 @@ public class MainViewController{
                     	}
                     }
                     if(isExist == true){
-            			warning("File name already exist.");
+            			warning("File name already exists.");
 
             		} else {
                     	query = "UPDATE PFiles SET pfname='" + inputFileName + "' WHERE pfid='" + selected.getValue().getID() + "'";
@@ -620,7 +635,7 @@ public class MainViewController{
     	}
 */
       	if(selected == null){
-            warning("No project or file selected.");
+            warning("Select a project, folder, or file.");
     	} else if(selected.getValue().isProject()){
     		int pid = selected.getValue().getID();
 
@@ -720,9 +735,19 @@ public class MainViewController{
 /***************************Warning Pop Up Window***************************/
 
     private void warning(String text){
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Warning");
-        alert.setHeaderText("Warning");
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Error");
+        alert.setContentText(text);
+        alert.showAndWait();
+    }
+
+    /***************************Success Pop Up Window***************************/
+    
+    private void confirm(String text){
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText("Success");
         alert.setContentText(text);
         alert.showAndWait();
     }
@@ -785,7 +810,7 @@ public class MainViewController{
                     	}
                     }
         		if(isExist == true){
-        			warning("Directory name already exist.");
+        			warning("Directory name already exists.");
 
         		} else {
         			query = "INSERT INTO PDirs(pdname, pid) VALUE('" + inputFolderName + "','" + currPID + "')";
@@ -828,7 +853,7 @@ public class MainViewController{
                 	}
                 }
                 if(isExist == true){
-        			warning("Directory name already exist.");
+        			warning("Directory name already exists.");
         		} else {
         	   		if(selected.getParent().getValue().isProject()){
             			query = "INSERT INTO PDirs(pdname, pid) VALUE('" + inputFolderName + "','" + currPID + "')";
@@ -873,7 +898,7 @@ public class MainViewController{
                 	}
                 }
     		if(isExist == true){
-    			warning("Directory name already exist.");
+    			warning("Directory name already exists.");
     		} else {
     			query = "INSERT INTO PDirs(pdname, pid, parentid) VALUE('" + inputFolderName + "','" + currPID + "','" + selected.getValue().getID() + "')";
     			st = conn.createStatement();
@@ -899,7 +924,7 @@ public class MainViewController{
     	boolean isExist = false;
 
     	if(Objects.equals(currProjectName,"") || selected == null){
-            warning("Can't create file under the main project");
+            warning("Can't create file under the main project.");
     	} else if(selected.getValue().isProject()){
     		TextInputDialog dialog = new TextInputDialog("");
         	dialog.setTitle("Create File");
@@ -922,7 +947,7 @@ public class MainViewController{
         			}
         		}
         		if(isExist == true){
-        			warning("File name already exist.");
+        			warning("File name already exists.");
         		} else {
         			query = "INSERT INTO PFiles(pfname, pid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + userID +  "')";
         			st = conn.createStatement();
@@ -966,7 +991,7 @@ public class MainViewController{
                 	}
                 }
                 if(isExist == true){
-        			warning("File name already exist.");
+        			warning("File name already exists.");
 
         		} else {
         	   		if(selected.getParent().getValue().isProject()){
@@ -1014,7 +1039,7 @@ public class MainViewController{
 	                	}
 	                }
 	    		if(isExist == true){
-	    			warning("File name already exist.");
+	    			warning("File name already exists.");
 	    		} else {
 	    			query = "INSERT INTO PFiles(pfname, pid, pdid,creatorID) VALUE('" + inputFileName + "','" + currPID + "','" + selected.getValue().getID() + "','" + userID + "')";
 	    			st = conn.createStatement();
@@ -1192,7 +1217,7 @@ public class MainViewController{
             			ResultSet rs6 = st6.executeQuery(query6);
             			boolean isExist = rs6.next();
             			if(isExist == false){
-            				warning("Successful!");
+            				confirm("Successful!");
             				Statement st5 = conn.createStatement();
             				String query5 = "INSERT INTO ProjectAccess(PID,userID)VALUE('" + rs4.getInt("PID") + "','" + userID+"')";
             				st5.executeUpdate(query5);
@@ -1315,21 +1340,45 @@ public class MainViewController{
 //        }
 //	}
 
+    
+    
+    
+    
+////////////////////// new chat stuff //////////////////////////
+    @FXML
+    public void handleEnterPressed(KeyEvent event){
+		if(event.getCode() == KeyCode.ENTER){
+			SendMessage();
+		}
+	}
+    
+    @FXML
+	public void SendMessage() {
+		MainApp.chatManager.enterText(Message.getText());
+		Message.clear();
+    }
+    
+    
+    
+    
+    
 /////////////////// Show users /////////////////////
     @FXML
     private void showUsers() throws IOException{
     	try{
 	        FXMLLoader loader = new FXMLLoader();
-	        loader.setLocation(MainApp.class.getResource("view/UserList.fxml"));
+	        loader.setLocation(MainApp.class.getResource("view/UserList/UserList.fxml"));
 	        AnchorPane page = (AnchorPane) loader.load();
 
 	        Stage ulist = new Stage();
 	        ulist.initModality(Modality.NONE);
+	        ulist.initOwner(MainApp.getPrimaryStage());
 	        Scene scene = new Scene(page);
 	        ulist.setScene(scene);
-	        userList.setItems(names);
-	        System.out.println(userList.getItems());
-	        //userList.setItems(names);
+	        
+	        UserListController ulc = new UserListController();
+			ulc.initialize();
+	        
 	        ulist.show();
 	        
     	} catch (IOException e) {

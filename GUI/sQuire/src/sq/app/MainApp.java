@@ -1,15 +1,10 @@
 package sq.app;
 
-import java.awt.Event;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import javax.swing.Action;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -23,10 +18,11 @@ import sq.app.model.ServerConnection;
 import sq.app.model.User;
 import sq.app.view.LoginPaneController;
 import sq.app.view.MainViewController;
+import sq.app.view.UserList.UserListController;
 
 public class MainApp extends Application {
 
-	private Stage primaryStage;
+	private static Stage primaryStage;
 	private Stage chatStage;
 	public BorderPane chatRoot;
 	private Stage loginStage;
@@ -65,9 +61,6 @@ public class MainApp extends Application {
 
 		showLoginPane();
 		
-		initChatRoot();
-		
-		showChatPane();
 		
 	}
 	
@@ -88,24 +81,6 @@ public class MainApp extends Application {
 		}
 	}
 	
-	public void initChatRoot(){
-		try{
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("view/ChatPaneRoot.fxml"));
-			chatRoot = (BorderPane) loader.load();
-			
-			Scene scene = new Scene(chatRoot);
-			
-			secondaryStage = new Stage();
-			secondaryStage.setScene(scene);
-			secondaryStage.initOwner(primaryStage);
-			secondaryStage.show();
-
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	
 	
@@ -119,11 +94,12 @@ public class MainApp extends Application {
 	    	MainView.getScene().getStylesheets().add(sq.app.model.editor.EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
 
 	    	mainController = loader.getController();
+	    	
   
 		} catch (IOException e){
 			e.printStackTrace();
-			
 		}
+		
 	}
 	public static void setUser(User user){
 		currentUser = user;
@@ -138,33 +114,13 @@ public class MainApp extends Application {
 		return currentUser;
 	}
 
-	public void showChatPane() {
-	    try {
-	    	
-	    	
-	        // Load the fxml file and create a new stage for the popup dialog.
-	        FXMLLoader loader2 = new FXMLLoader();
-	        loader2.setLocation(MainApp.class.getResource("view/ChatPane.fxml"));
-	        AnchorPane page = (AnchorPane) loader2.load();
-	        
-	        
-	        chatRoot.setCenter(page);
-	    	
-
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	    MainApp.chatManager.onLogin(MainApp.getCurrentUser().getUserID());
-	}
 	
 	public boolean showLoginPane() {
 	    try {
-	        // Load the fxml file and create a new stage for the popup dialog.
 	        FXMLLoader loader = new FXMLLoader();
 	        loader.setLocation(MainApp.class.getResource("view/LoginPane.fxml"));
 	        AnchorPane page = (AnchorPane) loader.load();
 
-	        // Create the dialog Stage.
 	        loginStage = new Stage();
 	        loginStage.setTitle("Login");
 	        loginStage.initModality(Modality.WINDOW_MODAL);
@@ -176,7 +132,6 @@ public class MainApp extends Application {
 	        controller.setDialogStage(loginStage);
 
 
-	        // Show the dialog and wait until the user closes it
 	        loginStage.showAndWait();
 
 	        return controller.isOkClicked();
@@ -186,7 +141,7 @@ public class MainApp extends Application {
 	    }
 	}
 	
-	public Stage getPrimaryStage() {
+	public static Stage getPrimaryStage() {
 		return primaryStage;
 	}
 	
