@@ -1314,7 +1314,6 @@ public class MainViewController {
     }
 /***************************Logout***************************/
     @FXML public void Logout(){
-    	MainApp mainApp = new MainApp();
     	reset();
     	IniTree();
     	mainApp.showLoginPane();
@@ -1362,12 +1361,6 @@ public class MainViewController {
 				}
 			}
 		});
-    }
-    
-////////////////////////////////////////////Logout Button/////////////////////////////////////////////////
-    @FXML private void LogoutButton() {
-    	System.out.println("Logging out.");
-    	if(mainApp != null) mainApp.showLoginPane();
     }
     
 ////////////////////////////////////////////Set MainApp/////////////////////////////////////////////////
