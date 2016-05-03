@@ -226,6 +226,12 @@ public class Server{
         			
         			output = ret.toJSONString();
         		}
+        		else if (action.compareToIgnoreCase("Logout") == 0)
+        		{
+        			this.userID = -1;
+        			this.chatManager.setUserID(-1);
+        			this.projectManager.setUserID(-1);
+        		}
         		else if (action.compareToIgnoreCase("createAccount") == 0)
         		{
         			String fName = (String) params.get("fName");

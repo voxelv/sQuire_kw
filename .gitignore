@@ -59,3 +59,4 @@ local.properties
 .recommenders/
 *\bin\*
 *.class
+Source/Server/SquireServer/.project
