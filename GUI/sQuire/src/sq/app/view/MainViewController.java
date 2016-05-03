@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -1296,9 +1297,21 @@ public class MainViewController{
 ////////////////////////////////////////////Compiler Methods/////////////////////////////////////////////////
 
     @FXML private void compileAndRun() throws Exception{
-    	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
-    	CompilerOutput.setText(compiler.compilerOutput);
+		Platform.runLater(new Runnable(){
+			@Override public void run() {
+				try {
+			    	Compiler compiler = new Compiler();
+			    	ServerConnection server = MainApp.GetServer();
+			    	String pid = String.valueOf(currPID);
+			    	String file = selectedFile.getValue().toString();
+					compiler.compileAndRunProject(server, pid, file);
+					CompilerOutput.setText(compiler.compilerOutput);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
     }
 
 ///////////////////////////////////////////////////////////////////////////////////
