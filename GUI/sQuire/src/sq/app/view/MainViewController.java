@@ -61,6 +61,7 @@ public class MainViewController{
     int tempFileId = 0;
 	String currProjectName = "";
 	String tempFileData = "";
+	MainApp mainApp;
 	
 	ObservableList<String> names = FXCollections.observableArrayList("Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
 
@@ -1335,6 +1336,17 @@ public class MainViewController{
 				}
 			}
 		});
+    }
+    
+////////////////////////////////////////////Logout Button/////////////////////////////////////////////////
+    @FXML private void LogoutButton() {
+    	System.out.println("Logging out.");
+    	if(mainApp != null) mainApp.showLoginPane();
+    }
+    
+////////////////////////////////////////////Set MainApp/////////////////////////////////////////////////
+    public void setMainApp(MainApp ma) {
+    	this.mainApp = ma;
     }
 
 ///////////////////////////////////////////////////////////////////////////////////

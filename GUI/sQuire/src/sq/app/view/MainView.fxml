@@ -40,6 +40,7 @@
                      </items>
                   </MenuButton>
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
+                  <Button mnemonicParsing="false" onAction="#LogoutButton" text="Logout" />
                   <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
                   <Button mnemonicParsing="false" onAction="#Rename" text="Rename" />
                   <Button mnemonicParsing="false" onAction="#locateFile" text="Input" />

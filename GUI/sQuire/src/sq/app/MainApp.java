@@ -119,6 +119,7 @@ public class MainApp extends Application {
 	    	MainView.getScene().getStylesheets().add(sq.app.model.editor.EditorCodeArea.class.getResource("resources/java-keywords.css").toExternalForm());
 
 	    	mainController = loader.getController();
+	    	mainController.setMainApp(this);
   
 		} catch (IOException e){
 			e.printStackTrace();
@@ -204,7 +205,6 @@ public class MainApp extends Application {
 	public static ServerConnection GetServer(){
     	return server;
     }
-	
 	
 	public static void Connect() throws ClassNotFoundException{
 		try {
