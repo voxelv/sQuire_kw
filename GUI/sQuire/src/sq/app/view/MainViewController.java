@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -64,6 +65,8 @@ public class MainViewController {
     int tempFileId = 0;
 	String currProjectName = "";
 	String tempFileData = "";
+	
+	MainApp mainApp;
 
 	TreeItem<StrucTree> selected = null;
     TreeItem<StrucTree> selectedFile = null;
@@ -1092,7 +1095,7 @@ public class MainViewController {
     }
 
     ArrayList<Line> lineArray = new ArrayList<Line>();
-
+    
     private StringBuilder getLine(int id, int lineNo, StringBuilder temp) throws SQLException{
     	Statement st = conn.createStatement();
     	String query = "SELECT * FROM PFLines WHERE pflid like '" + id + "'";
@@ -1101,7 +1104,10 @@ public class MainViewController {
     		int lastEditor = (rs.getString("lastEditor")!=null)?(rs.getInt("lastEditor")):(-1);
     		lineArray.add(new Line(id, lineNo, lastEditor, rs.getInt("nextid"), rs.getString("text"), rs.getTimestamp("timeEdited")));
     		temp.append(rs.getString("text"));
-            temp.append("\n");
+    		
+    		// If the nextID is null, then don't append a newline - that's end of file.
+    		if (rs.getInt("nextid") != 0)
+    			temp.append("\n");
     		getLine(rs.getInt("nextid"), lineNo+1, temp);
     	}
     	return temp;
@@ -1306,8 +1312,31 @@ public class MainViewController {
         	warning("No project selected.");
     	}
     }
-
-
+/***************************Logout***************************/
+    @FXML public void Logout(){
+    	MainApp mainApp = new MainApp();
+    	reset();
+    	IniTree();
+    	mainApp.showLoginPane();
+    	if(userID == 0){
+    		Platform.exit();
+    	} else {
+    		//mainApp.initChatRoot();
+        	//mainApp.showChatPane();
+    	}
+	}
+/***************************Reset***************************/
+    private void reset(){
+    	currPID = 0;
+    	selected = null;
+    	selectedFile = null;
+    	currProjectName = "";
+    	tempFileId = 0;
+    	tempFileData = "";
+    	userID = 0;
+    	userName = "None";
+    	user.setText("username");
+    }
 
 
 
@@ -1318,9 +1347,32 @@ public class MainViewController {
 ////////////////////////////////////////////Compiler Methods/////////////////////////////////////////////////
 
     @FXML private void compileAndRun() throws Exception{
-    	Compiler compiler = new Compiler();
-    	compiler.compileAndRunProject(MainApp.GetServer(), String.valueOf(currPID), selectedFile.getValue().toString());
-    	CompilerOutput.setText(compiler.compilerOutput);
+		Platform.runLater(new Runnable(){
+			@Override public void run() {
+				try {
+			    	Compiler compiler = new Compiler();
+			    	ServerConnection server = MainApp.GetServer();
+			    	String pid = String.valueOf(currPID);
+			    	String file = selectedFile.getValue().toString();
+					compiler.compileAndRunProject(server, pid, file);
+					CompilerOutput.setText(compiler.compilerOutput);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+    }
+    
+////////////////////////////////////////////Logout Button/////////////////////////////////////////////////
+    @FXML private void LogoutButton() {
+    	System.out.println("Logging out.");
+    	if(mainApp != null) mainApp.showLoginPane();
+    }
+    
+////////////////////////////////////////////Set MainApp/////////////////////////////////////////////////
+    public void setMainApp(MainApp ma) {
+    	this.mainApp = ma;
     }
 
 ///////////////////////////////////////////////////////////////////////////////////
