@@ -112,8 +112,13 @@ public class EditorCodeArea extends CodeArea{
     		});
 		});
     	
-//    	this.caretPositionProperty().addListener(event->{
-//    	});
+    	this.caretPositionProperty().addListener(event->{
+    		Platform.runLater(new Runnable(){
+    			@Override public void run() {
+    				doHighlight();    		
+    			}
+    		});
+    	});
     	
     	
     	this.currentParagraphProperty().addListener(event->{
@@ -129,7 +134,6 @@ public class EditorCodeArea extends CodeArea{
     	});
     	
     	this.plainTextChanges().subscribe(change->{
-    		this.doHighlight();    		
     	});
 
 		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
