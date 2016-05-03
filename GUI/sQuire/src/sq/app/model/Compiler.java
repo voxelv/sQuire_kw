@@ -189,6 +189,12 @@ public class Compiler
         //get system compiler:
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
  
+        // this was null and i realized that i was somehow no longer
+        // using the jdk so i added user output
+        if (compiler == null){
+        	compilerOutput = "Java compiler is null, you are probably using jre not jdk";
+        }
+        
         // for compilation diagnostic message processing on compilation WARNING/ERROR
         MyDiagnosticListener c = new MyDiagnosticListener();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(c, Locale.ENGLISH,null);
