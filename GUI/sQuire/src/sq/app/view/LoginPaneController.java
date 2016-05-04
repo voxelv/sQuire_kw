@@ -85,6 +85,8 @@ public class LoginPaneController {
 	@FXML
 	private void handleCancel(){
 		dialogStage.close();
+		Stage a = (Stage) dialogStage.getOwner();
+		a.close();
 	}
 	
 	@FXML
@@ -234,7 +236,7 @@ public class LoginPaneController {
 		
 		JSONObject loginObj = null;
 		try {
-//			System.out.println(stringResult);
+			System.out.println(returnValue);
 			loginObj = (JSONObject) new JSONParser().parse(returnValue);
 			int userID = Integer.parseInt((String) loginObj.get("userID"));
 			
