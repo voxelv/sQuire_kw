@@ -1316,6 +1316,7 @@ public class MainViewController {
     @FXML public void Logout(){
     	reset();
     	IniTree();
+    	mainApp.sendLogout();
     	mainApp.showLoginPane();
     	if(userID == 0){
     		Platform.exit();
