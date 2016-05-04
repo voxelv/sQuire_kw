@@ -539,10 +539,11 @@ public class ProjectManager {
 		firstvalues[0] = lineID;
 		
 		String upquery = "Update PFLines " +
-						 "set nextid = ? " +
+						 "set nextid = ?, timeEdited = ? " +
 						 "where nextid = ? ";
-		String[] upvalues = new String[2];
-		upvalues[1] = lineID;
+		String[] upvalues = new String[3];
+		upvalues[2] = lineID;
+		upvalues[1] = (new Timestamp(System.currentTimeMillis())).toString();
 		
 		String query = "Delete from PFLines " + 
 							"where " +
