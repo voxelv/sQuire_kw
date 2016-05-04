@@ -78,10 +78,30 @@ public class BackgroundWorker extends Thread{
 	            						nextLineID = Integer.parseInt((String)jo.get("nextid"));	            					
 	            					}
 	            					Timestamp ts = Timestamp.valueOf((String)jo.get("timeEdited"));
+            						if(nextLineID!=-1 && editor.lineDictionary.getID(nextLineID)==null){
+            							Line n = new Line();
+            							n.setID(nextLineID);
+            							n.setTimestamp(ts);
+            							editor.lineDictionary.add(n);
+            							Line l = editor.lineDictionary.getID(lineID);
+            							int pos = editor.GotPositionOfLineID(lineID);
+            							editor.InsertLine(pos+l.getText().length()+1, "");
+            						}
+            						if(editor.lineDictionary.getID(lineID)==null){
+            							Line n = new Line();
+            							n.setID(lineID);
+            							editor.lineDictionary.add(n);
+            						}
 	            					Line l = editor.lineDictionary.getID(lineID);
-	            					if (ts.after(l.getTimestamp())){
+	            					if ((ts.after(l.getTimestamp()) || !newText.equals(l.getText())) &&
+	            							lastEditor!=editor.currentUserID){
 		            					editor.lineDictionary.updateNextID(lineID, nextLineID);
 		            					int lineNumber = editor.GetLineIndexFromID(lineID);
+		            					if (lineNumber==-1){
+		            						lineNumber = editor.lineDictionary.getSize();
+		            						editor.lineDictionary.getID(lineID).setLineNumber(lineNumber);
+		            					}
+		            					System.out.println(lineNumber);
 		            					editor.lineDictionary.updateTextbyID(lineID, newText, ts, lastEditor);
 		            					editor.lineDictionary.MarkChanged(lineNumber);
 		            					editor.checkIt.set(!editor.checkIt.get());

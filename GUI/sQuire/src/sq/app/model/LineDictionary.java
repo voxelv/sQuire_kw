@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.sun.org.apache.bcel.internal.classfile.LineNumber;
+
 import sq.app.model.Line;
 
 //@Author Joe
@@ -22,14 +25,14 @@ public class LineDictionary {
 		if (idMap.containsValue(value)){
 			this.removeID(value.getID());
 		}
-		
-
 		if (value.getLocked())
 		{
 			lockIt(value);
 		}
 		idMap.put(value.getID(), value);
-		lineList.add(value.getLineNumber(), value);
+		if (value.getLineNumber()!=-1){
+			lineList.add(value.getLineNumber(), value);
+		}
     }
 	
 	public void setUserID(int id){
@@ -167,7 +170,14 @@ public class LineDictionary {
 			l.setTimestamp(tstamp);
 			l.setLastEditorID(lastEditorID);
 			idMap.put(id, l);
-			lineList.set(l.getLineNumber(),l);
+			if (l.getLineNumber()!=-1){
+				if (l.getLineNumber() < getSize()){
+					lineList.set(l.getLineNumber(),l);
+				}
+				else{
+					lineList.add(l);
+				}
+			}
 		}
 	}
 
@@ -196,15 +206,15 @@ public class LineDictionary {
 				}
 			}
 			// delete a line
-			else{
-				while (l.getNextID()!=nextID){
-					Line lll = idMap.get(l.getNextID());
-					l.setNextID(lll.getNextID());
-					lineList.remove(lll);
-					changeList.add(lll);
-					lll = idMap.get(l.getNextID());
-				}
-			}
+//			else{
+//				while (l.getNextID()!=nextID){
+//					Line lll = idMap.get(l.getNextID());
+//					l.setNextID(lll.getNextID());
+//					lineList.remove(lll);
+//					changeList.add(lll);
+//					lll = idMap.get(l.getNextID());
+//				}
+//			}
 		}
 	}
 	

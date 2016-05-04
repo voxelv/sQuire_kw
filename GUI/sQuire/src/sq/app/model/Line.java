@@ -19,7 +19,7 @@ public class Line {
 		this.setNextID(-1);
 		this.setLastEditorID(-1);
 		this.setText("");
-		this.setTimestamp(Timestamp);
+		this.setTimestamp(new Timestamp(0));
 		this.setLocked(false);
 	}
 	

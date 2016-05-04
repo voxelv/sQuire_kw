@@ -126,7 +126,7 @@ public class EditorCodeArea extends CodeArea{
     			@Override public void run() {
     				try{
     					doHighlight();    		
-    					updateMyLockedLine();
+    					//updateMyLockedLine();
     				}
     				catch(Exception e){
     					e.printStackTrace(System.out);
@@ -140,8 +140,11 @@ public class EditorCodeArea extends CodeArea{
     		try{
     			if (isEditable()){
 	    			this.previousLineNumber = this.currentLineNumber;
-		    		if (this.previousLineNumber!= -1){
+		    		if (this.previousLineNumber!= -1 && this.previousLineNumber < lineDictionary.getSize()){
 		    			this.previousLineText = this.getText(this.previousLineNumber);
+		    		}
+		    		else if(this.previousLineNumber >= lineDictionary.getSize()){
+		    			this.previousLineNumber=-1;
 		    		}
 		    		this.currentLineNumber = getCurrentParagraph();
 		        	if (this.currentLineNumber != this.previousLineNumber){
@@ -162,17 +165,19 @@ public class EditorCodeArea extends CodeArea{
 //    	this.plainTextChanges().subscribe(change->{
 //    	});
 
-//		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+		this.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
 //			int p = this.getCurrentParagraph();
-//			this.lastCharEntered = event.getCode();
+			this.lastCharEntered = event.getCode();
 ////			System.out.println("Last Char entered: '" + this.lastCharEntered.getName() + "'");
 //        	if (this.lineDictionary.getLockedLines().contains(p) && !event.getCode().isArrowKey())
 //        	{
 //        		revertLine(this.getCurrentParagraph());
 //    		}
-////        	if (event.getCode() == KeyCode.ENTER){
-////        		createNewLine();
-////        	}
+        	if (event.getCode() == KeyCode.ENTER){
+        		int cp = getCaretPosition();
+        		int cc = getCaretColumn();
+        		createNewLine(cp, cc);
+        	}
 ////        	else if (event.getCode() == KeyCode.DELETE){
 ////        		char deleteChar = this.getText().charAt(this.caretPositionProperty().getValue()+1);
 ////        		if (deleteChar == '\r' || deleteChar == '\n'){
@@ -190,7 +195,7 @@ public class EditorCodeArea extends CodeArea{
 ////        		}
 ////        	}
 //        	
-//		});
+		});
 	}
 	
 	private void removeLineNum(int lineNum)
@@ -234,16 +239,25 @@ public class EditorCodeArea extends CodeArea{
 			    		//System.out.println(String.valueOf(lineDictionary));
 			        	int curLineNum = getCurrentParagraph();
 			        	int prevLineNum = previousLineNumber;
-			    		String prevLineText = lineDictionary.getLine(prevLineNum).getText();
+			    		String prevLineText = "";
+			    		if (prevLineNum != -1 && prevLineNum < lineDictionary.getSize()){
+				    		prevLineText = lineDictionary.getLine(prevLineNum).getText();
+			    		}
+			    		else
+			    		{
+			    			prevLineNum = -1;
+			    		}
 			    		String curLineText = "";
-			    		if (curLineNum != -1){
+			    		if (prevLineNum != -1){
 			    			curLineText = getText(prevLineNum); 
 			    		}
-			    		if (curLineNum != prevLineNum){
-			        		if (!new String(curLineText).equals(prevLineText) && prevLineNum != -1){
-			                	if (prevLineNum == lineDictionary.getSize()){
-			                		createNewLine();
-			                	}
+			    		if (curLineNum != prevLineNum && prevLineNum < lineDictionary.getSize()){
+			        		if (!new String(curLineText).equals("") &&
+			        				!new String(curLineText).equals(prevLineText) && 
+			        				prevLineNum != -1){
+//			                	if (prevLineNum == lineDictionary.getSize()){
+//			                		createNewLine(getCaretPosition(),getCaretColumn());
+//			                	}
 	        			JSONObject jo = new JSONObject();
 	            		jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(prevLineNum)));
 	            		jo.put("text", curLineText);
@@ -261,6 +275,20 @@ public class EditorCodeArea extends CodeArea{
 		}
 	}
 	
+	public int GotPositionOfLineID(int id){
+		try{
+			int line = lineDictionary.getID(id).getLineNumber();
+			int start = 0;
+			for (int i = 0; i < line; i++){
+				start += getText(i).length()+1;
+			}
+			return start;
+		}
+		catch(Exception e){
+			e.printStackTrace(System.out);
+			return -1;
+		}
+	}
 	
 	private void updateMyLockedLine(){
 		
@@ -325,94 +353,97 @@ public class EditorCodeArea extends CodeArea{
 		//this.replaceSelection(this.lineDictionary.getLine(p).getText());	        		
 	}
 	
-	private void createNewLine(){
-		System.out.println("Creating new line...");
-    	JSONObject jo = new JSONObject();
-		int p = this.getCurrentParagraph();
-    	String beforeCaretText = this.getText(this.getCaretPosition()-this.getCaretColumn(), this.getCaretPosition());
-    	String afterCaretText = this.getText(this.getCaretPosition(), this.getCaretPosition()-this.getCaretColumn()+this.getParagraph(p).length());
-    	Object response = null;
-		if (p==0){
-			try{
-				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
-				jo.put("text", afterCaretText);
-		    	server.sendSingleRequest("project", "changeLine", jo);
-				jo = new JSONObject();
-    			jo.put("fileID", String.valueOf(this.currentFileID));
-    			jo.put("text", beforeCaretText);
-    			response = server.sendSingleRequest("project", "createLineAtHead", jo);
-			}
-			catch(Exception e){
-				System.out.println("error trying to add line to begginning of file");
-			}
-		}
-		else if (p == lineDictionary.getSize()){
-			try{
-				jo.put("text", beforeCaretText);
-				jo.put("fileID", String.valueOf(this.currentFileID));
-				response = server.sendSingleRequest("project", "createLineAtEnd", jo);
-			}
-			catch(Exception e){
-				System.out.println("error trying to add line to end of file");
-			}
-		}
-		else if (p == lineDictionary.getSize()-1){
-			try{
-				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
-				jo.put("text", afterCaretText);
-				server.addRequest("project", "changeLine", jo);
-
-				jo = new JSONObject();
-				jo.put("fileID", String.valueOf(this.currentFileID));
-				jo.put("text", beforeCaretText);
-				server.addRequest("project", "createLineAtEnd", jo);
-				
-				
-				JSONArray multipleResponses = (JSONArray) server.sendRequestBuffer();
-				JSONObject t = (JSONObject) multipleResponses.get(1);
-				
-				response = (Object) ( t.get("result") );
-				
-			}
-			catch(Exception e){
-				System.out.println("error trying to add line to end of file");
-			}
-		}
-		else{
-			try{
-				jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(p)));
-				jo.put("text", afterCaretText);
-		    	server.sendSingleRequest("project", "changeLine", jo);
-				jo = new JSONObject();
-				jo.put("nextLineID", String.valueOf(lineDictionary.getIDfromLine(p)));
-				jo.put("text", beforeCaretText);
-				response = server.sendSingleRequest("project", "createLine", jo);
-			}
-			catch(Exception e){
-				System.out.println("error trying to add line in middle of file");
-			}
-		}
-		if (response != null){
-			JSONArray ja;
-			try {
-				ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)response);
-				jo = (JSONObject)ja.get(0);
-				System.out.println("JSONObject: " + jo);
-//				int i1 = Integer.valueOf((String)jo.get("LAST_INSERT_ID()"));
-//				System.out.println("")
-//				int i2 = listOfLineObjects.get(p+1).getID();
-//				String s = "";
-//				Timestamp t = new Timestamp(0);
-				int nextLineID = 0;
-				if (p+1 < this.lineDictionary.getSize())
-					nextLineID = lineDictionary.getIDfromLine(p+1);
-				
-				Line l = new Line(Integer.valueOf((String)jo.get("LAST_INSERT_ID()")), p+1, currentUserID, nextLineID,"",new Timestamp(0));
-				this.lineDictionary.add(l);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+	private void createNewLine(int caretPosition, int caretColumn){
+		if (isEditable()){
+	    	try{
+		    	JSONObject jo = new JSONObject();
+		    	int curLineNum = getCurrentParagraph();
+		    	int prevLineNum = curLineNum-1;
+				String prevLineText = "";
+				if (prevLineNum != -1){
+					prevLineText = getText(prevLineNum);
+				}
+				String curLineText = "";
+				if (curLineNum != -1){
+					curLineText = getText(curLineNum); 
+				}
+		    	String beforeCaretText = getText(getCaretPosition()-getCaretColumn(), getCaretPosition());
+		    	String afterCaretText = getText(getCaretPosition(), getCaretPosition()-getCaretColumn()+getParagraph(curLineNum).length());
+		    	Object response = null;
+//				if (curLineNum==0){
+//					try{
+//						System.out.println("new line at head");
+//						jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(curLineNum)));
+//						jo.put("text", beforeCaretText);
+//				    	server.sendSingleRequest("project", "changeLine", jo);
+//						jo = new JSONObject();
+//		    			jo.put("fileID", String.valueOf(currentFileID));
+//		    			jo.put("text", afterCaretText);
+//		    			response = server.sendSingleRequest("project", "createLineAtHead", jo);
+//					}
+//					catch(Exception e){
+//						System.out.println("error trying to add line to begginning of file");
+//					}
+//				}
+//				else 
+		    	if (curLineNum >= lineDictionary.getSize()-1){
+					try{
+						System.out.println("new line at tail");
+						jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(curLineNum)));
+						jo.put("text", beforeCaretText);
+				    	server.sendSingleRequest("project", "changeLine", jo);
+						jo.put("text", afterCaretText);
+						jo.put("fileID", String.valueOf(currentFileID));
+						response = server.sendSingleRequest("project", "createLineAtEnd", jo);
+					}
+					catch(Exception e){
+						System.out.println("error trying to add line to end of file");
+					}
+				}
+				else{
+					try{
+						System.out.println("new line");
+						jo.put("lineID", String.valueOf(lineDictionary.getIDfromLine(curLineNum)));
+						jo.put("text", beforeCaretText);
+				    	server.sendSingleRequest("project", "changeLine", jo);
+						jo = new JSONObject();
+						jo.put("nextLineID", String.valueOf(lineDictionary.getLine(curLineNum).getNextID()));
+						jo.put("text", afterCaretText);
+						response = server.sendSingleRequest("project", "createLine", jo);
+					}
+					catch(Exception e){
+						System.out.println("error trying to add line in middle of file");
+					}
+				}
+				if (response != null){
+					JSONArray ja;
+					try {
+						ja = (JSONArray)new org.json.simple.parser.JSONParser().parse((String)response);
+						jo = (JSONObject)ja.get(0);
+						int newLineID = Integer.valueOf((String)jo.get("LAST_INSERT_ID()"));
+						int nextLineID = 0;
+						if (curLineNum+1 < lineDictionary.getSize()){
+							nextLineID = lineDictionary.getIDfromLine(curLineNum+1);
+						}
+						Line l = new Line(newLineID, curLineNum+1, currentUserID, nextLineID,afterCaretText,new Timestamp(0));
+						lineDictionary.add(l);
+						lineDictionary.getLine(curLineNum).setNextID(newLineID);
+						for (int i = 0; i < lineDictionary.getSize(); i++){
+ 			    			Line x = lineDictionary.getLine(i);
+ 			    			System.out.print(x.getLineNumber()+", ");
+ 			    			System.out.print(x.getID()+", ");
+ 			    			System.out.print(x.getText()+", ");
+ 			    			System.out.print(x.getLastEditorID()+", ");
+ 			    			System.out.print(x.getLocked()+", ");
+ 			    			System.out.print(x.getTimestamp()+"\n");
+ 			    		}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+	    	}catch(Exception e){
 				e.printStackTrace();
-			}
+	    	}
 		}
 	}
 	
@@ -482,6 +513,21 @@ public class EditorCodeArea extends CodeArea{
 		}
 	}
 	
+	public void InsertLine(int textPos, String text){
+		Platform.runLater(new Runnable() {
+		    @Override
+		    public void run(){	  
+				try{
+					int c = getCaretPosition();
+					insertText(getLength()-2, "\n"+text);
+					positionCaret(c);//-text.length()-2);
+				}
+				catch(Exception e){
+					e.printStackTrace(System.out);						
+				}
+		    }
+		});
+	}
 	
 	public void LockParagraph(int paragraphNumber){
 		lineDictionary.lockLine(paragraphNumber);
