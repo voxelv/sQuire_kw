@@ -207,6 +207,7 @@ public class Compiler
         PrintStream old = System.out;
         System.setOut(ps);
     	
+        compilerOutput = "Compiler output >>\n\n";
     	
         //get system compiler:
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -238,7 +239,7 @@ public class Compiler
             System.out.flush();
             System.setOut(old);
             compilerOutput += baos.toString();
-            return true;
+            return result;
         }        
     }
  
@@ -254,22 +255,25 @@ public class Compiler
         // Tell Java to use your special stream
     	System.setOut(ps);
     	
-    	System.out.println("Running main() of class " + packageDotClassName);
+    	compilerOutput = "Run output >>\n";
+    	
+    	System.out.println("Running main() of class " + packageDotClassName + " >>\n");
     	
         // Create a File object on the root of the directory
         // containing the class file
         File file = new File(classOutputFolder);
  
         try
-        {
+        {            
             // Convert File to a URL
             URL url = file.toURL(); // file:/classes
             URL[] urls = new URL[] { url };
  
             // Create a new class loader with the directory
             ClassLoader loader = new URLClassLoader(urls);
- 
-            Class thisClass = loader.loadClass(packageDotClassName);
+            
+            // got rid of '.java' extension
+            Class thisClass = loader.loadClass(packageDotClassName.replace(".java", ""));
  
             String params[] = null;
             Method mainMethod = thisClass.getMethod("main", String[].class);
@@ -279,9 +283,11 @@ public class Compiler
         }
         catch (MalformedURLException e)
         {
+        	e.printStackTrace(System.out);
         } 
         catch (ClassNotFoundException e)
         {
+        	e.printStackTrace(System.out);
         }
         catch (Exception ex)
         {
@@ -289,7 +295,7 @@ public class Compiler
         }
         System.out.flush();
         System.setOut(old);
-        systemOutput += baos.toString();
+        compilerOutput += baos.toString();
     }
  
 }
