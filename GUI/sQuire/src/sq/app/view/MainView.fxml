@@ -49,7 +49,6 @@
                 <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
                   <Button mnemonicParsing="false" onAction="#Logout" text="Logout" />
                   <Button layoutX="255.0" layoutY="10.0" mnemonicParsing="false" onAction="#compileAndRun" text="Run" />
-                  <Button layoutX="432.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchUser" text="Switch User" />
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
