@@ -35,6 +35,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#CreateFolder" text="Create Folder" />
                         <MenuItem mnemonicParsing="false" onAction="#CreateFile" text="Create File" />
                         <MenuItem mnemonicParsing="false" onAction="#locateFile" text="Import" />
+                        <MenuItem mnemonicParsing="false" onAction="#Export" text="Export" />
                         <MenuItem mnemonicParsing="false" onAction="#projectAccess" text="Access Project" />
                      </items>
                   </MenuButton>
