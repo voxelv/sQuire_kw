@@ -43,7 +43,10 @@ public class BackgroundWorker extends Thread{
             			ArrayList<Integer> locked = new ArrayList<Integer>();
             			for(Object o : ja.toArray()){
             				JSONObject joo = (JSONObject)o;
-            				locked.add(Integer.parseInt((String)joo.get("pflid")));
+            				if (Integer.parseInt((String)joo.get("lastEditor"))!=editor.currentUserID)
+            				{
+            					locked.add(Integer.parseInt((String)joo.get("pflid")));
+            				}
             			}
             			editor.SetLockedParagraphs(locked);
             		}
@@ -74,11 +77,15 @@ public class BackgroundWorker extends Thread{
 	            					if ((Object)jo.get("nextid") != null){
 	            						nextLineID = Integer.parseInt((String)jo.get("nextid"));	            					
 	            					}
-	            					editor.lineDictionary.updateNextID(lineID, nextLineID);
-	            					int lineNumber = editor.GetLineIndexFromID(lineID);
-	            					editor.lineDictionary.updateTextbyID(lineID, newText, Timestamp.valueOf((String)jo.get("timeEdited")), lastEditor);
-	            					editor.lineDictionary.MarkChanged(lineNumber);
-	            					editor.checkIt.set(!editor.checkIt.get());
+	            					Timestamp ts = Timestamp.valueOf((String)jo.get("timeEdited"));
+	            					Line l = editor.lineDictionary.getID(lineID);
+	            					if (ts.after(l.getTimestamp())){
+		            					editor.lineDictionary.updateNextID(lineID, nextLineID);
+		            					int lineNumber = editor.GetLineIndexFromID(lineID);
+		            					editor.lineDictionary.updateTextbyID(lineID, newText, ts, lastEditor);
+		            					editor.lineDictionary.MarkChanged(lineNumber);
+		            					editor.checkIt.set(!editor.checkIt.get());
+	            					}
 	            				}
             				}
             			}

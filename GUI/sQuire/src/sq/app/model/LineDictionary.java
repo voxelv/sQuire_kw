@@ -86,7 +86,7 @@ public class LineDictionary {
 		if (l != null){
 			l.setLocked(true);
 			idMap.put(l.getID(),l);
-			lineList.add(key, l);
+			lineList.set(key, l);
 			lockIt(l);
 		}
 	}
