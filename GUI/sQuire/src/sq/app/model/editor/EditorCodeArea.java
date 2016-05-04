@@ -184,16 +184,16 @@ public class EditorCodeArea extends CodeArea{
 ////        			deleteChar = deleteChar;
 ////        		}
 ////        	}
-////        	else if (event.getCode() == KeyCode.BACK_SPACE){
-////        		char backChar = this.getText().charAt(this.caretPositionProperty().getValue()-1);
-////        		if (backChar == '\r' || backChar == '\n'){
-////        			System.out.println("Killing line #: " + String.valueOf(this.getCurrentParagraph()));
-////        			backChar = backChar;
-////        			
-////        			if (this.lineDictionary.getSize() > this.getCurrentParagraph())
-////        				this.removeLineNum(this.getCurrentParagraph());
-////        		}
-////        	}
+        	else if (event.getCode() == KeyCode.BACK_SPACE){
+        		char backChar = this.getText().charAt(this.caretPositionProperty().getValue()-1);
+        		if (backChar == '\r' || backChar == '\n'){
+//        			System.out.println("Killing line #: " + String.valueOf(this.getCurrentParagraph()));
+        			backChar = backChar;
+        			
+        			if (this.lineDictionary.getSize() > this.getCurrentParagraph())
+        				this.removeLineNum(this.getCurrentParagraph());
+        		}
+        	}
 //        	
 		});
 	}
