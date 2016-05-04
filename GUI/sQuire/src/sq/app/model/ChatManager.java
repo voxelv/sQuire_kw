@@ -570,6 +570,10 @@ public class ChatManager {
          */
         public void updateMessages()
         {
+        	System.out.println(this.userID);
+        	if (this.userID != null && Integer.parseInt(this.userID) <= 0)
+        		return;
+        	
         	JSONObject params;
         	
         	/**************************** START OF REQUEST ****************************/
@@ -598,8 +602,11 @@ public class ChatManager {
             JSONArray msgArray = new JSONArray();
     		try {
 //    			System.out.println(stringResult);
-    			if (stringResult!=null){
-    				msgArray = (JSONArray) new JSONParser().parse(stringResult);
+    			if (stringResult != null){
+    				if (stringResult.compareToIgnoreCase("Success") != 0 && stringResult.compareToIgnoreCase("{}") != 0)
+    					msgArray = (JSONArray) new JSONParser().parse(stringResult);
+    				else
+    					msgArray = new JSONArray();
     			}
     		} catch (ParseException e1) {
     			// TODO Auto-generated catch block
