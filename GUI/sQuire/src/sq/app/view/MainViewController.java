@@ -1314,6 +1314,7 @@ public class MainViewController {
     }
 /***************************Logout***************************/
     @FXML public void Logout(){
+    	System.out.println("this");
     	reset();
     	IniTree();
     	mainApp.sendLogout();

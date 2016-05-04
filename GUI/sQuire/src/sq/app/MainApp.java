@@ -140,9 +140,16 @@ public class MainApp extends Application {
 
 	        loginStage.showAndWait();
 
-	        return controller.isOkClicked();
+	        if(controller.isOkClicked()){
+	        	return true;
+	        } else {
+	        Stage a = (Stage) loginStage.getOwner();
+	        a.close();
+	        return false;
+	        }
 	    } catch (IOException e) {
 	        e.printStackTrace();
+	        
 	        return false;
 	    }
 	}
