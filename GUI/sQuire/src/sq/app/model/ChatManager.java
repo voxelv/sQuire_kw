@@ -577,7 +577,7 @@ public class ChatManager {
          */
         public void updateMessages()
         {
-        	System.out.println("User: " + this.userID);
+        	//System.out.println("User: " + this.userID);
         	if (this.userID != null && Integer.parseInt(this.userID) <= 0)
         		return;
         	

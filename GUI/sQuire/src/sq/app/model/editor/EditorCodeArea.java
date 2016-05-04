@@ -109,7 +109,7 @@ public class EditorCodeArea extends CodeArea{
 		    					insertText(lengthProperty().getValue()-1, "\n"+l.getText());
 		    				}
 							doHighlight();
-							System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());
+							//System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());
 		    			}
 		    		}
 		    	}
@@ -127,7 +127,7 @@ public class EditorCodeArea extends CodeArea{
     	
     	
     	this.currentParagraphProperty().addListener(event->{
-    		System.out.println("cur par: " + String.valueOf(this.getCurrentParagraph()));
+    		//System.out.println("cur par: " + String.valueOf(this.getCurrentParagraph()));
     		
     		this.previousLineNumber = this.currentLineNumber;
     		if (this.previousLineNumber!= -1){
@@ -194,7 +194,7 @@ public class EditorCodeArea extends CodeArea{
 		// uses the same parameters as unlocking
 		server.addRequest("project", "removeline", params);
 		
-		System.out.println("Trying to unlock and then remove line: " + String.valueOf(lineNum) + "; ID: " + String.valueOf(delLineID));
+		//System.out.println("Trying to unlock and then remove line: " + String.valueOf(lineNum) + "; ID: " + String.valueOf(delLineID));
 		
 		// send both requests at once.
 		server.sendRequestBuffer();
@@ -207,16 +207,16 @@ public class EditorCodeArea extends CodeArea{
 			    @Override
 			    public void run(){	    
 			    	try{
-			    		for (int i = 0; i < lineDictionary.getSize(); i++){
-			    			Line x = lineDictionary.getLine(i);
-			    			System.out.print(x.getLineNumber()+", ");
-			    			System.out.print(x.getID()+", ");
-			    			System.out.print(x.getText()+", ");
-			    			System.out.print(x.getLastEditorID()+", ");
-			    			System.out.print(x.getLocked()+", ");
-			    			System.out.print(x.getTimestamp()+"\n");
-			    		}
-			    		System.out.println(String.valueOf(lineDictionary));
+//			    		for (int i = 0; i < lineDictionary.getSize(); i++){
+//			    			Line x = lineDictionary.getLine(i);
+//			    			System.out.print(x.getLineNumber()+", ");
+//			    			System.out.print(x.getID()+", ");
+//			    			System.out.print(x.getText()+", ");
+//			    			System.out.print(x.getLastEditorID()+", ");
+//			    			System.out.print(x.getLocked()+", ");
+//			    			System.out.print(x.getTimestamp()+"\n");
+//			    		}
+			    		//System.out.println(String.valueOf(lineDictionary));
 			        	int curLineNum = getCurrentParagraph();
 			        	int prevLineNum = previousLineNumber;
 			    		String prevLineText = lineDictionary.getLine(prevLineNum).getText();
@@ -234,7 +234,7 @@ public class EditorCodeArea extends CodeArea{
 	            		jo.put("text", curLineText);
 	                	server.sendSingleRequest("project", "changeLine", jo);
 	                	lineDictionary.updateText(prevLineNum, curLineText);
-						System.out.println("snd chg: " + String.valueOf(prevLineNum) +", "+ prevLineText);
+						//System.out.println("snd chg: " + String.valueOf(prevLineNum) +", "+ prevLineText);
 			    		    }
 					    }
 				    }
@@ -290,7 +290,7 @@ public class EditorCodeArea extends CodeArea{
 	private void revertLine(int line){
 		int p = this.getCurrentParagraph();
 		int c = getCaretPosition();
-		System.out.println("rev par "+String.valueOf(line));
+		//System.out.println("rev par "+String.valueOf(line));
 		try{
 			String oldText = getText(line);
 			String newText = lineDictionary.getLine(line).getText();
