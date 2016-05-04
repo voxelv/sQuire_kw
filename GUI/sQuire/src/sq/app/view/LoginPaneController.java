@@ -236,12 +236,16 @@ public class LoginPaneController {
 		try {
 //			System.out.println(stringResult);
 			loginObj = (JSONObject) new JSONParser().parse(returnValue);
+			int userID = Integer.parseInt((String) loginObj.get("userID"));
 			
-			MainApp.setUser(new User(Integer.parseInt((String) loginObj.get("userID"))));
-			MainApp.setUser(userName);
+			if (userID > 0)
+			{
+				MainApp.setUser(new User(userID));
+				MainApp.setUser(userName);
+			}
 			
 			//MainViewController.setUser(MainApp.CurrentUser.getUserID());
-			System.out.println(Integer.toString(MainApp.getCurrentUser().getUserID()));
+//			System.out.println(Integer.toString(MainApp.getCurrentUser().getUserID()));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 			

@@ -58,6 +58,13 @@ public class ChatManager {
     	this.server = server;
     }
     
+    public void onLogout()
+    {
+    	autoHelper.interrupt();
+    	autoHelper.destroy();
+    	manualHelper.destroy();
+    }
+    
     public void onLogin(int userID)
     {
     	this.userID = String.valueOf(userID);
@@ -570,6 +577,7 @@ public class ChatManager {
          */
         public void updateMessages()
         {
+        	System.out.println("User: " + this.userID);
         	if (this.userID != null && Integer.parseInt(this.userID) <= 0)
         		return;
         	

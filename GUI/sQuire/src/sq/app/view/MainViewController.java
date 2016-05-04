@@ -1324,6 +1324,7 @@ public class MainViewController {
     		//mainApp.initChatRoot();
         	//mainApp.showChatPane();
     	}
+    	
 	}
 /***************************Reset***************************/
     private void reset(){
