@@ -29,24 +29,28 @@
          <children>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="FIle">
+                  <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="File">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#CreateProject" text="Create Project" />
                         <MenuItem mnemonicParsing="false" onAction="#CreateFolder" text="Create Folder" />
                         <MenuItem mnemonicParsing="false" onAction="#CreateFile" text="Create File" />
                         <MenuItem mnemonicParsing="false" onAction="#locateFile" text="Import" />
                         <MenuItem mnemonicParsing="false" onAction="#projectAccess" text="Access Project" />
-                        <MenuItem mnemonicParsing="false" onAction="#showPassword" text="Show Project Password" />
                      </items>
                   </MenuButton>
                   <MenuButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="Edit">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showUsers" text="View Current Users" />
                         <MenuItem mnemonicParsing="false" onAction="#Rename" text="Rename" />
                         <MenuItem mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
                      </items>
                   </MenuButton>
-                <Button mnemonicParsing="false" onAction="#HomeButton" text="Home" />
+                  <MenuButton mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showPassword" text="Show Project Password" />
+                        <MenuItem mnemonicParsing="false" onAction="#showUsers" text="View Current Users" />
+                    </items>
+                  </MenuButton>
+                <Button mnemonicParsing="false" onAction="#HomeButton" text="Exit Project" />
                   <Button mnemonicParsing="false" onAction="#Logout" text="Logout" />
                   <Button layoutX="255.0" layoutY="10.0" mnemonicParsing="false" onAction="#compileAndRun" text="Run" />
               </items>
