@@ -87,31 +87,36 @@ public class EditorCodeArea extends CodeArea{
        	checkIt.addListener(change->{
     		Platform.runLater(new Runnable(){
     			@Override public void run() {
-    				if (lineDictionary.HasChanges()){
-		    			for(Line l : lineDictionary.GetChangeList()){
-		    				
-		    				int c = getCaretPosition();
-		    				try{
-		    					String oldText = getText(l.getLineNumber());
-		    					if (!oldText.equals(l.getText())){
-									int start = 0;
-									for (int i = 0; i < l.getLineNumber(); i++){
-										start += getText(i).length()+1;
-									}
-									int end = start + oldText.length();
-									replaceText(start, end, l.getText());
-									int oldLen = end - start;
-									int newLen = l.getText().length();
-									c += (newLen - oldLen);
-									positionCaret(c);
-		    					}
-		    				} catch (Exception e){		    					
-		    					insertText(lengthProperty().getValue()-1, "\n"+l.getText());
-		    				}
-							doHighlight();
-							//System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());
-		    			}
-		    		}
+    				try{
+	    				if (lineDictionary.HasChanges() && isEditable()){
+			    			for(Line l : lineDictionary.GetChangeList()){
+			    				
+			    				int c = getCaretPosition();
+			    				try{
+			    					String oldText = getText(l.getLineNumber());
+			    					if (!oldText.equals(l.getText())){
+										int start = 0;
+										for (int i = 0; i < l.getLineNumber(); i++){
+											start += getText(i).length()+1;
+										}
+										int end = start + oldText.length();
+										replaceText(start, end, l.getText());
+										int oldLen = end - start;
+										int newLen = l.getText().length();
+										c += (newLen - oldLen);
+										positionCaret(c);
+			    					}
+			    				} catch (Exception e){		    					
+			    					insertText(lengthProperty().getValue()-1, "\n"+l.getText());
+			    				}
+								doHighlight();
+								//System.out.println("got chg: " + String.valueOf(l.getLineNumber()) +", "+ l.getText());
+			    			}
+			    		}
+    				}
+    				catch(Exception e){
+    					e.printStackTrace(System.out);
+    				}
 		    	}
     		});
 		});
@@ -119,28 +124,38 @@ public class EditorCodeArea extends CodeArea{
     	this.caretPositionProperty().addListener(event->{
     		Platform.runLater(new Runnable(){
     			@Override public void run() {
-    				doHighlight();    		
-                	updateMyLockedLine();
+    				try{
+    					doHighlight();    		
+    					updateMyLockedLine();
+    				}
+    				catch(Exception e){
+    					e.printStackTrace(System.out);
+    				}
     			}
     		});
     	});
     	
     	
     	this.currentParagraphProperty().addListener(event->{
-    		//System.out.println("cur par: " + String.valueOf(this.getCurrentParagraph()));
-    		
-    		this.previousLineNumber = this.currentLineNumber;
-    		if (this.previousLineNumber!= -1){
-    			this.previousLineText = this.getText(this.previousLineNumber);
-    		}
-    		this.currentLineNumber = getCurrentParagraph();
-        	if (this.currentLineNumber != this.previousLineNumber){
-    			if (lineDictionary.getLockedLines().contains(previousLineNumber) &&
-    					!getText(previousLineNumber).equals(lineDictionary.getLine(previousLineNumber).getText()))
-    			{
-    				revertLine(previousLineNumber);
+    		try{
+    			if (isEditable()){
+	    			this.previousLineNumber = this.currentLineNumber;
+		    		if (this.previousLineNumber!= -1){
+		    			this.previousLineText = this.getText(this.previousLineNumber);
+		    		}
+		    		this.currentLineNumber = getCurrentParagraph();
+		        	if (this.currentLineNumber != this.previousLineNumber){
+		    			if (lineDictionary.getLockedLines().contains(previousLineNumber) &&
+		    					!getText(previousLineNumber).equals(lineDictionary.getLine(previousLineNumber).getText()))
+		    			{
+		    				revertLine(previousLineNumber);
+		    			}
+		    			sendChangesToServer();
+		    		}
     			}
-    			sendChangesToServer();
+    		}
+    		catch(Exception e){
+				e.printStackTrace(System.out);
     		}
     	});
     	
@@ -202,10 +217,10 @@ public class EditorCodeArea extends CodeArea{
 		this.lineDictionary.removeLine(lineNum);
 	}
 	
-	private void sendChangesToServer(){		
-        	new Thread(new Runnable() {
-			    @Override
-			    public void run(){	    
+	private void sendChangesToServer(){	
+		if (isEditable()){
+			Platform.runLater(new Runnable() {
+			    @Override public void run(){	    
 			    	try{
 //			    		for (int i = 0; i < lineDictionary.getSize(); i++){
 //			    			Line x = lineDictionary.getLine(i);
@@ -239,12 +254,12 @@ public class EditorCodeArea extends CodeArea{
 					    }
 				    }
 	            	catch (Exception e){
-	            		System.out.println("an exception happened while trying to send line change data");
+    					e.printStackTrace(System.out);
 	            	}
 			    }
-        	}).start();
+        	});
 		}
-	
+	}
 	
 	
 	private void updateMyLockedLine(){
@@ -304,6 +319,7 @@ public class EditorCodeArea extends CodeArea{
 			int newLen = newText.length();
 			c += (newLen - oldLen);
 		} catch (Exception e){
+			e.printStackTrace(System.out);
 			//insertText(lengthProperty().getValue()-1, "\n"+newText);
 		}
 		//this.replaceSelection(this.lineDictionary.getLine(p).getText());	        		
@@ -446,11 +462,24 @@ public class EditorCodeArea extends CodeArea{
 	}
 
 	public void ReplaceText(String text, List<Line> listOfLines, int fileID){
-		lineDictionary.resetTo(listOfLines);
-		this.previousLineNumber = -1;
-		this.currentFileID = fileID;
-		this.replaceText(text);
-		this.doHighlight();
+		try{
+			lineDictionary.resetTo(listOfLines);
+			this.previousLineNumber = -1;
+			this.currentFileID = fileID;
+			Platform.runLater(new Runnable() {
+			    @Override
+			    public void run(){	  
+			    	setEditable(false);
+			    	clear();
+					replaceText(text);
+					doHighlight();
+					setEditable(true);
+			    }
+	    	});
+		}
+		catch(Exception e){
+			e.printStackTrace(System.out);
+		}
 	}
 	
 	
