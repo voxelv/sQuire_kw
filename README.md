@@ -1,19 +1,70 @@
 # sQuire by Knight Writers
 CS383 Project by the Knight Writers group.
 
-##Proposed Git Workflow
-####  This is a suggested workflow that slip5295 learned during an internship. You can do these using the git shell.
-####  (If you prefer the GUI, do the GUI equivalents.)
-1. Ensure you are not currently working on something (i.e. you have already committed and pushed any previous work).
-2. Do `git checkout master` and then `git pull` to ensure you have all the latest changes.
-3. Do `git checkout -b <name1234_change>` using your uidaho name1234 and an extremely brief description of what you plan to change. Example: `git checkout -b slip5295_editor`. This creates a new branch for you to work on, based on the latest master.
-4. Work on your branch. Commit your work.
-5. To push your branch, (This is not going to affect the master branch) do `git push -u origin <name1234_change>` where `<name1234_change>` is your branch name. Your branch will be available online for others to checkout if they wish. This branch is not the master branch.
-6. If you want to get the latest changes in master into your branch. Do `git fetch` and then `git rebase origin/master`.
-7. If you do the above step and want to push your branch again, you must do `git push -u origin :<name1234_change>` and then `git push -u origin <name1234_change>` immediately afterward. The difference is the colon in front of the branch name. This effectively deletes the branch on github, then reuploads your new changes.
-8. To merge your branch to master, you must do `git fetch`. Then, while on your branch, do `git rebase origin/master`. This effectively puts everyone else's changes in front of yours, as if they had done them before you did. This may cause conflicts that you must resolve in each file that both you and another person changed, but the important thing is you are resolving them on your branch, not master.
-9. Once all conflicts are resolved, do `git checkout master`, `git merge <name1234_change>`, `git push`. This puts your changes on master.
-10. To delete a merged branch, `git branch -d <name1234_change>`, `git push -u origin :<name1234_change>` (note the colon);
+##Distribution Instructions
+Both the server and client can downloaded and executed as runnable jar.
+The code is also open source and accessible for anyone who wants to set
+up their own server to run and access using the sQuire client.
+Client Project: sQuire kw/GUI/sQuire/src/sq/app/
+Server Project: sQuire kw/Source/Server/SquireServer/src/squire/
+1. Obtain Raspberry Pi
+2. Install Raspbian OS (Java included)
+3. Install MySQL
+4. Download sQuire source code from github.com/voxelv/sQuire kw
+5. Run sql files to create database structure:
+a) 01 Create Users.sql
+b) 02 Create Messages.sql
+c) 03 Create Projects.sql
+6. Modify function setProperties() in DBConnector.java to match MySQL
+configuration
+7. Modify the connection properties between server and client
+a) Port number (default 9898)
+i. Server: Change this in Server.java line 27
+ii. Client: Change this in MainApp.java line 45
+b) Server URL (or IP address) (default is our server)
+i. Client: Change this in MainApp.java line 45
+8. Modify stormpath connection
+a) Create an account at Stormpath.com
+88
+b) Create a new application in stormpath
+c) Go to stormpath home page
+d) Click “Manage API Keys”
+e) Click “Create API Key”
+f) Copy the ‘id’ and ‘secret’ values to server AccountManager.java
+lines 55 & 56
+9. Compile the Server into a runnable JAR.
+a) use makeJar.sh in Source/Server/SquireServer/ or an IDE.
+10. Run server in background on your server (linux: “java -jar Source/Server/SquireServer/Server.jar
+&”)
+11. If you are planning on using this over the internet, will need to port
+forward the port you configured the server to listen to (default 9898)
+to your server
+12. Compile client runnable JAR using IDE
+13. Run sQuireClient.jar
+##Quick Start Guide
+1. Registration
+Once the steps from the distribution section have been completed,
+create an account via the register tab in the login pane.
+2. User Activities
+Once you are logged in, you can create projects, edit code, and even
+edit other users’ projects. To gain access to another user’s project,
+simply obtain the password to their project, select Edit→Project Access
+in the drop down menu, then enter the password.
+89
+When editing a project, the user can exit their current project to
+return to the list of projects available to them.
+3. Project Interaction
+Once you have a project open you can add folders and files, edit file
+contents, and run the project locally.
+4. Chat
+The chat window is in the bottom right corner of the client application.
+By default, all users are logged into global chat. To join a chat
+room, simply type “\join (chatroomname)”. If this chat room doesn’t
+exist, this will automatically create a chat room with that name. To
+send a message to a joined chat room, simply select the chat room
+in the dropdown list to the left of the chat text area, then type and
+send your message.
+
 
 ##OneNote
 * [OneNote] (https://onedrive.live.com/view.aspx?resid=273538595B398734!133&ithint=onenote%2c&app=OneNote&authkey=!ABbDfXT81mMyGkQ)
