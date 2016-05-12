@@ -11,9 +11,7 @@ Client Project: sQuire kw/GUI/sQuire/src/sq/app/
 Server Project: sQuire kw/Source/Server/SquireServer/src/squire/
 
 1. Obtain Raspberry Pi
-
 2. Install Raspbian OS (Java included)
-
 3. Install MySQL
 4. Download sQuire source code from github.com/voxelv/sQuire kw
 5. Run sql files to create database structure:
@@ -30,7 +28,6 @@ b) Server URL (or IP address) (default is our server)
 i. Client: Change this in MainApp.java line 45
 8. Modify stormpath connection
 a) Create an account at Stormpath.com
-88
 b) Create a new application in stormpath
 c) Go to stormpath home page
 d) Click “Manage API Keys”
@@ -46,22 +43,22 @@ forward the port you configured the server to listen to (default 9898)
 to your server
 12. Compile client runnable JAR using IDE
 13. Run sQuireClient.jar
+
 ##Quick Start Guide
-1. Registration
+1. Registration: 
 Once the steps from the distribution section have been completed,
 create an account via the register tab in the login pane.
-2. User Activities
+2. User Activities: 
 Once you are logged in, you can create projects, edit code, and even
 edit other users’ projects. To gain access to another user’s project,
 simply obtain the password to their project, select Edit→Project Access
 in the drop down menu, then enter the password.
-89
 When editing a project, the user can exit their current project to
 return to the list of projects available to them.
-3. Project Interaction
+3. Project Interaction: 
 Once you have a project open you can add folders and files, edit file
 contents, and run the project locally.
-4. Chat
+4. Chat: 
 The chat window is in the bottom right corner of the client application.
 By default, all users are logged into global chat. To join a chat
 room, simply type “\join (chatroomname)”. If this chat room doesn’t
