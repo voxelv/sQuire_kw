@@ -5,10 +5,15 @@ CS383 Project by the Knight Writers group.
 Both the server and client can downloaded and executed as runnable jar.
 The code is also open source and accessible for anyone who wants to set
 up their own server to run and access using the sQuire client.
+
 Client Project: sQuire kw/GUI/sQuire/src/sq/app/
+
 Server Project: sQuire kw/Source/Server/SquireServer/src/squire/
+
 1. Obtain Raspberry Pi
+
 2. Install Raspbian OS (Java included)
+
 3. Install MySQL
 4. Download sQuire source code from github.com/voxelv/sQuire kw
 5. Run sql files to create database structure:
